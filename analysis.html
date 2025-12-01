@@ -146,8 +146,8 @@
       buttons.forEach(id=>document.getElementById(id).classList.remove("active"));
       document.getElementById(btn).classList.add("active");
     }
-    function redirect(page){
-      window.location.href=`?page=${page}`;
+    function redirect(page) {
+      window.location.href = page;
     }
     function loadMonitoring() { activate("btnMonitoring"); redirect("index.html"); }
     function loadAnalysis()   { activate("btnAnalysis");   redirect("analysis.html"); }
@@ -230,4 +230,5 @@
   </script>
 </body>
 </html>
+
 
