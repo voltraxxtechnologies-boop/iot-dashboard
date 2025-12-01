@@ -18,7 +18,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 18px 24px;
-      background: rgba(26, 26, 26, 0.35);
+      background: rgba(26,26,26,0.35);
     }
 
     .logo {
@@ -48,12 +48,6 @@
       color: #fff;
     }
 
-    .section-title {
-      margin: 12px 16px;
-      font-size: 22px;
-      font-weight: bold;
-    }
-
     section {
       display: flex;
       overflow-x: auto;
@@ -62,20 +56,13 @@
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255,255,255,0.12);
       backdrop-filter: blur(10px);
       border-radius: 18px;
       min-width: 300px;
       padding: 22px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255,255,255,0.15);
       box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-      color: #F6EDFF;
-      transition: 0.25s;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 35px rgba(0,0,0,0.55);
     }
 
     .card-header {
@@ -106,40 +93,39 @@
     }
   </style>
 </head>
-
 <body>
 
-  <!-- NAVBAR -->
-  <div class="top-nav">
-    <div class="logo">LOGO</div>
+<!-- NAVBAR -->
+<div class="top-nav">
+  <div class="logo">LOGO</div>
 
-    <div class="nav-buttons">
-      <button class="active" onclick="window.location.href='index.html'">Monitoring</button>
-      <button onclick="window.location.href='analysis.html'">Analysis</button>
-      <button onclick="window.location.href='history.html'">History</button>
-      <button onclick="window.location.href='settings.html'">Settings</button>
-    </div>
+  <div class="nav-buttons">
+    <button class="active" onclick="window.location.href='index.html'">Monitoring</button>
+    <button onclick="window.location.href='analysis.html'">Analysis</button>
+    <button onclick="window.location.href='history.html'">History</button>
+    <button onclick="window.location.href='settings.html'">Settings</button>
   </div>
+</div>
 
-  <!-- CONTENT -->
-  <h2 class="section-title">Water Level</h2>
-  <section id="distance"></section>
+<!-- CONTENT -->
+<h2 class="section-title">Water Level</h2>
+<section id="distance"></section>
 
-  <h2 class="section-title">Temperature</h2>
-  <section id="temperature"></section>
+<h2 class="section-title">Temperature</h2>
+<section id="temperature"></section>
 
-  <h2 class="section-title">Flow</h2>
-  <section id="flow"></section>
+<h2 class="section-title">Flow</h2>
+<section id="flow"></section>
 
-  <h2 class="section-title">Other</h2>
-  <section id="other"></section>
+<h2 class="section-title">Other</h2>
+<section id="other"></section>
 
 <script>
-/* ================= BASE API URL ===================== */
+// FINAL FIXED URL
 const BASE_URL =
-"https://script.google.com/macros/s/AKfycby2xEnzT9PavcBIEXm6JCVNRIy9rqr7K2-wO0coaoNaC3ElqTQ7KmMcFjxUNL5gb_M12Q/exec";
+  "https://script.google.com/macros/s/AKfycby2xEnzT9PavcBIEXm6JCVNRIy9rqr7K2-wO0coaoNaC3ElqTQ7KmMcFjxUNL5gb_M12Q/exec";
 
-/* ================= LIVE REFRESH (1 second) ===================== */
+// Auto-refresh every 1 second
 setInterval(loadData, 1000);
 loadData();
 
@@ -152,18 +138,16 @@ function loadData() {
       renderCategory("flow", data.flow || []);
       renderCategory("other", data.none || []);
     })
-    .catch(err => console.error("Fetch Error:", err));
+    .catch(err => console.log("Fetch Error:", err));
 }
 
 function renderCategory(sectionID, array) {
   const container = document.getElementById(sectionID);
-  container.innerHTML = ""; // Clear old
+  container.innerHTML = "";
 
   array.forEach(item => {
     const card = document.createElement("div");
     card.className = "card";
-
-    card.style.borderLeft = `6px solid #f890ec`;
 
     card.innerHTML = `
       <div class="card-header">
