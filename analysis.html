@@ -149,11 +149,11 @@
     function redirect(page){
       window.location.href=`?page=${page}`;
     }
-    function loadMonitoring(){ activate("btnMonitoring"); redirect("monitoringpage"); }
-    function loadAnalysis(){ activate("btnAnalysis"); redirect("analysispage"); }
-    function loadHistory(){ activate("btnHistory"); redirect("historypage"); }
-    function loadSettings(){ activate("btnSettings"); redirect("settingspage"); }
-    function loadLogout(){ activate("btnLogout"); redirect("logoutpage"); }
+    function loadMonitoring() { activate("btnMonitoring"); redirect("index.html"); }
+    function loadAnalysis()   { activate("btnAnalysis");   redirect("analysis.html"); }
+    function loadHistory()    { activate("btnHistory");    redirect("history.html"); }
+    function loadSettings()   { activate("btnSettings");   redirect("settings.html"); }
+    function loadLogout()     { activate("btnLogout");     redirect("logout.html"); }
     /* ==================== FETCH ANALYSIS DATA ==================== */
     const BASE_URL = "https://script.google.com/macros/s/AKfycbylrxvnv8sqCT8vuRMYpVbhGVb-tMjEhzSQbrPHx3_zqMwTPfvVjNuPojUsYgiRe6ZWUw/exec";
     fetch(`${BASE_URL}?page=analysis`)
@@ -230,3 +230,4 @@
   </script>
 </body>
 </html>
+
