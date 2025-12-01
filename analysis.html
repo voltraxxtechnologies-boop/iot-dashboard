@@ -1,11 +1,11 @@
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Analysis Dashboard</title>
-
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
     body {
       margin: 0;
@@ -14,125 +14,219 @@
       font-family: 'Segoe UI', sans-serif;
       color: white;
     }
-
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 24px;
+    /* ==================== NAVBAR ==================== */
+    .top-nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:18px 24px;
       background: rgba(26,26,26,0.35);
     }
-
-    .logo { font-size: 26px; font-weight: bold; }
-
-    .nav-buttons { display: flex; gap: 25px; }
-
-    .nav-buttons button {
-      background: transparent;
-      color: #f2f2f2;
-      font-size: 18px;
-      padding: 8px 14px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      transition: .25s;
+    .logo{font-size:26px;font-weight:bold;}
+    .nav-buttons{display:flex; gap:25px;}
+    .nav-buttons button{
+      background:transparent;color:#f2f2f2;
+      font-size:18px;padding:8px 14px;
+      border-radius:6px;border:none;cursor:pointer;
+      transition:.25s;
     }
-
-    .nav-buttons button.active {
-      background: linear-gradient(135deg, #C9A8E3 0%, #6A329F 100%);
-      font-weight: 700;
-      color: #fff;
+    .nav-buttons button.active{
+      background: linear-gradient(135deg,#C9A8E3 0%,#6A329F 100%);
+      font-weight:700;color:#fff;
     }
-
-    section {
-      display: flex;
-      gap: 20px;
-      overflow-x: auto;
-      padding: 12px;
+    .nav-buttons button:hover{
+      border:2px solid #C9A8E3;color:#ffd6ff;
     }
-
-    .card {
-      min-width: 300px;
-      padding: 22px;
-      border-radius: 18px;
+    /* ==================== TITLES ==================== */
+    .section-title{
+      margin:12px 16px;
+      font-size:22px;font-weight:bold;
+    }
+    section{
+      display:flex;
+      overflow-x:auto;
+      gap:20px;
+      padding:12px;
+    }
+    .card{
       background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.18);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+      border-radius:18px;
+      min-width:300px;
+      padding:22px;
+      border:1px solid rgba(255,255,255,0.15);
+      box-shadow:0 8px 25px rgba(0,0,0,0.4);
+      color:#F6EDFF;
+      transition:.25s;
+      cursor:pointer;
+    }
+    .card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 10px 35px rgba(0,0,0,0.55);
+    }
+    .card-header{display:flex; justify-content:space-between; margin-bottom:8px;}
+    .title{font-size:20px;font-weight:600;}
+    .ids{font-size:14px; opacity:.8;}
+    .main-line{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:8px;
+    }
+    .main-line span{font-size:18px;font-weight:600;color:#ffd6ff;}
+    .main-value{font-size:36px;font-weight:800;}
+    .sub-line{
+      display:flex;
+      justify-content:space-between;
+      margin-top:10px;
+    }
+    .sub-line span{font-size:15px;color:#e8c5e8;}
+    .sub-value{font-size:18px;font-weight:700;color:#fff;}
+    .chart-container{
+      margin-top:15px;
+      height:180px;
+    }
+    @media(max-width:600px){
+      .card{min-width:210px;}
+      .main-value{font-size:28px;}
+    }
+    /* Extra info modal */
+    #extraInfo{
+      position:fixed; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      background: rgba(26,26,26,0.95);
+      border-radius:14px;
+      padding:20px;
+      display:none;
+      max-width:90%;
+      max-height:80%;
+      overflow:auto;
+      z-index:1000;
+    }
+    #extraInfo h3{margin-top:0;}
+    #closeInfo{
+      position:absolute;top:10px;right:12px;
+      cursor:pointer;color:#ff3b3b;font-size:18px;
     }
   </style>
 </head>
-
 <body>
-
+  <!-- NAVBAR -->
   <div class="top-nav">
     <div class="logo">LOGO</div>
-
     <div class="nav-buttons">
-      <button onclick="window.location.href='index.html'">Monitoring</button>
-      <button class="active" onclick="window.location.href='analysis.html'">Analysis</button>
-      <button onclick="window.location.href='history.html'">History</button>
-      <button onclick="window.location.href='settings.html'">Settings</button>
+      <button id="btnMonitoring" onclick="loadMonitoring()">Monitoring</button>
+      <button id="btnAnalysis" class="active" onclick="loadAnalysis()">Analysis</button>
+      <button id="btnHistory" onclick="loadHistory()">History</button>
+      <button id="btnSettings" onclick="loadSettings()">Settings</button>
+      <button id="btnLogout" onclick="loadLogout()">Logout</button>
     </div>
   </div>
-
-  <h2 class="section-title">Distance</h2>
-  <section id="distance"></section>
-
-  <h2 class="section-title">Temperature</h2>
-  <section id="temperature"></section>
-
-  <h2 class="section-title">Flow</h2>
-  <section id="flow"></section>
-
-  <h2 class="section-title">Other</h2>
-  <section id="other"></section>
-
-<script>
-const BASE_URL =
-"https://script.google.com/macros/s/AKfycby2xEnzT9PavcBIEXm6JCVNRIy9rqr7K2-wO0coaoNaC3ElqTQ7KmMcFjxUNL5gb_M12Q/exec";
-
-fetch(`${BASE_URL}?page=apianalysis`)
-  .then(res => res.json())
-  .then(data => {
-    renderCategory("distance", data.distance);
-    renderCategory("temperature", data.temperature);
-    renderCategory("flow", data.flow);
-    renderCategory("other", data.none);
-  });
-
-function renderCategory(sectionID, array) {
-  const container = document.getElementById(sectionID);
-
-  array.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <h3>${item.Label || "Sensor"}</h3>
-      <p><b>Sensor ID:</b> ${item["sensor ID"]}</p>
-      <canvas></canvas>
-    `;
-
-    container.appendChild(card);
-
-    const ctx = card.querySelector("canvas").getContext("2d");
-    const hours = [...Array(24).keys()];
-    const values = hours.map(h => item[h] || 0);
-
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: hours,
-        datasets: [{
-          label: item.Label,
-          data: values,
-          borderWidth: 2,
-        }]
-      }
-    });
-  });
-}
-</script>
-
+  <!-- PAGE CONTENT -->
+  <div id="content">
+    <h2 class="section-title">Distance</h2>
+    <section id="distance"></section>
+    <h2 class="section-title">Temperature</h2>
+    <section id="temperature"></section>
+    <h2 class="section-title">Flow</h2>
+    <section id="flow"></section>
+    <h2 class="section-title">Other</h2>
+    <section id="other"></section>
+  </div>
+  <!-- Extra Info Modal -->
+  <div id="extraInfo">
+    <span id="closeInfo" onclick="closeExtraInfo()">✖</span>
+    <h3>Sensor Info</h3>
+    <pre id="infoContent" style="white-space:pre-wrap;"></pre>
+  </div>
+  <script>
+    /* ==================== NAVBAR LOGIC ==================== */
+    function activate(btn){
+      const buttons=["btnMonitoring","btnAnalysis","btnHistory","btnSettings","btnLogout"];
+      buttons.forEach(id=>document.getElementById(id).classList.remove("active"));
+      document.getElementById(btn).classList.add("active");
+    }
+    function redirect(page){
+      window.location.href=`?page=${page}`;
+    }
+    function loadMonitoring(){ activate("btnMonitoring"); redirect("monitoringpage"); }
+    function loadAnalysis(){ activate("btnAnalysis"); redirect("analysispage"); }
+    function loadHistory(){ activate("btnHistory"); redirect("historypage"); }
+    function loadSettings(){ activate("btnSettings"); redirect("settingspage"); }
+    function loadLogout(){ activate("btnLogout"); redirect("logoutpage"); }
+    /* ==================== FETCH ANALYSIS DATA ==================== */
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbylrxvnv8sqCT8vuRMYpVbhGVb-tMjEhzSQbrPHx3_zqMwTPfvVjNuPojUsYgiRe6ZWUw/exec";
+    fetch(`${BASE_URL}?page=analysis`)
+      .then(res=>res.json())
+      .then(data=>{
+        renderCategory("distance", data.distance||[]);
+        renderCategory("temperature", data.temperature||[]);
+        renderCategory("flow", data.flow||[]);
+        renderCategory("other", data.none||[]);
+      })
+      .catch(err=>console.error(err));
+    /* ==================== RENDER CARDS ==================== */
+    function renderCategory(sectionID,array){
+      const container=document.getElementById(sectionID);
+      array.forEach(item=>{
+        const card=document.createElement("div");
+        card.className="card";
+        card.style.borderLeft=`6px solid #f890ec`;
+        // Card HTML
+        card.innerHTML=`
+          <div class="card-header">
+            <span class="title">${item.Label || item['Sensor Type'] || '-'}</span>
+            <span class="ids">C-SID:${item['sensor ID'] || '-'}</span>
+          </div>
+          <div class="main-line">
+            <span>${item['Sensor Type'] || ''}</span>
+            <span class="main-value">${item['16'] || '-'}</span>
+          </div>
+          <div class="sub-line">
+            <span>Tank Volume</span>
+            <span class="sub-value">${item['Tank Volume'] || '-'}</span>
+          </div>
+          <div class="chart-container">
+            <canvas></canvas>
+          </div>
+        `;
+        // Chart.js Graph inside card
+        const ctx=card.querySelector("canvas").getContext("2d");
+        const labels=Array.from({length:24},(_,i)=>i); // 0-23 hour
+        const values=Array.from({length:24},(_,i)=>item[i]||0);
+        new Chart(ctx,{
+          type:"line",
+          data:{
+            labels:labels,
+            datasets:[{
+              label:item.Label||item['Sensor Type'],
+              data:values,
+              borderColor:"#C9A8E3",
+              backgroundColor:"rgba(201,168,227,0.3)",
+              fill:true,
+              tension:0.3,
+              pointRadius:2
+            }]
+          },
+          options:{
+            responsive:true,
+            plugins:{legend:{display:false}},
+            scales:{x:{title:{display:true,text:"Hour"}},y:{title:{display:true,text:"Value"}}}
+          }
+        });
+        // Click to show extra info
+        card.onclick=()=>showExtraInfo(item);
+        container.appendChild(card);
+      });
+    }
+    /* ==================== EXTRA INFO ==================== */
+    function showExtraInfo(item){
+      document.getElementById("extraInfo").style.display="block";
+      document.getElementById("infoContent").textContent=JSON.stringify(item,null,2);
+    }
+    function closeExtraInfo(){
+      document.getElementById("extraInfo").style.display="none";
+    }
+  </script>
 </body>
 </html>
