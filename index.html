@@ -175,14 +175,12 @@
 
   <script>
     /* -------------------------------------------------------------
-       FIXED BASE URL — SAME AS analysis.html
+       FIXED BASE_URL
     ------------------------------------------------------------- */
     let BASE_URL = "https://script.google.com/macros/s/AKfycbylrxvnv8sqCT8vuRMYpVbhGVb-tMjEhzSQbrPHx3_zqMwTPfvVjNuPojUsYgiRe6ZWUw/exec";
 
-    console.log("✔ BASE_URL:", BASE_URL);
-
     /* -------------------------------------------------------------
-       NAVIGATION FIX — SAME BEHAVIOR AS analysis.html
+       NAVIGATION — OPEN HTML FILES DIRECTLY
     ------------------------------------------------------------- */
     function activate(btn) {
       const buttons = ["btnMonitoring","btnAnalysis","btnHistory","btnSettings","btnLogout"];
@@ -191,17 +189,17 @@
     }
 
     function redirect(page) {
-      window.location.href = `?page=${page}`;
+      window.location.href = page;
     }
 
-    function loadMonitoring() { activate("btnMonitoring"); redirect("monitoringpage"); }
-    function loadAnalysis()   { activate("btnAnalysis");   redirect("analysispage"); }
-    function loadHistory()    { activate("btnHistory");    redirect("historypage"); }
-    function loadSettings()   { activate("btnSettings");   redirect("settingspage"); }
-    function loadLogout()     { activate("btnLogout");     redirect("logoutpage"); }
+    function loadMonitoring() { activate("btnMonitoring"); redirect("index.html"); }
+    function loadAnalysis()   { activate("btnAnalysis");   redirect("analysis.html"); }
+    function loadHistory()    { activate("btnHistory");    redirect("history.html"); }
+    function loadSettings()   { activate("btnSettings");   redirect("settings.html"); }
+    function loadLogout()     { activate("btnLogout");     redirect("logout.html"); }
 
     /* -------------------------------------------------------------
-       FETCH DATA
+       FETCH MONITORING DATA
     ------------------------------------------------------------- */
     let lastData = {};
     let cards = {};
@@ -222,7 +220,7 @@
     }
 
     /* -------------------------------------------------------------
-       SMART CARD RENDERING
+       RENDER CARDS
     ------------------------------------------------------------- */
     function renderCategory(sectionID, array) {
       const container = document.getElementById(sectionID);
