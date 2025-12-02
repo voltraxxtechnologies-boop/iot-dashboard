@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>History Dashboard</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #6A329F 0%, #3B1C5B 100%);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+    }
+
+    /* ---------------- NAVBAR (Hamburger + Desktop) ---------------- */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+      background: rgba(26, 26, 26, 0.35);
+      position: relative;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    /* Desktop Menu */
+    .nav-buttons {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-buttons button {
+      background: transparent;
+      color: #f2f2f2;
+      font-size: 18px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: .25s;
+    }
+
+    .nav-buttons button.active {
+      background: linear-gradient(135deg,#C9A8E3 0%,#6A329F 100%);
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .nav-buttons button:hover {
+      border: 2px solid #C9A8E3;
+      color: #ffd6ff;
+    }
+
+    /* Hamburger icon */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .hamburger div {
+      width: 28px;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+    }
+
+    /* Mobile dropdown menu */
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: rgba(26, 26, 26, 0.95);
+      padding: 12px;
+      position: absolute;
+      top: 60px;
+      right: 0;
+      left: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      animation: slideDown 0.3s ease;
+      z-index: 100;
+    }
+
+    .mobile-menu button {
+      background: transparent;
+      color: white;
+      padding: 12px;
+      border: none;
+      text-align: left;
+      font-size: 16px;
+    }
+
+    .mobile-menu button.active {
+      color: #ffd6ff;
+      font-weight: bold;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hide desktop menu on mobile */
+    @media (max-width: 600px) {
+      .nav-buttons { display: none; }
+
+      .hamburger { display: flex; }
+    }
+
+    /* ---------------- PAGE CONTENT ---------------- */
+    .container { padding: 20px; }
+
+    .filters {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+
+    select, input[type="date"] {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button.fetchBtn {
+      padding: 10px 16px;
+      background: #C9A8E3;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      color: #000;
+      font-weight: 600;
+    }
+
+    /* Result card */
+    .result-card {
+      background: rgba(255,255,255,0.12);
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.3);
+      margin: 20px auto;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    canvas { max-width: 100%; }
+
+    .table-box {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    .table-box table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      color: white;
+    }
+
+    .table-box th, .table-box td {
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding: 8px 5px;
+      text-align: left;
+    }
+
+    @media(max-width: 450px) {
+      .result-card {
+        padding: 14px;
+        border-radius: 16px;
+      }
+      .table-box table { font-size: 12px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ---------------- NAVIGATION BAR ---------------- -->
+  <div class="top-nav">
+    <div class="logo">LOGO</div>
+
+    <!-- Desktop menu -->
+    <div class="nav-buttons">
+      <button id="btnMonitoring" onclick="loadMonitoring()">Monitoring</button>
+      <button id="btnAnalysis" onclick="loadAnalysis()">Analysis</button>
+      <button id="btnHistory" class="active" onclick="loadHistory()">History</button>
+      <button id="btnSettings" onclick="loadSettings()">Settings</button>
+      <button id="btnLogout" onclick="loadLogout()">Logout</button>
+    </div>
+
+    <!-- Hamburger -->
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div><div></div><div></div>
+    </div>
+  </div>
+
+  <!-- Mobile dropdown -->
+  <div id="mobileMenu" class="mobile-menu">
+    <button id="mMonitoring" onclick="loadMonitoring()">Monitoring</button>
+    <button id="mAnalysis" onclick="loadAnalysis()">Analysis</button>
+    <button id="mHistory" class="active" onclick="loadHistory()">History</button>
+    <button id="mSettings" onclick="loadSettings()">Settings</button>
+    <button id="mLogout" onclick="loadLogout()">Logout</button>
+  </div>
+
+  <!-- ---------------- PAGE CONTENT ---------------- -->
+  <div class="container">
+    <h2>History</h2>
+
+    <div class="filters">
+      <select id="sensorSelect">
+        <option value="">Select Sensor</option>
+      </select>
+
+      <input type="date" id="dateSelect">
+
+      <button class="fetchBtn" onclick="getHistory()">Fetch Data</button>
+    </div>
+
+    <div id="resultBox"></div>
+  </div>
+
+<script>
+/* Toggle hamburger menu */
+function toggleMenu() {
+  const menu = document.getElementById("mobileMenu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+
+/* NAVIGATION FUNCTIONS */
+function activate(btn){
+  ["btnMonitoring","btnAnalysis","btnHistory","btnSettings","btnLogout",
+   "mMonitoring","mAnalysis","mHistory","mSettings","mLogout"]
+    .forEach(id => document.getElementById(id)?.classList.remove("active"));
+
+  document.getElementById(btn).classList.add("active");
+}
+
+function redirect(pg){ window.location.href = pg; }
+
+function loadMonitoring(){ activate("btnMonitoring"); activate("mMonitoring"); redirect("index.html"); }
+function loadAnalysis(){ activate("btnAnalysis"); activate("mAnalysis"); redirect("analysis.html"); }
+function loadHistory(){ activate("btnHistory"); activate("mHistory"); redirect("history.html"); }
+function loadSettings(){ activate("btnSettings"); activate("mSettings"); redirect("settings.html"); }
+function loadLogout(){ activate("btnLogout"); activate("mLogout"); redirect("logout.html"); }
+
+/* API URL */
+const BASE_URL = "https://script.google.com/macros/s/AKfycbwchdbHGHK0HyNrBM_xn1udkf6_x_1C7oZguIqIKebL0cc6Mxz-Cnu2mnYP1TovuvTvyw/exec";
+
+/* Load AvailableSensors on page load */
+window.onload = function(){
+  fetch(`${BASE_URL}?page=history`)
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.AvailableSensors){
+        const sel=document.getElementById("sensorSelect");
+        data.AvailableSensors.forEach(id=>{
+          const op=document.createElement("option");
+          op.value=id;
+          op.textContent=`Sensor ${id}`;
+          sel.appendChild(op);
+        });
+
+        document.getElementById("resultBox").innerHTML =
+          `<div class='result-card'><p>${data.message}</p></div>`;
+      }
+    });
+};
+
+/* Fetch selected history data */
+function getHistory(){
+  const sensor=document.getElementById("sensorSelect").value;
+  const date=document.getElementById("dateSelect").value;
+
+  if(!sensor || !date){
+    document.getElementById("resultBox").innerHTML =
+      `<div class='result-card'><p>Please choose sensor & date.</p></div>`;
+    return;
+  }
+
+  const p=date.split("-");
+  const finalDate=`${p[2]}/${p[1]}/${p[0]}`;
+
+  fetch(`${BASE_URL}?page=history&sensorid=${sensor}&date=${finalDate}`)
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.status!=="ok"){
+        document.getElementById("resultBox").innerHTML =
+          `<div class='result-card'><p>${data.message}</p></div>`;
+        return;
+      }
+      displayHistory(data.row);
+    });
+}
+
+/* Render Chart + Table */
+function displayHistory(row){
+
+  const hours=[], values=[];
+  for(let i=0;i<=23;i++){
+    hours.push(i);
+    values.push(Number(row[i])||0);
+  }
+
+  document.getElementById("resultBox").innerHTML = `
+    <div class='result-card'>
+      <h3>History for Sensor ${row["sensor ID"]} — ${row.date}</h3>
+      <canvas id='historyChart' height='140'></canvas>
+
+      <div class='table-box'>
+        <table><tbody id='detailsTable'></tbody></table>
+      </div>
+    </div>
+  `;
+
+  /* Bar Graph */
+  new Chart(document.getElementById("historyChart"),{
+    type:"bar",
+    data:{
+      labels:hours,
+      datasets:[{
+        data:values,
+        backgroundColor:"rgba(201,168,227,0.6)",
+        borderColor:"#C9A8E3",
+        borderWidth:1
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{x:{},y:{}}
+    }
+  });
+
+  /* Table */
+  const table=document.getElementById("detailsTable");
+  for(let k in row){
+    if(!isNaN(k)) continue;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><b>${k}</b></td><td>${row[k]}</td>`;
+    table.appendChild(tr);
+  }
+}
+</script>
+
+</body>
+</html>

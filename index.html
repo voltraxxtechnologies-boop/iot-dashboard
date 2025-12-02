@@ -3,21 +3,27 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Monitoring Dashboard</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #6A329F 0%, #3B1C5B 100%);
       font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #6A329F 0%, #3B1C5B 100%);
       color: white;
     }
 
+    /* ---------------- NAVBAR ---------------- */
     .top-nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 18px 24px;
-      background: rgba(26, 26, 26, 0.35);
+      background: rgba(26,26,26,0.35);
+      position: relative;
+      z-index: 10;
     }
 
     .logo {
@@ -27,139 +33,166 @@
 
     .nav-buttons {
       display: flex;
-      gap: 25px;
+      gap: 20px;
     }
 
     .nav-buttons button {
       background: transparent;
       color: #f2f2f2;
-      font-size: 18px;
+      font-size: 16px;
       padding: 8px 14px;
-      border-radius: 6px;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
       transition: 0.25s;
     }
 
     .nav-buttons button.active {
-      background: linear-gradient(135deg, #C9A8E3 0%, #6A329F 100%);
-      font-weight: 700;
+      background: linear-gradient(135deg,#C9A8E3,#6A329F);
+      font-weight: bold;
       color: #fff;
     }
 
     .nav-buttons button:hover {
       border: 2px solid #C9A8E3;
-      color: #ffd6ff;
     }
 
-    .section-title {
-      margin: 12px 16px;
-      font-size: 22px;
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .hamburger div {
+      width: 28px;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+    }
+
+    /* Mobile dropdown */
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: rgba(26,26,26,0.95);
+      padding: 12px;
+      position: absolute;
+      top: 60px;
+      right: 0;
+      left: 0;
+      animation: slideDown 0.3s ease;
+    }
+    .mobile-menu button {
+      background: transparent;
+      color: white;
+      padding: 14px;
+      border: none;
+      font-size: 16px;
+      text-align: left;
+    }
+    .mobile-menu button.active {
+      color: #ffd6ff;
       font-weight: bold;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .nav-buttons { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    /* ---------------- CONTENT ---------------- */
+    .container { padding: 20px; }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 12px 0 8px 0;
     }
 
     section {
       display: flex;
       overflow-x: auto;
       gap: 20px;
-      padding: 12px;
+      padding-bottom: 10px;
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255,255,255,0.12);
       backdrop-filter: blur(10px);
       border-radius: 18px;
-      min-width: 300px;
-      padding: 22px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-      color: #F6EDFF;
+      min-width: 250px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.15);
       transition: 0.25s;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55);
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
-
-    .title {
-      font-size: 20px;
-      font-weight: 600;
-    }
-
-    .ids {
-      font-size: 14px;
-      opacity: 0.8;
-    }
+    .title { font-size: 18px; font-weight: 600; }
+    .ids { font-size: 12px; opacity: 0.8; }
 
     .main-line {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 8px;
+      margin-top: 6px;
     }
-
-    .main-line span {
-      font-size: 18px;
-      font-weight: 600;
-      color: #ffd6ff;
-    }
-
-    .main-value {
-      font-size: 36px;
-      font-weight: 800;
-    }
+    .main-label { font-size: 14px; color: #ffd6ff; }
+    .main-value { font-size: 28px; font-weight: 700; }
 
     .sub-line {
       display: flex;
       justify-content: space-between;
-      margin-top: 10px;
+      margin-top: 6px;
     }
-
-    .sub-line span {
-      font-size: 15px;
-      color: #e8c5e8;
-    }
-
-    .sub-value {
-      font-size: 18px;
-      font-weight: 700;
-      color: #ffffff;
-    }
+    .sub-label { font-size: 12px; color: #e8c5e8; }
+    .sub-value { font-size: 16px; font-weight: 600; }
 
     @media (max-width: 600px) {
-      .card {
-        min-width: 210px;
-      }
-      .main-value {
-        font-size: 28px;
-      }
+      .card { min-width: 200px; padding: 14px; }
+      .main-value { font-size: 22px; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- NAVBAR -->
+  <!-- NAVIGATION -->
   <div class="top-nav">
-    <div class="logo">LOGO</div>
+    <div class="logo">Voltraxx</div>
+
     <div class="nav-buttons">
-      <button id="btnMonitoring" class="active" onclick="loadMonitoring()">Monitoring</button>
-      <button id="btnAnalysis" onclick="loadAnalysis()">Analysis</button>
-      <button id="btnHistory" onclick="loadHistory()">History</button>
-      <button id="btnSettings" onclick="loadSettings()">Settings</button>
-      <button id="btnLogout" onclick="loadLogout()">Logout</button>
+      <button class="active" onclick="navigate('index.html', this)">Monitoring</button>
+      <button onclick="navigate('analysis.html', this)">Analysis</button>
+      <button onclick="navigate('history.html', this)">History</button>
+      <button onclick="navigate('settings.html', this)">Settings</button>
+      <button onclick="navigate('logout.html', this)">Logout</button>
+    </div>
+
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div><div></div><div></div>
     </div>
   </div>
 
+  <div id="mobileMenu" class="mobile-menu">
+    <button class="active" onclick="navigate('index.html', this)">Monitoring</button>
+    <button onclick="navigate('analysis.html', this)">Analysis</button>
+    <button onclick="navigate('history.html', this)">History</button>
+    <button onclick="navigate('settings.html', this)">Settings</button>
+    <button onclick="navigate('logout.html', this)">Logout</button>
+  </div>
+
   <!-- CONTENT -->
-  <div id="content">
+  <div class="container">
     <h2 class="section-title">Water Level</h2>
     <section id="distance"></section>
 
@@ -173,116 +206,101 @@
     <section id="other"></section>
   </div>
 
-  <script>
-    /* -------------------------------------------------------------
-       FIXED BASE_URL
-    ------------------------------------------------------------- */
-    let BASE_URL = "https://script.google.com/macros/s/AKfycbylrxvnv8sqCT8vuRMYpVbhGVb-tMjEhzSQbrPHx3_zqMwTPfvVjNuPojUsYgiRe6ZWUw/exec";
+<script>
+/* ---------------- NAVIGATION ---------------- */
+function toggleMenu() {
+  const m = document.getElementById("mobileMenu");
+  m.style.display = m.style.display === "flex" ? "none" : "flex";
+}
 
-    /* -------------------------------------------------------------
-       NAVIGATION — OPEN HTML FILES DIRECTLY
-    ------------------------------------------------------------- */
-    function activate(btn) {
-      const buttons = ["btnMonitoring","btnAnalysis","btnHistory","btnSettings","btnLogout"];
-      buttons.forEach(id => document.getElementById(id).classList.remove("active"));
-      document.getElementById(btn).classList.add("active");
+function navigate(page, btn) {
+  // Update active buttons
+  document.querySelectorAll('.nav-buttons button, .mobile-menu button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  window.location.href = page;
+}
+
+/* ---------------- MONITORING DATA ---------------- */
+const BASE_URL = "https://script.google.com/macros/s/AKfycbwchdbHGHK0HyNrBM_xn1udkf6_x_1C7oZguIqIKebL0cc6Mxz-Cnu2mnYP1TovuvTvyw/exec";
+
+let lastData = {};
+let cards = {};
+
+loadData();
+setInterval(loadData, 400);
+
+function loadData() {
+  fetch(`${BASE_URL}?page=monitoring`)
+    .then(res => res.json())
+    .then(data => {
+      renderCategory("distance", data.distance || []);
+      renderCategory("temperature", data.temperature || []);
+      renderCategory("flow", data.flow || []);
+      renderCategory("other", data.none || []);
+    })
+    .catch(err => console.log("Fetch Error:", err));
+}
+
+function renderCategory(sectionID, array) {
+  const container = document.getElementById(sectionID);
+
+  if (!cards[sectionID]) cards[sectionID] = {};
+  if (!lastData[sectionID]) lastData[sectionID] = {};
+
+  array.forEach(item => {
+    const key = `${item.controllerID}-${item.sensorID}`;
+
+    if (!cards[sectionID][key]) {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="title"></span>
+          <span class="ids"></span>
+        </div>
+        <div class="main-line">
+          <span class="main-label"></span>
+          <span class="main-value"></span>
+        </div>
+        <div class="sub-line">
+          <span class="sub-label"></span>
+          <span class="sub-value"></span>
+        </div>
+      `;
+      container.appendChild(card);
+
+      cards[sectionID][key] = {
+        el: card,
+        title: card.querySelector(".title"),
+        ids: card.querySelector(".ids"),
+        mainLabel: card.querySelector(".main-label"),
+        mainValue: card.querySelector(".main-value"),
+        subLabel: card.querySelector(".sub-label"),
+        subValue: card.querySelector(".sub-value")
+      };
     }
 
-    function redirect(page) {
-      window.location.href = page;
-    }
+    const c = cards[sectionID][key];
 
-    function loadMonitoring() { activate("btnMonitoring"); redirect("index.html"); }
-    function loadAnalysis()   { activate("btnAnalysis");   redirect("analysis.html"); }
-    function loadHistory()    { activate("btnHistory");    redirect("history.html"); }
-    function loadSettings()   { activate("btnSettings");   redirect("settings.html"); }
-    function loadLogout()     { activate("btnLogout");     redirect("logout.html"); }
+    fastUpdate(c.title, item.label);
+    fastUpdate(c.ids, `C${item.controllerID}:S${item.sensorID}`);
+    fastUpdate(c.mainLabel, item.mainLabel);
+    fastUpdate(c.mainValue, `${item.mainData}${item.mainUnit || ""}`);
+    fastUpdate(c.subLabel, item.subLabel);
+    fastUpdate(c.subValue, `${item.subData}${item.subUnit || ""}`);
 
-    /* -------------------------------------------------------------
-       FETCH MONITORING DATA
-    ------------------------------------------------------------- */
-    let lastData = {};
-    let cards = {};
+    let color = "#f890ec";
+    if (item.mainData > item.high) color = "#ff3b3b";
+    else if (item.mainData < item.low) color = "#2ecc71";
 
-    loadData();
-    setInterval(loadData, 400);
+    c.el.style.borderLeft = `6px solid ${color}`;
+  });
+}
 
-    function loadData() {
-      fetch(`${BASE_URL}?page=monitoring`)
-        .then(res => res.json())
-        .then(data => {
-          renderCategory("distance", data.distance || []);
-          renderCategory("temperature", data.temperature || []);
-          renderCategory("flow", data.flow || []);
-          renderCategory("other", data.none || []);
-        })
-        .catch(err => console.log("Fetch Error:", err));
-    }
-
-    /* -------------------------------------------------------------
-       RENDER CARDS
-    ------------------------------------------------------------- */
-    function renderCategory(sectionID, array) {
-      const container = document.getElementById(sectionID);
-
-      if (!cards[sectionID]) cards[sectionID] = {};
-      if (!lastData[sectionID]) lastData[sectionID] = {};
-
-      array.forEach(item => {
-        const key = `${item.controllerID}-${item.sensorID}`;
-
-        if (!cards[sectionID][key]) {
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `
-            <div class="card-header">
-              <span class="title"></span>
-              <span class="ids"></span>
-            </div>
-            <div class="main-line">
-              <span class="main-label"></span>
-              <span class="main-value"></span>
-            </div>
-            <div class="sub-line">
-              <span class="sub-label"></span>
-              <span class="sub-value"></span>
-            </div>
-          `;
-
-          container.appendChild(card);
-
-          cards[sectionID][key] = {
-            el: card,
-            title: card.querySelector(".title"),
-            ids: card.querySelector(".ids"),
-            mainLabel: card.querySelector(".main-label"),
-            mainValue: card.querySelector(".main-value"),
-            subLabel: card.querySelector(".sub-label"),
-            subValue: card.querySelector(".sub-value")
-          };
-        }
-
-        const c = cards[sectionID][key];
-
-        fastUpdate(c.title, item.label);
-        fastUpdate(c.ids, `C${item.controllerID}:S${item.sensorID}`);
-        fastUpdate(c.mainLabel, item.mainLabel);
-        fastUpdate(c.mainValue, `${item.mainData}${item.mainUnit || ""}`);
-        fastUpdate(c.subLabel, item.subLabel);
-        fastUpdate(c.subValue, `${item.subData}${item.subUnit || ""}`);
-
-        let color = "#f890ec";
-        if (item.mainData > item.high) color = "#ff3b3b";
-        else if (item.mainData < item.low) color = "#2ecc71";
-
-        c.el.style.borderLeft = `6px solid ${color}`;
-      });
-    }
-
-    function fastUpdate(el, val) {
-      if (el.textContent !== String(val)) el.textContent = val;
-    }
-  </script>
+function fastUpdate(el, val) {
+  if (el.textContent !== String(val)) el.textContent = val;
+}
+</script>
 
 </body>
 </html>
