@@ -3,7 +3,6 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Analysis Dashboard</title>
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -15,7 +14,7 @@
       color: white;
     }
 
-    /* ---------------- NAVBAR ---------------- */
+    /* NAV */
     .top-nav {
       display: flex;
       justify-content: space-between;
@@ -44,126 +43,66 @@
     }
     .nav-buttons button:hover { border: 2px solid #C9A8E3; }
 
-    /* Hamburger */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-    }
-    .hamburger div {
-      height: 3px;
-      width: 28px;
-      background: white;
-      border-radius: 2px;
-    }
-
-    /* Mobile menu */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger div { height: 3px; width: 28px; background: white; border-radius: 2px; }
     .mobile-menu {
-      display: none;
-      flex-direction: column;
+      display: none; flex-direction: column;
       background: rgba(26,26,26,0.95);
-      padding: 12px;
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 60px;
-      z-index: 10;
+      padding: 12px; position: absolute; left: 0; right: 0; top: 60px; z-index: 10;
       animation: slideDown 0.35s ease;
     }
-    .mobile-menu button {
-      background: transparent;
-      border: none;
-      font-size: 16px;
-      color: white;
-      padding: 14px;
-      text-align: left;
-    }
-    .mobile-menu button.active {
-      font-weight: bold;
-      color: #ffd6ff;
-    }
+    .mobile-menu button { background: transparent; border: none; font-size: 16px; color: white; padding: 14px; text-align: left; }
+    .mobile-menu button.active { font-weight: bold; color: #ffd6ff; }
 
-    @keyframes slideDown {
-      from { opacity: 0.2; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes slideDown { from { opacity: 0.2; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    @media(max-width:600px) { .nav-buttons { display: none; } .hamburger { display: flex; } }
 
-    @media(max-width:600px) {
-      .nav-buttons { display: none; }
-      .hamburger { display: flex; }
-    }
-
-    /* ---------------- CONTENT ---------------- */
-    .section-title { margin: 20px 16px; font-size: 22px; }
-    section { display: flex; overflow-x: auto; gap: 20px; padding: 12px; }
+    /* CONTENT */
+    .section-wrap { padding: 12px; }
+    .section-title { margin: 20px 8px; font-size: 20px; font-weight: 600; color: #fff; }
+    .section { display: flex; gap: 16px; overflow-x: auto; padding: 8px 8px 22px 8px; }
 
     .card {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(10px);
-      padding: 16px;
-      border-radius: 18px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      padding: 12px;
+      border-radius: 14px;
       min-width: 260px;
       max-width: 320px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
       cursor: pointer;
-      transition: 0.25s;
+      transition: 0.22s;
     }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 35px rgba(0,0,0,0.55); }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
 
-    .card-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-    .title { font-size: 18px; font-weight: 600; }
-    .ids { font-size: 12px; opacity: 0.8; }
+    .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .title { font-size:16px; font-weight:700; text-transform:capitalize; }
+    .ids { font-size:12px; opacity:0.85; }
 
-    .main-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 6px;
-    }
-    .main-line span { font-size: 14px; color: #ffd6ff; }
-    .main-value { font-size: 24px; font-weight: 700; }
+    .chart-container { margin-top:6px; height:150px; }
+    canvas { width:100% !important; height:150px !important; }
 
-    .sub-line {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
-    }
-    .sub-label { font-size: 12px; color: #e8c5e8; }
-    .sub-value { font-size: 16px; font-weight: 600; }
-
-    .chart-container { margin-top: 12px; height: 160px; }
-    canvas { max-width: 100%; }
-
-    /* Extra info modal */
+    /* popup */
     #extraInfo {
-      position: fixed; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(26,26,26,0.95);
-      border-radius: 14px;
-      padding: 20px;
-      display: none;
-      max-width: 90%;
-      max-height: 80%;
-      overflow: auto;
-      z-index: 1000;
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      background: rgba(18,18,18,0.96); color: #fff;
+      border-radius: 12px; padding: 18px; z-index: 1200;
+      max-width: 92%; max-height: 84%; overflow:auto; display:none;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
     }
-    #closeInfo {
-      position: absolute;
-      top: 10px; right: 12px;
-      cursor: pointer;
-      color: #ff3b3b;
-      font-size: 18px;
-    }
+    #closeInfo { position:absolute; right:12px; top:10px; cursor:pointer; color:#ff6b6b; font-size:18px; }
+    #infoTitle { margin:0 0 8px 0; font-weight:700; font-size:18px; text-transform:capitalize; }
+    #infoContent { white-space: pre-wrap; font-size:15px; line-height:1.5; color:#e6e6e6; }
+
+    /* small helper */
+    .muted { opacity:0.8; font-size:13px; margin-top:6px; }
   </style>
 </head>
 
 <body>
 
-  <!-- NAVIGATION -->
   <div class="top-nav">
     <div class="logo">Voltraxx</div>
-
     <div class="nav-buttons">
       <button onclick="navigate('index.html', this)">Monitoring</button>
       <button class="active" onclick="navigate('analysis.html', this)">Analysis</button>
@@ -171,7 +110,6 @@
       <button onclick="navigate('settings.html', this)">Settings</button>
       <button onclick="navigate('logout.html', this)">Logout</button>
     </div>
-
     <div class="hamburger" onclick="toggleMenu()">
       <div></div><div></div><div></div>
     </div>
@@ -185,118 +123,202 @@
     <button onclick="navigate('logout.html', this)">Logout</button>
   </div>
 
-  <!-- PAGE CONTENT -->
-  <h2 class="section-title">Distance</h2>
-  <section id="distance"></section>
+  <div id="sections" class="section-wrap">
+    <!-- dynamic sections created here -->
+  </div>
 
-  <h2 class="section-title">Temperature</h2>
-  <section id="temperature"></section>
-
-  <h2 class="section-title">Flow</h2>
-  <section id="flow"></section>
-
-  <h2 class="section-title">Other</h2>
-  <section id="other"></section>
-
-  <!-- Extra Info Modal -->
+  <!-- popup -->
   <div id="extraInfo">
     <span id="closeInfo" onclick="closeExtraInfo()">✖</span>
-    <h3>Sensor Info</h3>
-    <pre id="infoContent" style="white-space:pre-wrap;"></pre>
+    <div id="infoTitle"></div>
+    <div id="infoContent"></div>
   </div>
 
 <script>
-/* ---------------- NAVIGATION ---------------- */
+/* NAV helpers */
 function toggleMenu(){
-  const m = document.getElementById("mobileMenu");
-  m.style.display = m.style.display==="flex"?"none":"flex";
+  const m = document.getElementById('mobileMenu');
+  m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
 }
-
 function navigate(page, btn){
-  document.querySelectorAll('.nav-buttons button, .mobile-menu button').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('.nav-buttons button, .mobile-menu button')
+    .forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
   window.location.href = page;
 }
 
-/* ---------------- FETCH & RENDER ANALYSIS ---------------- */
-const BASE_URL = "https://script.google.com/macros/s/AKfycbwchdbHGHK0HyNrBM_xn1udkf6_x_1C7oZguIqIKebL0cc6Mxz-Cnu2mnYP1TovuvTvyw/exec";
+/* ------------------- CONFIG ------------------- */
+const BASE_URL = "https://script.google.com/macros/s/AKfycbwonHeHcmTCwIgyBdbRt_rMRnbUwfJua9udYYRezRjpcKG0SVzShZVtXElatW2a8-YOoA/exec";
 
+/* Fetch data and build sections */
 fetch(`${BASE_URL}?page=analysis`)
-  .then(res => res.json())
-  .then(data => {
-    renderCategory("distance", data.distance || []);
-    renderCategory("temperature", data.temperature || []);
-    renderCategory("flow", data.flow || []);
-    renderCategory("other", data.none || []);
-  })
-  .catch(err => console.error(err));
+  .then(r => r.json())
+  .then(json => {
+    // create a section for each key except status
+    const keys = Object.keys(json).filter(k => k !== 'status');
+    const wrapper = document.getElementById('sections');
 
-function renderCategory(sectionID,array){
-  const container=document.getElementById(sectionID);
+    keys.forEach(key => {
+      const arr = json[key];
+      if(!Array.isArray(arr) || arr.length === 0) return;
 
-  array.forEach(item=>{
-    const card=document.createElement("div");
-    card.className="card";
-    card.style.borderLeft=`6px solid #f890ec`;
+      // Section title (capitalize)
+      const title = document.createElement('h2');
+      title.className = 'section-title';
+      title.innerText = key.charAt(0).toUpperCase() + key.slice(1);
+      wrapper.appendChild(title);
 
-    card.innerHTML=`
-      <div class="card-header">
-        <span class="title">${item.Label||item['Sensor Type']||'-'}</span>
-        <span class="ids">C-SID:${item['sensor ID']||'-'}</span>
-      </div>
-      <div class="main-line">
-        <span>${item['Sensor Type']||''}</span>
-        <span class="main-value">${item['16']||'-'}</span>
-      </div>
-      <div class="sub-line">
-        <span>Tank Volume</span>
-        <span class="sub-value">${item['Tank Volume']||'-'}</span>
-      </div>
-      <div class="chart-container"><canvas></canvas></div>
-    `;
+      // Section container
+      const sec = document.createElement('div');
+      sec.className = 'section';
+      wrapper.appendChild(sec);
 
-    const ctx=card.querySelector("canvas").getContext("2d");
-    const labels=Array.from({length:24},(_,i)=>i);
-    const values=Array.from({length:24},(_,i)=>item[i]||0);
-
-    new Chart(ctx,{
-      type:"line",
-      data:{
-        labels:labels,
-        datasets:[{
-          label:item.Label||item['Sensor Type'],
-          data:values,
-          borderColor:"#C9A8E3",
-          backgroundColor:"rgba(201,168,227,0.3)",
-          fill:true,
-          tension:0.3,
-          pointRadius:2
-        }]
-      },
-      options:{
-        responsive:true,
-        plugins:{legend:{display:false}},
-        scales:{
-          x:{title:{display:true,text:"Hour"}},
-          y:{title:{display:true,text:"Value"}}
-        }
-      }
+      // Render each sensor card
+      arr.forEach(sensor => {
+        sec.appendChild(createCard(sensor));
+      });
     });
-
-    card.onclick = () => showExtraInfo(item);
-    container.appendChild(card);
+  })
+  .catch(err => {
+    console.error('fetch error', err);
+    const wrapper = document.getElementById('sections');
+    wrapper.innerHTML = '<div class="muted">Could not load data from API.</div>';
   });
+
+
+/* ----------------- CARD CREATION ----------------- */
+function createCard(item){
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const labelText = (item.Label && item.Label.toString().trim() !== '') ? item.Label : '';
+  const cID = item["controller ID"] ?? item["controllerID"] ?? '';
+  const sID = item["sensor ID"] ?? item["sensorID"] ?? '';
+  const cSID = `C${cID}:S${sID}`;
+
+  // header: label (or sensor) and cSID
+  const header = document.createElement('div');
+  header.className = 'card-header';
+  const t = document.createElement('div');
+  t.className = 'title';
+  t.innerText = labelText || `Sensor ${cSID}`;
+  const ids = document.createElement('div');
+  ids.className = 'ids';
+  ids.innerText = cSID;
+  header.appendChild(t);
+  header.appendChild(ids);
+  card.appendChild(header);
+
+  // chart container
+  const chartWrap = document.createElement('div');
+  chartWrap.className = 'chart-container';
+  const canvas = document.createElement('canvas');
+  chartWrap.appendChild(canvas);
+  card.appendChild(chartWrap);
+
+  // gather 24 readings (keys "0".."23")
+  const labels = Array.from({length:24}, (_,i) => String(i));
+  const values = labels.map(l => {
+    // value might be number or empty string; treat empty as 0
+    const v = item[l];
+    if(v === "" || v === null || v === undefined) return 0;
+    // ensure numeric
+    return (typeof v === 'number') ? v : Number(v) || 0;
+  });
+
+  // bar chart
+  const ctx = canvas.getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: '#e69df4',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#ffffff' }, grid: { display: false } },
+        y: { ticks: { color: '#ffffff' }, grid: { color: 'rgba(255,255,255,0.06)' } }
+      },
+      maintainAspectRatio: false
+    }
+  });
+
+  // click => open popup
+  card.onclick = () => openPopup(item);
+
+  return card;
 }
 
-/* ---------------- EXTRA INFO ---------------- */
-function showExtraInfo(item){
-  document.getElementById("extraInfo").style.display="block";
-  document.getElementById("infoContent").textContent = JSON.stringify(item,null,2);
+
+/* ----------------- POPUP ----------------- */
+function openPopup(item){
+  const cID = item["controller ID"] ?? item["controllerID"] ?? '';
+  const sID = item["sensor ID"] ?? item["sensorID"] ?? '';
+  const cSID = `C${cID}:S${sID}`;
+
+  // Title: Label + cSID (single header line)
+  const headerText = (item.Label && item.Label.toString().trim() !== '') ? `${item.Label} ${cSID}` : `Sensor ${cSID}`;
+  document.getElementById('infoTitle').innerText = headerText;
+
+  // Build content lines (exclude duplicate header)
+  let lines = [];
+
+  // Add Tank Volume, Tank Height, Offset Error if present and non-empty
+  const maybeAdd = (label, key) => {
+    if(item[key] !== undefined && item[key] !== null && String(item[key]).toString().trim() !== '') {
+      lines.push(`${label}: ${item[key]}`);
+    }
+  };
+  maybeAdd('Tank Volume', 'Tank Volume');
+  maybeAdd('Tank Height', 'Tank Height');
+  maybeAdd('Offset Error', 'Offset Error');
+
+  // Add custom/value pairs if both present & non-empty.
+  for(let i=1;i<=5;i++){
+    const cKey = `custom ${i}`;
+    const vKey = `value ${i}`;
+    const cust = item[cKey];
+    const val = item[vKey];
+
+    // if both exist and non-empty, show "label: value"
+    if(cust !== undefined && val !== undefined) {
+      if(String(cust).trim() !== '' && String(val).trim() !== '') {
+        lines.push(`${cust}: ${val}`);
+      }
+    }
+  }
+
+  // Also, if there were no lines at all, show a small message
+  if(lines.length === 0) lines.push('(no extra info)');
+
+  // Compose final content: each line on new line. Do NOT repeat header.
+  document.getElementById('infoContent').innerText = lines.join('\n');
+
+  // show popup
+  document.getElementById('extraInfo').style.display = 'block';
+  // scroll to top of popup
+  document.getElementById('extraInfo').scrollTop = 0;
 }
 
 function closeExtraInfo(){
-  document.getElementById("extraInfo").style.display="none";
+  document.getElementById('extraInfo').style.display = 'none';
 }
+
+/* close popup when clicking outside it */
+window.addEventListener('click', function(e){
+  const popup = document.getElementById('extraInfo');
+  if(popup.style.display === 'block') {
+    // if click is outside popup content and not the close button, close
+    if(!popup.contains(e.target) && !e.target.matches('.card') && !e.target.closest('.card')) {
+      closeExtraInfo();
+    }
+  }
+});
 </script>
 
 </body>
