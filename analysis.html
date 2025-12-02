@@ -12,6 +12,7 @@
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(135deg,#6A329F,#3B1C5B);
       color: white;
+      overflow-x: hidden;
     }
 
     /* NAV */
@@ -42,25 +43,57 @@
       color: #fff;
     }
     .nav-buttons button:hover { border: 2px solid #C9A8E3; }
-
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
     .hamburger div { height: 3px; width: 28px; background: white; border-radius: 2px; }
+
+    @media(max-width:600px) { 
+      .nav-buttons { display: none; } 
+      .hamburger { display: flex; } 
+    }
+
     .mobile-menu {
-      display: none; flex-direction: column;
+      display: none;
+      flex-direction: column;
       background: rgba(26,26,26,0.95);
-      padding: 12px; position: absolute; left: 0; right: 0; top: 60px; z-index: 10;
+      padding: 12px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 60px;
+      z-index: 10;
       animation: slideDown 0.35s ease;
     }
-    .mobile-menu button { background: transparent; border: none; font-size: 16px; color: white; padding: 14px; text-align: left; }
+
+    .mobile-menu button {
+      background: transparent;
+      border: none;
+      font-size: 16px;
+      color: white;
+      padding: 14px;
+      text-align: left;
+    }
+
     .mobile-menu button.active { font-weight: bold; color: #ffd6ff; }
 
-    @keyframes slideDown { from { opacity: 0.2; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-    @media(max-width:600px) { .nav-buttons { display: none; } .hamburger { display: flex; } }
+    @keyframes slideDown {
+      from { opacity: 0.2; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     /* CONTENT */
-    .section-wrap { padding: 12px; }
-    .section-title { margin: 20px 8px; font-size: 20px; font-weight: 600; color: #fff; }
-    .section { display: flex; gap: 16px; overflow-x: auto; padding: 8px 8px 22px 8px; }
+    .section-wrap { padding: 0; }
+    .section-title {
+      margin: 20px 8px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .section {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 8px 8px 22px 8px;
+    }
 
     .card {
       background: rgba(255,255,255,0.12);
@@ -73,9 +106,17 @@
       cursor: pointer;
       transition: 0.22s;
     }
-    .card:hover { transform: translateY(-6px); box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.55);
+    }
 
-    .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .card-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
     .title { font-size:16px; font-weight:700; text-transform:capitalize; }
     .ids { font-size:12px; opacity:0.85; }
 
@@ -84,17 +125,32 @@
 
     /* popup */
     #extraInfo {
-      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      background: rgba(18,18,18,0.96); color: #fff;
-      border-radius: 12px; padding: 18px; z-index: 1200;
-      max-width: 92%; max-height: 84%; overflow:auto; display:none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      background: rgba(18,18,18,0.96);
+      color: #fff;
+      border-radius: 12px;
+      padding: 18px;
+      z-index: 1200;
+      max-width: 92%;
+      max-height: 84%;
+      overflow:auto;
+      display:none;
       box-shadow: 0 12px 40px rgba(0,0,0,0.6);
     }
-    #closeInfo { position:absolute; right:12px; top:10px; cursor:pointer; color:#ff6b6b; font-size:18px; }
+    #closeInfo {
+      position:absolute;
+      right:12px;
+      top:10px;
+      cursor:pointer;
+      color:#ff6b6b;
+      font-size:18px;
+    }
     #infoTitle { margin:0 0 8px 0; font-weight:700; font-size:18px; text-transform:capitalize; }
     #infoContent { white-space: pre-wrap; font-size:15px; line-height:1.5; color:#e6e6e6; }
 
-    /* small helper */
     .muted { opacity:0.8; font-size:13px; margin-top:6px; }
   </style>
 </head>
@@ -123,9 +179,7 @@
     <button onclick="navigate('logout.html', this)">Logout</button>
   </div>
 
-  <div id="sections" class="section-wrap">
-    <!-- dynamic sections created here -->
-  </div>
+  <div id="sections" class="section-wrap"></div>
 
   <!-- popup -->
   <div id="extraInfo">
@@ -135,7 +189,7 @@
   </div>
 
 <script>
-/* NAV helpers */
+/* NAV */
 function toggleMenu(){
   const m = document.getElementById('mobileMenu');
   m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
@@ -147,56 +201,63 @@ function navigate(page, btn){
   window.location.href = page;
 }
 
-/* ------------------- CONFIG ------------------- */
-const BASE_URL = "https://script.google.com/macros/s/AKfycbwonHeHcmTCwIgyBdbRt_rMRnbUwfJua9udYYRezRjpcKG0SVzShZVtXElatW2a8-YOoA/exec";
+/* ---------------- CONFIG ---------------- */
+const BASE_URL = "https://script.google.com/macros/s/AKfycbwvBsB33ObFrowL-mMc6KR6UBTyk00GsaQMMa3SIkvUxJC4TE5dGe8w-XGD6r2HP5OUPA/exec";
 
-/* Fetch data and build sections */
+/* ---------------- FETCH ---------------- */
 fetch(`${BASE_URL}?page=analysis`)
   .then(r => r.json())
   .then(json => {
-    // create a section for each key except status
-    const keys = Object.keys(json).filter(k => k !== 'status');
     const wrapper = document.getElementById('sections');
+
+    // custom category order
+    const order = ["distance","flow","temperature"];
+
+    // get existing API keys except status
+    let keys = Object.keys(json).filter(k => k !== 'status');
+
+    // put in order
+    keys.sort((a,b)=>{
+      const ai = order.indexOf(a.toLowerCase());
+      const bi = order.indexOf(b.toLowerCase());
+      if(ai === -1 && bi === -1) return a.localeCompare(b);
+      if(ai === -1) return 1;
+      if(bi === -1) return -1;
+      return ai - bi;
+    });
 
     keys.forEach(key => {
       const arr = json[key];
       if(!Array.isArray(arr) || arr.length === 0) return;
 
-      // Section title (capitalize)
       const title = document.createElement('h2');
       title.className = 'section-title';
       title.innerText = key.charAt(0).toUpperCase() + key.slice(1);
       wrapper.appendChild(title);
 
-      // Section container
       const sec = document.createElement('div');
       sec.className = 'section';
       wrapper.appendChild(sec);
 
-      // Render each sensor card
-      arr.forEach(sensor => {
-        sec.appendChild(createCard(sensor));
-      });
+      arr.forEach(sensor => sec.appendChild(createCard(sensor)));
     });
   })
   .catch(err => {
     console.error('fetch error', err);
-    const wrapper = document.getElementById('sections');
-    wrapper.innerHTML = '<div class="muted">Could not load data from API.</div>';
+    document.getElementById('sections').innerHTML =
+      '<div class="muted">Could not load data from API.</div>';
   });
 
-
-/* ----------------- CARD CREATION ----------------- */
+/* ---------------- CARD ---------------- */
 function createCard(item){
   const card = document.createElement('div');
   card.className = 'card';
 
-  const labelText = (item.Label && item.Label.toString().trim() !== '') ? item.Label : '';
-  const cID = item["controller ID"] ?? item["controllerID"] ?? '';
-  const sID = item["sensor ID"] ?? item["sensorID"] ?? '';
+  const labelText = (item.Label && item.Label != -1) ? item.Label : '';
+  const cID = item["controller ID"] ?? '';
+  const sID = item["sensor ID"] ?? '';
   const cSID = `C${cID}:S${sID}`;
 
-  // header: label (or sensor) and cSID
   const header = document.createElement('div');
   header.className = 'card-header';
   const t = document.createElement('div');
@@ -209,116 +270,106 @@ function createCard(item){
   header.appendChild(ids);
   card.appendChild(header);
 
-  // chart container
   const chartWrap = document.createElement('div');
   chartWrap.className = 'chart-container';
   const canvas = document.createElement('canvas');
   chartWrap.appendChild(canvas);
   card.appendChild(chartWrap);
 
-  // gather 24 readings (keys "0".."23")
-  const labels = Array.from({length:24}, (_,i) => String(i));
-  const values = labels.map(l => {
-    // value might be number or empty string; treat empty as 0
-    const v = item[l];
-    if(v === "" || v === null || v === undefined) return 0;
-    // ensure numeric
-    return (typeof v === 'number') ? v : Number(v) || 0;
-  });
-
-  // bar chart
-  const ctx = canvas.getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: '#e69df4',
-        borderRadius: 6
-      }]
-    },
-    options: {
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color: '#ffffff' }, grid: { display: false } },
-        y: { ticks: { color: '#ffffff' }, grid: { color: 'rgba(255,255,255,0.06)' } }
-      },
-      maintainAspectRatio: false
-    }
-  });
-
-  // click => open popup
+  renderChart(canvas, item);
   card.onclick = () => openPopup(item);
 
   return card;
 }
 
+/* ---------------- GRAPH ---------------- */
+function renderChart(canvas, item){
+  const labels = Array.from({length:24}, (_,i)=> String(i));
 
-/* ----------------- POPUP ----------------- */
-function openPopup(item){
-  const cID = item["controller ID"] ?? item["controllerID"] ?? '';
-  const sID = item["sensor ID"] ?? item["sensorID"] ?? '';
-  const cSID = `C${cID}:S${sID}`;
+  // preserve empty and -1
+  let rawValues = labels.map(key => {
+    const v = item[key];
+    if (v === -1 || v === "" || v === null || v === undefined) return null;
+    return Number(v);
+  });
 
-  // Title: Label + cSID (single header line)
-  const headerText = (item.Label && item.Label.toString().trim() !== '') ? `${item.Label} ${cSID}` : `Sensor ${cSID}`;
-  document.getElementById('infoTitle').innerText = headerText;
+  // apply percentage ONLY to Distance
+  if(item["Sensor Type"] === "Distance"){
+    const H = Number(item["Tank Height"]) || 0;
+    const O = Number(item["Offset Error"]) || 0;
 
-  // Build content lines (exclude duplicate header)
-  let lines = [];
-
-  // Add Tank Volume, Tank Height, Offset Error if present and non-empty
-  const maybeAdd = (label, key) => {
-    if(item[key] !== undefined && item[key] !== null && String(item[key]).toString().trim() !== '') {
-      lines.push(`${label}: ${item[key]}`);
-    }
-  };
-  maybeAdd('Tank Volume', 'Tank Volume');
-  maybeAdd('Tank Height', 'Tank Height');
-  maybeAdd('Offset Error', 'Offset Error');
-
-  // Add custom/value pairs if both present & non-empty.
-  for(let i=1;i<=5;i++){
-    const cKey = `custom ${i}`;
-    const vKey = `value ${i}`;
-    const cust = item[cKey];
-    const val = item[vKey];
-
-    // if both exist and non-empty, show "label: value"
-    if(cust !== undefined && val !== undefined) {
-      if(String(cust).trim() !== '' && String(val).trim() !== '') {
-        lines.push(`${cust}: ${val}`);
-      }
+    if(H > 0){
+      rawValues = rawValues.map(v => {
+        if(v === null) return null;
+        const pct = ((H - v + O) / H) * 100;
+        return Math.max(0, Math.min(100, Math.round(pct)));
+      });
     }
   }
 
-  // Also, if there were no lines at all, show a small message
-  if(lines.length === 0) lines.push('(no extra info)');
-
-  // Compose final content: each line on new line. Do NOT repeat header.
-  document.getElementById('infoContent').innerText = lines.join('\n');
-
-  // show popup
-  document.getElementById('extraInfo').style.display = 'block';
-  // scroll to top of popup
-  document.getElementById('extraInfo').scrollTop = 0;
+  new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: rawValues,
+        skipNull: true,
+        spanGaps: false,
+        backgroundColor: '#e69df4',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      plugins: { legend:{display:false} },
+      scales: {
+        x:{ ticks:{color:'#fff'}, grid:{display:false}},
+        y:{ ticks:{color:'#fff'}, grid:{color:'rgba(255,255,255,0.06)'}}
+      },
+      maintainAspectRatio:false
+    }
+  });
 }
 
+/* ---------------- POPUP ---------------- */
+function openPopup(item){
+  const cID = item["controller ID"];
+  const sID = item["sensor ID"];
+  const title = (item.Label && item.Label != -1)
+      ? `${item.Label} C${cID}:S${sID}`
+      : `Sensor C${cID}:S${sID}`;
+
+  document.getElementById('infoTitle').innerText = title;
+
+  let lines = [];
+
+  const add = (label,key)=>{
+    const v = item[key];
+    if(v !== undefined && v !== -1 && v !== "" && v !== null){
+      lines.push(`${label}: ${v}`);
+    }
+  };
+
+  add("Tank Volume","Tank Volume");
+  add("Tank Height","Tank Height");
+  add("Offset Error","Offset Error");
+
+  for(let i=1;i<=5;i++){
+    const ck = `custom ${i}`;
+    const vk = `value ${i}`;
+    if(item[ck] !== -1 && item[ck] !== ""
+    && item[vk] !== -1 && item[vk] !== ""){
+      lines.push(`${item[ck]}: ${item[vk]}`);
+    }
+  }
+
+  if(lines.length === 0) lines.push("(no extra info)");
+
+  document.getElementById('infoContent').innerText = lines.join("\n");
+  document.getElementById('extraInfo').style.display = 'block';
+}
 function closeExtraInfo(){
   document.getElementById('extraInfo').style.display = 'none';
 }
-
-/* close popup when clicking outside it */
-window.addEventListener('click', function(e){
-  const popup = document.getElementById('extraInfo');
-  if(popup.style.display === 'block') {
-    // if click is outside popup content and not the close button, close
-    if(!popup.contains(e.target) && !e.target.matches('.card') && !e.target.closest('.card')) {
-      closeExtraInfo();
-    }
-  }
-});
 </script>
 
 </body>

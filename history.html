@@ -3,357 +3,495 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>History Dashboard</title>
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #6A329F 0%, #3B1C5B 100%);
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
+    body{
+      margin:0;
+      padding:0;
+      font-family:'Segoe UI',sans-serif;
+      background:linear-gradient(135deg,#6A329F,#3B1C5B);
+      color:white;
     }
 
-    /* ---------------- NAVBAR (Hamburger + Desktop) ---------------- */
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 24px;
-      background: rgba(26, 26, 26, 0.35);
+    /* NAVIGATION */
+    .top-nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:18px 24px;
+      background:rgba(26,26,26,0.35);
       position: relative;
     }
+    .logo{font-size:26px;font-weight:700;}
 
-    .logo {
-      font-size: 26px;
-      font-weight: bold;
+    .nav-buttons{display:flex;gap:20px;}
+    .nav-buttons button{
+      background:transparent;color:#fff;
+      padding:8px 14px;font-size:16px;
+      border:none;border-radius:6px;
+      cursor:pointer;transition:.25s;
+    }
+    .nav-buttons button.active{
+      background:linear-gradient(135deg,#C9A8E3,#6A329F);
+      color:#fff;font-weight:700;
+    }
+    .nav-buttons button:hover{
+      border:2px solid #C9A8E3;
     }
 
-    /* Desktop Menu */
-    .nav-buttons {
-      display: flex;
-      gap: 25px;
+    /* HAMBURGER */
+    .hamburger{
+      display:none;
+      flex-direction:column;
+      gap:5px;
+      cursor:pointer;
+    }
+    .hamburger div{
+      height:3px;width:28px;background:white;border-radius:2px;
+    }
+    .mobile-menu{
+      display:none;
+      flex-direction:column;
+      background:rgba(26,26,26,0.95);
+      padding:12px;
+      position:absolute;
+      left:0;right:0;top:60px;
+      z-index:10;
+    }
+    .mobile-menu button{
+      background:transparent;border:none;font-size:16px;
+      color:white;padding:14px;text-align:left;
+    }
+    .mobile-menu button.active{
+      font-weight:bold;color:#ffd6ff;
     }
 
-    .nav-buttons button {
-      background: transparent;
-      color: #f2f2f2;
-      font-size: 18px;
-      padding: 8px 14px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      transition: .25s;
+    @media(max-width:600px){
+      .nav-buttons{display:none;}
+      .hamburger{display:flex;}
     }
 
-    .nav-buttons button.active {
-      background: linear-gradient(135deg,#C9A8E3 0%,#6A329F 100%);
-      font-weight: 700;
-      color: #fff;
+    /* FILTERS */
+    .filters{
+      padding:14px;
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    select,input[type="date"],button.fetchBtn{
+      padding:10px;font-size:15px;border-radius:8px;border:none;
     }
 
-    .nav-buttons button:hover {
-      border: 2px solid #C9A8E3;
-      color: #ffd6ff;
+    /* BUTTON STATES */
+    button.fetchBtn{
+      background:#C9A8E3;
+      color:#111;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.3s;
+    }
+    button.fetchBtn.loading{
+      background:#ffca2c;
+      color:#111;
+    }
+    button.fetchBtn.success{
+      background:#17c964;
+      color:white;
+    }
+    button.fetchBtn.error{
+      background:#ff4d4f;
+      color:white;
     }
 
-    /* Hamburger icon */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
+    /* DOWNLOAD BUTTON */
+    .download-wrap{
+      display:none;
+      justify-content:center;
+      margin:12px 0 30px;
+    }
+    button.downloadBtn{
+      background:#00b7ff;
+      color:#111;
+      padding:10px 18px;
+      border:none;
+      border-radius:8px;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.35s;
     }
 
-    .hamburger div {
-      width: 28px;
-      height: 3px;
-      background: white;
-      border-radius: 2px;
+    /* CONTAINERS */
+    .section-wrap{
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:22px;
+      max-width:900px;
+      margin:auto;
+    }
+    .card{
+      background:rgba(255,255,255,0.12);
+      backdrop-filter:blur(8px);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.35);
+    }
+    .title{font-size:18px;font-weight:700;}
+    .subtitle{opacity:.85;margin-bottom:10px;}
+
+    /* GRAPH */
+    .chart-container{
+      width:100%;
+      margin-top:6px;
+      height:180px; /* mobile default */
     }
 
-    /* Mobile dropdown menu */
-    .mobile-menu {
-      display: none;
-      flex-direction: column;
-      background: rgba(26, 26, 26, 0.95);
-      padding: 12px;
-      position: absolute;
-      top: 60px;
-      right: 0;
-      left: 0;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      animation: slideDown 0.3s ease;
-      z-index: 100;
+    canvas{
+      width:100%!important;
+      height:180px!important;
     }
 
-    .mobile-menu button {
-      background: transparent;
-      color: white;
-      padding: 12px;
-      border: none;
-      text-align: left;
-      font-size: 16px;
-    }
-
-    .mobile-menu button.active {
-      color: #ffd6ff;
-      font-weight: bold;
-    }
-
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Hide desktop menu on mobile */
-    @media (max-width: 600px) {
-      .nav-buttons { display: none; }
-
-      .hamburger { display: flex; }
-    }
-
-    /* ---------------- PAGE CONTENT ---------------- */
-    .container { padding: 20px; }
-
-    .filters {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-      text-align: center;
-    }
-
-    select, input[type="date"] {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-    }
-
-    button.fetchBtn {
-      padding: 10px 16px;
-      background: #C9A8E3;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      color: #000;
-      font-weight: 600;
-    }
-
-    /* Result card */
-    .result-card {
-      background: rgba(255,255,255,0.12);
-      padding: 20px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.3);
-      margin: 20px auto;
-      max-width: 420px;
-      width: 100%;
-    }
-
-    canvas { max-width: 100%; }
-
-    .table-box {
-      overflow-x: auto;
-      margin-top: 15px;
-    }
-
-    .table-box table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-      color: white;
-    }
-
-    .table-box th, .table-box td {
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      padding: 8px 5px;
-      text-align: left;
-    }
-
-    @media(max-width: 450px) {
-      .result-card {
-        padding: 14px;
-        border-radius: 16px;
+    /* bigger on larger screens */
+    @media(min-width:768px){
+      .chart-container{
+        height:340px;
       }
-      .table-box table { font-size: 12px; }
+      canvas{
+        height:340px!important;
+      }
+    }
+
+    /* TABLE */
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:15px;
+    }
+    td{
+      padding:8px 4px;
+      border-bottom:1px solid rgba(255,255,255,0.14);
+    }
+    td:first-child{
+      opacity:.85;
+      width:42%;
+      font-weight:500;
     }
   </style>
 </head>
 
+
 <body>
 
-  <!-- ---------------- NAVIGATION BAR ---------------- -->
-  <div class="top-nav">
-    <div class="logo">LOGO</div>
+<!-- NAV -->
+<div class="top-nav">
+  <div class="logo">Voltraxx</div>
 
-    <!-- Desktop menu -->
-    <div class="nav-buttons">
-      <button id="btnMonitoring" onclick="loadMonitoring()">Monitoring</button>
-      <button id="btnAnalysis" onclick="loadAnalysis()">Analysis</button>
-      <button id="btnHistory" class="active" onclick="loadHistory()">History</button>
-      <button id="btnSettings" onclick="loadSettings()">Settings</button>
-      <button id="btnLogout" onclick="loadLogout()">Logout</button>
-    </div>
-
-    <!-- Hamburger -->
-    <div class="hamburger" onclick="toggleMenu()">
-      <div></div><div></div><div></div>
-    </div>
+  <div class="nav-buttons">
+    <button onclick="nav('index.html')">Monitoring</button>
+    <button onclick="nav('analysis.html')">Analysis</button>
+    <button class="active" onclick="nav('history.html')">History</button>
+    <button onclick="nav('settings.html')">Settings</button>
+    <button onclick="nav('logout.html')">Logout</button>
   </div>
 
-  <!-- Mobile dropdown -->
-  <div id="mobileMenu" class="mobile-menu">
-    <button id="mMonitoring" onclick="loadMonitoring()">Monitoring</button>
-    <button id="mAnalysis" onclick="loadAnalysis()">Analysis</button>
-    <button id="mHistory" class="active" onclick="loadHistory()">History</button>
-    <button id="mSettings" onclick="loadSettings()">Settings</button>
-    <button id="mLogout" onclick="loadLogout()">Logout</button>
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div><div></div><div></div>
   </div>
+</div>
 
-  <!-- ---------------- PAGE CONTENT ---------------- -->
-  <div class="container">
-    <h2>History</h2>
+<div id="mobileMenu" class="mobile-menu">
+  <button onclick="nav('index.html')">Monitoring</button>
+  <button onclick="nav('analysis.html')">Analysis</button>
+  <button class="active" onclick="nav('history.html')">History</button>
+  <button onclick="nav('settings.html')">Settings</button>
+  <button onclick="nav('logout.html')">Logout</button>
+</div>
 
-    <div class="filters">
-      <select id="sensorSelect">
-        <option value="">Select Sensor</option>
-      </select>
+<!-- FILTER -->
+<div class="filters">
+  <select id="sensorSelect">
+    <option value="">Select Sensor</option>
+  </select>
+  <input type="date" id="dateSelect">
+  <button class="fetchBtn" onclick="getHistory()">Fetch</button>
+</div>
 
-      <input type="date" id="dateSelect">
+<div id="sections" class="section-wrap"></div>
 
-      <button class="fetchBtn" onclick="getHistory()">Fetch Data</button>
-    </div>
+<!-- DOWNLOAD -->
+<div class="download-wrap" id="downloadBlock">
+  <button class="downloadBtn" onclick="downloadJPEG()">⬇ Download Graph + Table</button>
+</div>
 
-    <div id="resultBox"></div>
-  </div>
 
 <script>
-/* Toggle hamburger menu */
-function toggleMenu() {
-  const menu = document.getElementById("mobileMenu");
-  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+function nav(p){window.location.href=p;}
+function toggleMenu(){
+  let m=document.getElementById("mobileMenu");
+  m.style.display=m.style.display==="flex"?"none":"flex";
 }
 
-/* NAVIGATION FUNCTIONS */
-function activate(btn){
-  ["btnMonitoring","btnAnalysis","btnHistory","btnSettings","btnLogout",
-   "mMonitoring","mAnalysis","mHistory","mSettings","mLogout"]
-    .forEach(id => document.getElementById(id)?.classList.remove("active"));
+const BASE_URL="https://script.google.com/macros/s/AKfycbzefzhucyqigki40hyaEZT1vnQXOP4B4EibOlW7xPSRiPl-QAIJCkKdGcDYsKyXGVntGQ/exec";
 
-  document.getElementById(btn).classList.add("active");
-}
+let lastRow=null;
 
-function redirect(pg){ window.location.href = pg; }
 
-function loadMonitoring(){ activate("btnMonitoring"); activate("mMonitoring"); redirect("index.html"); }
-function loadAnalysis(){ activate("btnAnalysis"); activate("mAnalysis"); redirect("analysis.html"); }
-function loadHistory(){ activate("btnHistory"); activate("mHistory"); redirect("history.html"); }
-function loadSettings(){ activate("btnSettings"); activate("mSettings"); redirect("settings.html"); }
-function loadLogout(){ activate("btnLogout"); activate("mLogout"); redirect("logout.html"); }
-
-/* API URL */
-const BASE_URL = "https://script.google.com/macros/s/AKfycbwchdbHGHK0HyNrBM_xn1udkf6_x_1C7oZguIqIKebL0cc6Mxz-Cnu2mnYP1TovuvTvyw/exec";
-
-/* Load AvailableSensors on page load */
-window.onload = function(){
+/******** INITIAL SENSOR LIST *********/
+window.onload=()=>{
   fetch(`${BASE_URL}?page=history`)
-    .then(r=>r.json())
-    .then(data=>{
-      if(data.AvailableSensors){
-        const sel=document.getElementById("sensorSelect");
-        data.AvailableSensors.forEach(id=>{
-          const op=document.createElement("option");
-          op.value=id;
-          op.textContent=`Sensor ${id}`;
-          sel.appendChild(op);
-        });
-
-        document.getElementById("resultBox").innerHTML =
-          `<div class='result-card'><p>${data.message}</p></div>`;
-      }
-    });
+  .then(r=>r.json())
+  .then(j=>{
+    const sel=document.getElementById("sensorSelect");
+    if(j.AvailableSensors){
+      j.AvailableSensors.forEach(id=>{
+        const o=document.createElement("option");
+        o.value=id;
+        o.innerText=`Sensor ${id}`;
+        sel.appendChild(o);
+      });
+    }
+  });
 };
 
-/* Fetch selected history data */
-function getHistory(){
-  const sensor=document.getElementById("sensorSelect").value;
-  const date=document.getElementById("dateSelect").value;
 
-  if(!sensor || !date){
-    document.getElementById("resultBox").innerHTML =
-      `<div class='result-card'><p>Please choose sensor & date.</p></div>`;
+/******** FETCH DATA *********/
+function getHistory(){
+  const btn=document.querySelector(".fetchBtn");
+  btn.classList.remove("success","error");
+  btn.classList.add("loading");
+  btn.innerText="Loading...";
+
+  const s=document.getElementById("sensorSelect").value;
+  const d=document.getElementById("dateSelect").value;
+
+  if(!s||!d){
+    btn.classList.remove("loading");
+    btn.classList.add("error");
+    btn.innerText="Select Both";
     return;
   }
 
-  const p=date.split("-");
-  const finalDate=`${p[2]}/${p[1]}/${p[0]}`;
+  const p=d.split("-");
+  const final=`${p[2]}/${p[1]}/${p[0]}`;
 
-  fetch(`${BASE_URL}?page=history&sensorid=${sensor}&date=${finalDate}`)
-    .then(r=>r.json())
-    .then(data=>{
-      if(data.status!=="ok"){
-        document.getElementById("resultBox").innerHTML =
-          `<div class='result-card'><p>${data.message}</p></div>`;
-        return;
-      }
-      displayHistory(data.row);
-    });
+  fetch(`${BASE_URL}?page=history&sensorid=${s}&date=${final}`)
+  .then(r=>r.json())
+  .then(j=>{
+    if(j.status!=="ok"){fail();}
+    else{
+      lastRow=j.row;
+      renderHistory(j.row);
+      btn.classList.remove("loading");
+      btn.classList.add("success");
+      btn.innerText="Fetched ✔";
+
+      document.getElementById("downloadBlock").style.display="flex";
+    }
+  })
+  .catch(fail);
+
+  function fail(){
+    btn.classList.remove("loading");
+    btn.classList.add("error");
+    btn.innerText="Error";
+  }
 }
 
-/* Render Chart + Table */
-function displayHistory(row){
 
-  const hours=[], values=[];
-  for(let i=0;i<=23;i++){
-    hours.push(i);
-    values.push(Number(row[i])||0);
+/******** RENDER *********/
+function renderHistory(item){
+  const wrap=document.getElementById("sections");
+  wrap.innerHTML="";
+
+  wrap.appendChild(graphCard(item));
+  wrap.appendChild(tableCard(item));
+}
+
+
+/******** GRAPH CARD *********/
+function graphCard(item){
+  const card=document.createElement("div");
+  card.className="card";
+
+  const head=document.createElement("div");
+  head.className="title";
+  head.innerText = (item.Label && item.Label!=-1)
+    ? item.Label
+    : `Sensor C${item["controller ID"]}:S${item["sensor ID"]}`;
+  card.appendChild(head);
+
+  const sub=document.createElement("div");
+  sub.className="subtitle";
+  sub.innerText=item.date;
+  card.appendChild(sub);
+
+  const cc=document.createElement("div");
+  cc.className="chart-container";
+  const c=document.createElement("canvas");
+  cc.appendChild(c);
+  card.appendChild(cc);
+
+  renderChart(c,item);
+  return card;
+}
+
+
+/******** TABLE CARD *********/
+function tableCard(item){
+  const card=document.createElement("div");
+  card.className="card";
+
+  const head=document.createElement("div");
+  head.className="title";
+  head.innerText="Sensor Details";
+  card.appendChild(head);
+
+  const t=document.createElement("table");
+
+  const skip=[
+    "readings","Main data","Sub data",
+    ...Array.from({length:24},(_,i)=>String(i))
+  ];
+
+  const add=(k,v)=>{
+    const tr=document.createElement("tr");
+    const td1=document.createElement("td");
+    const td2=document.createElement("td");
+    td1.innerText=k;
+    td2.innerText=v;
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    t.appendChild(tr);
   }
 
-  document.getElementById("resultBox").innerHTML = `
-    <div class='result-card'>
-      <h3>History for Sensor ${row["sensor ID"]} — ${row.date}</h3>
-      <canvas id='historyChart' height='140'></canvas>
+  const empty=v=>v===-1||v===""||v===null;
 
-      <div class='table-box'>
-        <table><tbody id='detailsTable'></tbody></table>
-      </div>
-    </div>
-  `;
+  for(const k in item){
+    if(skip.includes(k))continue;
+    if(!isNaN(k))continue;
+    if(empty(item[k]))continue;
+    add(k,item[k]);
+  }
+  for(let i=1;i<=5;i++){
+    let c=item[`custom ${i}`];
+    let v=item[`value ${i}`];
+    if(!empty(c)&&!empty(v))add(c,v);
+  }
 
-  /* Bar Graph */
-  new Chart(document.getElementById("historyChart"),{
+  card.appendChild(t);
+  return card;
+}
+
+
+/******** GRAPH BUILD *********/
+function renderChart(canvas,item){
+  const labels=Array.from({length:24},(_,i)=>i);
+  let values=labels.map(i=>{
+    const v=item[String(i)];
+    if(v===-1||v===""||v==null)return null;
+    return Number(v);
+  });
+
+  if(item["Sensor Type"]==="Distance"){
+    const H=Number(item["Tank Height"]);
+    const O=Number(item["Offset Error"]);
+    if(H>0){
+      values=values.map(v=>{
+        if(v===null)return null;
+        return Math.max(0,Math.min(100,Math.round(((H-v+O)/H)*100)));
+      });
+    }
+  }
+
+  new Chart(canvas.getContext("2d"),{
     type:"bar",
     data:{
-      labels:hours,
+      labels,
       datasets:[{
         data:values,
-        backgroundColor:"rgba(201,168,227,0.6)",
-        borderColor:"#C9A8E3",
-        borderWidth:1
+        backgroundColor:"#e69df4",
+        borderRadius:6
       }]
     },
     options:{
-      responsive:true,
       plugins:{legend:{display:false}},
-      scales:{x:{},y:{}}
+      scales:{
+        x:{ticks:{color:'#fff'},grid:{display:false}},
+        y:{ticks:{color:'#fff'}}
+      },
+      maintainAspectRatio:false
     }
   });
-
-  /* Table */
-  const table=document.getElementById("detailsTable");
-  for(let k in row){
-    if(!isNaN(k)) continue;
-    const tr=document.createElement("tr");
-    tr.innerHTML=`<td><b>${k}</b></td><td>${row[k]}</td>`;
-    table.appendChild(tr);
-  }
 }
+
+
+/******************************************************
+   COMBINE GRAPH + TABLE => SINGLE JPEG
+******************************************************/
+function downloadJPEG(){
+
+  const graphCanvas = document.querySelector("canvas");
+  const table = document.querySelector("table");
+
+  if(!graphCanvas || !table){
+    alert("Missing graph or table");
+    return;
+  }
+
+  // Extract table rows
+  const rows = [...table.rows].map(r => [...r.cells].map(c => c.innerText));
+
+  // DYNAMIC canvas size
+  const w = 1000;
+  const logoHeight = 90;
+  const spacing = 40;
+  const tableHeight = rows.length * 38;
+  const graphH = graphCanvas.height;
+
+  // total height
+  const h = logoHeight + spacing + graphH + spacing + tableHeight + 100;
+
+  const out = document.createElement("canvas");
+  out.width = w;
+  out.height = h;
+  const ctx = out.getContext("2d");
+
+  // background
+  ctx.fillStyle = "#222233";
+  ctx.fillRect(0, 0, w, h);
+
+  /************ DRAW LOGO ************/
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "32px Segoe UI";
+  ctx.textAlign = "center";
+  ctx.fillText("VOLTRAXX", w / 2, 60);
+
+  /************ GRAPH ************/
+  ctx.drawImage(graphCanvas, 50, logoHeight + 20, 900, graphH);
+
+  /************ TABLE ************/
+  ctx.textAlign = "left";
+  ctx.font = "18px Segoe UI";
+  ctx.fillStyle = "#fff";
+
+  let y = logoHeight + 20 + graphH + 40;
+
+  for (const r of rows) {
+    ctx.fillText(`${r[0]}: ${r[1]}`, 60, y);
+    y += 34;
+  }
+
+  /************ DOWNLOAD ************/
+  const a = document.createElement("a");
+  a.download = "history_export.jpeg";
+  a.href = out.toDataURL("image/jpeg", 0.95);
+  a.click();
+}
+
 </script>
 
 </body>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings</title>
+
+  <style>
+    body{
+      margin:0;
+      padding:0;
+      font-family:'Segoe UI',sans-serif;
+      background:linear-gradient(135deg,#6A329F,#3B1C5B);
+      color:white;
+      overflow-x:hidden;
+    }
+
+    /* ---------- NAV ---------- */
+    .top-nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:18px 24px;
+      background:rgba(26,26,26,0.35);
+      position:relative;
+      z-index:1000;
+    }
+    .logo{font-size:26px;font-weight:700;}
+
+    .nav-buttons{display:flex;gap:20px;}
+    .nav-buttons button{
+      background:transparent;
+      color:#fff;
+      padding:8px 14px;
+      font-size:16px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      transition:.25s;
+    }
+    .nav-buttons button.active{
+      background:linear-gradient(135deg,#C9A8E3,#6A329F);
+      font-weight:700;
+      color:#fff;
+    }
+    .nav-buttons button:hover{
+      border:2px solid #C9A8E3;
+    }
+
+    .hamburger{
+      display:none;
+      flex-direction:column;
+      gap:5px;
+      cursor:pointer;
+    }
+    .hamburger div{
+      width:28px;
+      height:3px;
+      background:white;
+      border-radius:2px;
+    }
+
+    @media(max-width:600px){
+      .nav-buttons{display:none;}
+      .hamburger{display:flex;}
+    }
+
+    /* ---------- MOBILE MENU ---------- */
+    .mobile-menu{
+      display:none;
+      flex-direction:column;
+      background:rgba(26,26,26,0.95);
+      padding:12px;
+      position:absolute;
+      left:0;
+      right:0;
+      top:60px;
+      z-index:2000;
+    }
+    .mobile-menu button{
+      background:transparent;
+      border:none;
+      font-size:16px;
+      color:white;
+      padding:14px;
+      text-align:left;
+    }
+    .mobile-menu button.active{
+      color:#ffd6ff;
+      font-weight:bold;
+    }
+
+    /* ---------- CONTENT ---------- */
+    .filter-bar{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-top:22px;
+      padding:10px;
+    }
+
+    select,input{
+      padding:10px 14px;
+      border-radius:8px;
+      border:none;
+      font-size:15px;
+    }
+
+    button.updateBtn{
+      padding:10px 18px;
+      background:#C9A8E3;
+      color:#111;
+      border:none;
+      border-radius:8px;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      transition:.3s;
+    }
+
+    /* MATCH History.html button behavior */
+    .updateBtn.loading{
+      background:#ffca2c !important;
+      color:#111 !important;
+    }
+    .updateBtn.success{
+      background:#17c964 !important;
+      color:white !important;
+    }
+    .updateBtn.error{
+      background:#ff4d4f !important;
+      color:white !important;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.12);
+      backdrop-filter:blur(8px);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.35);
+      margin:20px auto;
+      width:80%;
+      max-width:700px;
+    }
+
+    .card h2{
+      text-align:center;
+      margin:8px 0 16px;
+      font-size:22px;
+    }
+
+    .preview-table{
+      width:100%;
+      border-collapse:collapse;
+    }
+    .preview-table td{
+      padding:8px 4px;
+      border-bottom:1px solid rgba(255,255,255,0.14);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<div class="top-nav">
+  <div class="logo">Voltraxx</div>
+
+  <div class="nav-buttons">
+    <button onclick="nav('index.html')">Monitoring</button>
+    <button onclick="nav('analysis.html')">Analysis</button>
+    <button onclick="nav('history.html')">History</button>
+    <button class="active" onclick="nav('settings.html')">Settings</button>
+    <button onclick="nav('logout.html')">Logout</button>
+  </div>
+
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div><div></div><div></div>
+  </div>
+</div>
+
+<div id="mobileMenu" class="mobile-menu">
+  <button onclick="nav('index.html')">Monitoring</button>
+  <button onclick="nav('analysis.html')">Analysis</button>
+  <button onclick="nav('history.html')">History</button>
+  <button class="active" onclick="nav('settings.html')">Settings</button>
+  <button onclick="nav('logout.html')">Logout</button>
+</div>
+
+<script>
+function nav(p){ window.location.href=p; }
+function toggleMenu(){
+  let m=document.getElementById("mobileMenu");
+  m.style.display = (m.style.display==="flex") ? "none" : "flex";
+}
+</script>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <select id="sensorSelect"></select>
+
+  <select id="metaSelect">
+    <option value="">Select MetaData</option>
+    <option value="Label">Label</option>
+    <option value="High Reading">High Reading</option>
+    <option value="LOW Reading">LOW Reading</option>
+    <option value="Tank Volume">Tank Volume</option>
+    <option value="Tank Height">Tank Height</option>
+    <option value="Offset Error">Offset Error</option>
+
+    <option value="custom 1">custom 1</option>
+    <option value="value 1">value 1</option>
+    <option value="custom 2">custom 2</option>
+    <option value="value 2">value 2</option>
+    <option value="custom 3">custom 3</option>
+    <option value="value 3">value 3</option>
+    <option value="custom 4">custom 4</option>
+    <option value="value 4">value 4</option>
+    <option value="custom 5">custom 5</option>
+    <option value="value 5">value 5</option>
+  </select>
+
+  <input type="text" id="valueBox" placeholder="Enter value">
+
+  <button class="updateBtn" onclick="updateMeta()">UPDATE</button>
+</div>
+
+<!-- PREVIEW CARD -->
+<div class="card" id="previewCard" style="display:none;">
+  <h2>Sensor Metadata</h2>
+  <table class="preview-table" id="previewTable"></table>
+</div>
+
+<script>
+const apiBase =
+  "https://script.google.com/macros/s/AKfycbzK7XfqfDy3-TFjLLUDAGLQ00nlcchMnvTn6kNpric2QV4dFAukH7jhS9zV9HayltvdPQ/exec";
+
+let allRows = [];
+
+/* ============= LOAD SETTINGS ============= */
+async function loadSettings() {
+  const res = await fetch(apiBase + "?page=settings");
+  const data = await res.json();
+
+  if (!data.rows) return;
+
+  allRows = data.rows;
+
+  const sensorSel = document.getElementById("sensorSelect");
+  sensorSel.innerHTML = "<option value=''>Select Sensor</option>";
+
+  data.rows.forEach(r => {
+    sensorSel.innerHTML += `
+      <option value="${r["sensor ID"]}">
+        ${r["sensor ID"]} (${r["Sensor Type"]})
+      </option>`;
+  });
+}
+
+loadSettings();
+
+/* ============= PREVIEW ============= */
+document.getElementById("sensorSelect").addEventListener("change", showPreview);
+
+function showPreview() {
+  const sid = Number(document.getElementById("sensorSelect").value);
+  const card = document.getElementById("previewCard");
+  const table = document.getElementById("previewTable");
+
+  if (!sid) { card.style.display = "none"; return; }
+
+  const row = allRows.find(r => r["sensor ID"] === sid);
+  if (!row) return;
+
+  let html = "";
+  Object.keys(row).forEach(k => {
+    html += `
+      <tr>
+        <td>${k}</td>
+        <td>${row[k] === "" ? "-" : row[k]}</td>
+      </tr>`;
+  });
+
+  table.innerHTML = html;
+  card.style.display = "block";
+}
+
+/* ============= UPDATE META ============= */
+async function updateMeta() {
+  const btn = document.querySelector(".updateBtn");
+
+  // Set loading
+  btn.classList.remove("success","error");
+  btn.classList.add("loading");
+  btn.innerText = "Updating...";
+
+  const sid = document.getElementById("sensorSelect").value;
+  const meta = document.getElementById("metaSelect").value;
+  const val = document.getElementById("valueBox").value;
+
+  if (!sid || !meta) {
+    btn.classList.remove("loading");
+    btn.classList.add("error");
+    btn.innerText = "Select Fields!";
+    return;
+  }
+
+  const payload =
+    "sensorID=" + sid +
+    "&metaData=" + encodeURIComponent(meta) +
+    "&value=" + encodeURIComponent(val);
+
+  try {
+    const res = await fetch(apiBase, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: payload
+    });
+
+    // SUCCESS
+    btn.classList.remove("loading");
+    btn.classList.add("success");
+    btn.innerText = "Updated ✔";
+
+    // Reset fields
+    document.getElementById("sensorSelect").value = "";
+    document.getElementById("metaSelect").value = "";
+    document.getElementById("valueBox").value = "";
+    document.getElementById("previewCard").style.display = "none";
+
+    await loadSettings(); // reload fresh data
+
+  } catch (e) {
+    btn.classList.remove("loading");
+    btn.classList.add("error");
+    btn.innerText = "Error!";
+    return;
+  }
+
+  setTimeout(()=>{
+    btn.classList.remove("success","error");
+    btn.innerText = "UPDATE";
+  }, 2000);
+}
+</script>
+
+</body>
+</html>
