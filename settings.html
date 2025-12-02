@@ -289,7 +289,7 @@ function showPreview() {
 async function updateMeta() {
   const btn = document.querySelector(".updateBtn");
 
-  // Set loading
+  // Button loading state
   btn.classList.remove("success","error");
   btn.classList.add("loading");
   btn.innerText = "Updating...";
@@ -298,6 +298,7 @@ async function updateMeta() {
   const meta = document.getElementById("metaSelect").value;
   const val = document.getElementById("valueBox").value;
 
+  // Validate
   if (!sid || !meta) {
     btn.classList.remove("loading");
     btn.classList.add("error");
@@ -317,32 +318,40 @@ async function updateMeta() {
       body: payload
     });
 
-    // SUCCESS
+    // We only reset fields AFTER receiving the final response
+    const text = await res.text();
+
+    // SUCCESS visual feedback
     btn.classList.remove("loading");
     btn.classList.add("success");
     btn.innerText = "Updated ✔";
 
-    // Reset fields
+    // ---- RESET ALL FIELDS AFTER SUCCESS ----
     document.getElementById("sensorSelect").value = "";
     document.getElementById("metaSelect").value = "";
     document.getElementById("valueBox").value = "";
     document.getElementById("previewCard").style.display = "none";
 
-    await loadSettings(); // reload fresh data
+    // reload updated data
+    await loadSettings();
 
-  } catch (e) {
+  } catch (err) {
+    // If API fails → do NOT reset fields
     btn.classList.remove("loading");
     btn.classList.add("error");
     btn.innerText = "Error!";
     return;
   }
 
-  setTimeout(()=>{
+  // Reset button styling after delay
+  setTimeout(() => {
     btn.classList.remove("success","error");
     btn.innerText = "UPDATE";
   }, 2000);
 }
+
 </script>
 
 </body>
 </html>
+
