@@ -3,304 +3,320 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Monitoring Dashboard</title>
-  
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #6A329F 0%, #3B1C5B 100%);
-      color: white;
+    body{
+      margin:0;
+      padding:0;
+      font-family:'Segoe UI',sans-serif;
+      background:linear-gradient(135deg,#6A329F,#3B1C5B);
+      color:white;
+      overflow-x:hidden;
     }
 
-    /* ---------------- NAVBAR ---------------- */
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 24px;
-      background: rgba(26,26,26,0.35);
-      position: relative;
-      z-index: 10;
+    /* ---------- NAV ---------- */
+    .top-nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:18px 24px;
+      background:rgba(26,26,26,0.35);
+      position:relative;
+      z-index:1000; /* ✔ brings nav above cards */
+    }
+    .logo{font-size:26px;font-weight:700;}
+
+    .nav-buttons{display:flex;gap:20px;}
+    .nav-buttons button{
+      background:transparent;
+      color:#fff;
+      padding:8px 14px;
+      font-size:16px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      transition:.25s;
+    }
+    .nav-buttons button.active{
+      background:linear-gradient(135deg,#C9A8E3,#6A329F);
+      font-weight:700;
+      color:#fff;
+    }
+    .nav-buttons button:hover{
+      border:2px solid #C9A8E3;
     }
 
-    .logo {
-      font-size: 26px;
-      font-weight: bold;
+    .hamburger{
+      display:none;
+      flex-direction:column;
+      gap:5px;
+      cursor:pointer;
+    }
+    .hamburger div{
+      width:28px;height:3px;background:white;border-radius:2px;
     }
 
-    .nav-buttons {
-      display: flex;
-      gap: 20px;
+    @media(max-width:600px){
+      .nav-buttons{display:none;}
+      .hamburger{display:flex;}
     }
 
-    .nav-buttons button {
-      background: transparent;
-      color: #f2f2f2;
-      font-size: 16px;
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.25s;
+    /* ---------- MOBILE MENU ---------- */
+    .mobile-menu{
+      display:none;
+      flex-direction:column;
+      background:rgba(26,26,26,0.95);
+      padding:12px;
+      position:absolute;
+      left:0;
+      right:0;
+      top:60px;
+      z-index:2000;  /* ✔ ON TOP of cards */
+    }
+    .mobile-menu button{
+      background:transparent;
+      border:none;
+      font-size:16px;
+      color:white;
+      padding:14px;
+      text-align:left;
+    }
+    .mobile-menu button.active{
+      color:#ffd6ff;
+      font-weight:bold;
     }
 
-    .nav-buttons button.active {
-      background: linear-gradient(135deg,#C9A8E3,#6A329F);
-      font-weight: bold;
-      color: #fff;
+    /* ---------- CONTENT ---------- */
+    .section-title{
+      margin:18px 10px;
+      font-size:20px;
+      font-weight:600;
+    }
+    .section{
+      display:flex;
+      gap:16px;
+      overflow-x:auto;
+      padding:8px 10px 20px;
     }
 
-    .nav-buttons button:hover {
-      border: 2px solid #C9A8E3;
+    .card{
+      background:rgba(255,255,255,0.12);
+      backdrop-filter:blur(8px);
+      padding:14px;
+      border-radius:14px;
+      min-width:260px;
+      max-width:310px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.35);
+      transition:.25s;
+    }
+    .card:hover{
+      transform:translateY(-5px);
+      box-shadow:0 10px 28px rgba(0,0,0,0.55);
     }
 
-    /* Hamburger */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-    }
-    .hamburger div {
-      width: 28px;
-      height: 3px;
-      background: white;
-      border-radius: 2px;
+    .card-header{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:6px;
     }
 
-    /* Mobile dropdown */
-    .mobile-menu {
-      display: none;
-      flex-direction: column;
-      background: rgba(26,26,26,0.95);
-      padding: 12px;
-      position: absolute;
-      top: 60px;
-      right: 0;
-      left: 0;
-      animation: slideDown 0.3s ease;
+    .title{
+      font-size:16px;
+      font-weight:700;
+      text-transform:capitalize;
     }
-    .mobile-menu button {
-      background: transparent;
-      color: white;
-      padding: 14px;
-      border: none;
-      font-size: 16px;
-      text-align: left;
-    }
-    .mobile-menu button.active {
-      color: #ffd6ff;
-      font-weight: bold;
+    .ids{
+      font-size:12px;
+      opacity:.85;
     }
 
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .main-line{
+      display:flex;
+      justify-content:space-between;
+      margin-top:8px;
     }
+    .main-label{font-size:14px;color:#ffd6ff;}
+    .main-value{font-size:28px;font-weight:700;}
 
-    @media (max-width: 600px) {
-      .nav-buttons { display: none; }
-      .hamburger { display: flex; }
+    .sub-line{
+      display:flex;
+      justify-content:space-between;
+      margin-top:6px;
     }
-
-    /* ---------------- CONTENT ---------------- */
-    .container { padding: 20px; }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin: 12px 0 8px 0;
-    }
-
-    section {
-      display: flex;
-      overflow-x: auto;
-      gap: 20px;
-      padding-bottom: 10px;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(10px);
-      border-radius: 18px;
-      min-width: 250px;
-      padding: 20px;
-      border: 1px solid rgba(255,255,255,0.15);
-      transition: 0.25s;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .title { font-size: 18px; font-weight: 600; }
-    .ids { font-size: 12px; opacity: 0.8; }
-
-    .main-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 6px;
-    }
-    .main-label { font-size: 14px; color: #ffd6ff; }
-    .main-value { font-size: 28px; font-weight: 700; }
-
-    .sub-line {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
-    }
-    .sub-label { font-size: 12px; color: #e8c5e8; }
-    .sub-value { font-size: 16px; font-weight: 600; }
-
-    @media (max-width: 600px) {
-      .card { min-width: 200px; padding: 14px; }
-      .main-value { font-size: 22px; }
-    }
+    .sub-label{font-size:13px;opacity:.85;}
+    .sub-value{font-size:16px;font-weight:600;}
   </style>
 </head>
 
 <body>
 
-  <!-- NAVIGATION -->
-  <div class="top-nav">
-    <div class="logo">Voltraxx</div>
+<!-- NAV -->
+<div class="top-nav">
+  <div class="logo">Voltraxx</div>
 
-    <div class="nav-buttons">
-      <button class="active" onclick="navigate('index.html', this)">Monitoring</button>
-      <button onclick="navigate('analysis.html', this)">Analysis</button>
-      <button onclick="navigate('history.html', this)">History</button>
-      <button onclick="navigate('settings.html', this)">Settings</button>
-      <button onclick="navigate('logout.html', this)">Logout</button>
-    </div>
-
-    <div class="hamburger" onclick="toggleMenu()">
-      <div></div><div></div><div></div>
-    </div>
+  <div class="nav-buttons">
+    <button class="active" onclick="navigate('index.html',this)">Monitoring</button>
+    <button onclick="navigate('analysis.html',this)">Analysis</button>
+    <button onclick="navigate('history.html',this)">History</button>
+    <button onclick="navigate('settings.html',this)">Settings</button>
+    <button onclick="navigate('logout.html',this)">Logout</button>
   </div>
 
-  <div id="mobileMenu" class="mobile-menu">
-    <button class="active" onclick="navigate('index.html', this)">Monitoring</button>
-    <button onclick="navigate('analysis.html', this)">Analysis</button>
-    <button onclick="navigate('history.html', this)">History</button>
-    <button onclick="navigate('settings.html', this)">Settings</button>
-    <button onclick="navigate('logout.html', this)">Logout</button>
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div><div></div><div></div>
   </div>
+</div>
 
-  <!-- CONTENT -->
-  <div class="container">
-    <h2 class="section-title">Water Level</h2>
-    <section id="distance"></section>
+<!-- MOBILE MENU -->
+<div id="mobileMenu" class="mobile-menu">
+  <button class="active" onclick="navigate('index.html',this)">Monitoring</button>
+  <button onclick="navigate('analysis.html',this)">Analysis</button>
+  <button onclick="navigate('history.html',this)">History</button>
+  <button onclick="navigate('settings.html',this)">Settings</button>
+  <button onclick="navigate('logout.html',this)">Logout</button>
+</div>
 
-    <h2 class="section-title">Temperature</h2>
-    <section id="temperature"></section>
+<!-- CONTENT SECTIONS -->
+<div class="section-wrap">
 
-    <h2 class="section-title">Flow</h2>
-    <section id="flow"></section>
+  <h2 class="section-title">Distance</h2>
+  <div class="section" id="distance"></div>
 
-    <h2 class="section-title">Other</h2>
-    <section id="other"></section>
-  </div>
+  <h2 class="section-title">Flow</h2>
+  <div class="section" id="flow"></div>
+
+  <h2 class="section-title">Temperature</h2>
+  <div class="section" id="temperature"></div>
+
+  <h2 class="section-title">None</h2>
+  <div class="section" id="none"></div>
+
+</div>
 
 <script>
-/* ---------------- NAVIGATION ---------------- */
-function toggleMenu() {
-  const m = document.getElementById("mobileMenu");
-  m.style.display = m.style.display === "flex" ? "none" : "flex";
+/* ------------ NAVIGATION ------------ */
+function toggleMenu(){
+  const m=document.getElementById('mobileMenu');
+  m.style.display=(m.style.display==='flex')?'none':'flex';
 }
-
-function navigate(page, btn) {
-  // Update active buttons
-  document.querySelectorAll('.nav-buttons button, .mobile-menu button').forEach(b => b.classList.remove('active'));
+function navigate(page,btn){
+  document.querySelectorAll('.nav-buttons button,.mobile-menu button')
+    .forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  window.location.href = page;
+  window.location.href=page;
 }
 
-/* ---------------- MONITORING DATA ---------------- */
-const BASE_URL = "https://script.google.com/macros/s/AKfycbwchdbHGHK0HyNrBM_xn1udkf6_x_1C7oZguIqIKebL0cc6Mxz-Cnu2mnYP1TovuvTvyw/exec";
+/* ------------ API ------------ */
+const BASE_URL="https://script.google.com/macros/s/AKfycbzk7j1g31Z_9p7a0TDTYfWJIk8LW89j5UAN6W3FFtOb2L8UzHl5W3o_aS-7fydHTgdq9w/exec";
 
-let lastData = {};
-let cards = {};
+let cards={};
+let lastSet={};
 
 loadData();
-setInterval(loadData, 400);
+setInterval(loadData,600);
 
-function loadData() {
+/* ------------ FETCH ------------ */
+function loadData(){
   fetch(`${BASE_URL}?page=monitoring`)
-    .then(res => res.json())
-    .then(data => {
-      renderCategory("distance", data.distance || []);
-      renderCategory("temperature", data.temperature || []);
-      renderCategory("flow", data.flow || []);
-      renderCategory("other", data.none || []);
+    .then(r=>r.json())
+    .then(data=>{
+      renderCategory("distance",data.distance||[]);
+      renderCategory("flow",data.flow||[]);
+      renderCategory("temperature",data.temperature||[]);
+      renderCategory("none",data.none||[]);
     })
-    .catch(err => console.log("Fetch Error:", err));
+    .catch(err=>console.log(err));
 }
 
-function renderCategory(sectionID, array) {
+/* ------------ BUILD CARDS ------------ */
+function renderCategory(sectionID, array){
   const container = document.getElementById(sectionID);
 
-  if (!cards[sectionID]) cards[sectionID] = {};
-  if (!lastData[sectionID]) lastData[sectionID] = {};
+  if(!cards[sectionID]) cards[sectionID]={};
+  if(!lastSet[sectionID]) lastSet[sectionID]={};
+
+  // clear old cards first
+  container.innerHTML = "";
+  cards[sectionID] = {};
 
   array.forEach(item => {
-    const key = `${item.controllerID}-${item.sensorID}`;
 
-    if (!cards[sectionID][key]) {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <div class="card-header">
-          <span class="title"></span>
-          <span class="ids"></span>
-        </div>
-        <div class="main-line">
-          <span class="main-label"></span>
-          <span class="main-value"></span>
-        </div>
-        <div class="sub-line">
-          <span class="sub-label"></span>
-          <span class="sub-value"></span>
-        </div>
-      `;
-      container.appendChild(card);
-
-      cards[sectionID][key] = {
-        el: card,
-        title: card.querySelector(".title"),
-        ids: card.querySelector(".ids"),
-        mainLabel: card.querySelector(".main-label"),
-        mainValue: card.querySelector(".main-value"),
-        subLabel: card.querySelector(".sub-label"),
-        subValue: card.querySelector(".sub-value")
-      };
+    // 🔥 Skip if mainData is empty or invalid
+    if(
+      item.mainData === "" ||
+      item.mainData === null ||
+      item.mainData === undefined ||
+      item.mainData === "-" ||
+      (typeof item.mainData === "string" && item.mainData.trim().length === 0)
+    ){
+      return;
     }
 
-    const c = cards[sectionID][key];
+    const key=`${item.controllerID}-${item.sensorID}`;
 
-    fastUpdate(c.title, item.label);
-    fastUpdate(c.ids, `C${item.controllerID}:S${item.sensorID}`);
-    fastUpdate(c.mainLabel, item.mainLabel);
-    fastUpdate(c.mainValue, `${item.mainData}${item.mainUnit || ""}`);
-    fastUpdate(c.subLabel, item.subLabel);
-    fastUpdate(c.subValue, `${item.subData}${item.subUnit || ""}`);
+    // create card
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <div class="card-header">
+        <div class="title"></div>
+        <div class="ids"></div>
+      </div>
 
-    let color = "#f890ec";
-    if (item.mainData > item.high) color = "#ff3b3b";
-    else if (item.mainData < item.low) color = "#2ecc71";
+      <div class="main-line">
+        <div class="main-label"></div>
+        <div class="main-value"></div>
+      </div>
 
-    c.el.style.borderLeft = `6px solid ${color}`;
+      <div class="sub-line">
+        <div class="sub-label"></div>
+        <div class="sub-value"></div>
+      </div>
+    `;
+    container.appendChild(card);
+
+    cards[sectionID][key] = {
+      el:card,
+      title: card.querySelector(".title"),
+      ids: card.querySelector(".ids"),
+      mainLabel: card.querySelector(".main-label"),
+      mainValue: card.querySelector(".main-value"),
+      subLabel: card.querySelector(".sub-label"),
+      subValue: card.querySelector(".sub-value"),
+    };
+
+    const c=cards[sectionID][key];
+
+    const cID=item.controllerID;
+    const sID=item.sensorID;
+    const label=item.label;
+
+    // Title
+    if(label && label !== ""){
+      c.title.innerText = label;
+    } else {
+      c.title.innerText = `Sensor C${cID}:S${sID}`;
+    }
+
+    c.ids.innerText = `C${cID}:S${sID}`;
+
+    c.mainLabel.innerText = item.mainLabel||"";
+    c.mainValue.innerText = `${item.mainData}${item.mainUnit||""}`;
+
+    c.subLabel.innerText = item.subLabel||"";
+    c.subValue.innerText =
+      (item.subData!="" && item.subData!=null)
+        ? `${item.subData}${item.subUnit||""}`
+        : "";
+
+    // ---- Border alert ----
+    let color="#e69df4";
+    if(item.high && item.mainData>item.high) color="#ff4d4f";
+    else if(item.low && item.mainData<item.low) color="#17c964";
+
+    c.el.style.borderLeft=`6px solid ${color}`;
   });
 }
-
-function fastUpdate(el, val) {
-  if (el.textContent !== String(val)) el.textContent = val;
-}
 </script>
-
 </body>
 </html>
