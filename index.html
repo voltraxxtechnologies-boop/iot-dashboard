@@ -8,12 +8,13 @@
   <style>
     body {
       margin: 0;
-      padding: 0;
+
       font-family: "Poppins", sans-serif;
       height: 100vh;
       display: flex;
-      justify-content: center;
-      align-items: center;
+      justify-content: center; 
+      align-items: flex-start; /* TOP */
+      padding-top: 10px;
       background: linear-gradient(135deg, #3B1C5B, #6A329F, #C9A8E3);
       background-size: 300% 300%;
       animation: gradientMove 13s ease infinite;
@@ -28,7 +29,7 @@
 
     .login-wrapper {
       width: 90%;
-      max-width: 300px;
+      max-width: 300px;  /* Reduced width */
       padding: 35px 30px;
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.08);
@@ -104,15 +105,6 @@
       color: #3B1C5B;
       font-weight: bold;
     }
-
-    footer {
-      position: absolute;
-      bottom: 12px;
-      width: 100%;
-      text-align: center;
-      font-size: 12px;
-      opacity: 0.7;
-    }
   </style>
 </head>
 
@@ -132,7 +124,7 @@
       <input id="signin_pin" type="password" placeholder="Enter PIN"
              inputmode="numeric" pattern="[0-9]*">
 
-      <button class="action-btn" onclick="signin()">Login</button>
+      <button class="action-btn" onclick="signin()">Verify</button>
     </div>
 
     <!-- SIGNUP FORM -->
@@ -168,12 +160,11 @@
 
     <!-- Bottom Navigation -->
     <div class="nav-btns">
-      <button id="btnSignin" class="active" onclick="showForm('Sign in')">Signin</button>
-      <button id="btnSignup" onclick="showForm('Sign up')">Signup</button>
-      <button id="btnReset" onclick="showForm('Reset')">Reset</button>
+      <button id="btnSignin" class="active" onclick="showForm('signin')">Sign in</button>
+      <button id="btnSignup" onclick="showForm('signup')">Sign up</button>
+      <button id="btnReset" onclick="showForm('reset')">Reset</button>
     </div>
   </div>
-
 
 <script>
 const API = "https://script.google.com/macros/s/AKfycbwWPko9KArysDEx7KhzHK7Cp9z7c9kRGF20VNG8cR-s0jnaAQttV5QFku-exHcj288/exec";
@@ -307,4 +298,3 @@ function showMsg(msg){
 
 </body>
 </html>
-
