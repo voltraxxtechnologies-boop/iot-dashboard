@@ -1,322 +1,294 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Monitoring Dashboard</title>
+  <meta charset="UTF-8" />
+  <title>Voltraxx Access Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <style>
-    body{
-      margin:0;
-      padding:0;
-      font-family:'Segoe UI',sans-serif;
-      background:linear-gradient(135deg,#6A329F,#3B1C5B);
-      color:white;
-      overflow-x:hidden;
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #3B1C5B, #6A329F, #C9A8E3);
+      background-size: 300% 300%;
+      animation: gradientMove 13s ease infinite;
+      color: white;
     }
 
-    /* ---------- NAV ---------- */
-    .top-nav{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:18px 24px;
-      background:rgba(26,26,26,0.35);
-      position:relative;
-      z-index:1000; /* ✔ brings nav above cards */
-    }
-    .logo{font-size:26px;font-weight:700;}
-
-    .nav-buttons{display:flex;gap:20px;}
-    .nav-buttons button{
-      background:transparent;
-      color:#fff;
-      padding:8px 14px;
-      font-size:16px;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      transition:.25s;
-    }
-    .nav-buttons button.active{
-      background:linear-gradient(135deg,#C9A8E3,#6A329F);
-      font-weight:700;
-      color:#fff;
-    }
-    .nav-buttons button:hover{
-      border:2px solid #C9A8E3;
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
-    .hamburger{
-      display:none;
-      flex-direction:column;
-      gap:5px;
-      cursor:pointer;
-    }
-    .hamburger div{
-      width:28px;height:3px;background:white;border-radius:2px;
-    }
-
-    @media(max-width:600px){
-      .nav-buttons{display:none;}
-      .hamburger{display:flex;}
+    /* Card */
+    .login-wrapper {
+      width: 90%;
+      max-width: 380px;
+      padding: 35px 30px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      text-align: center;
     }
 
-    /* ---------- MOBILE MENU ---------- */
-    .mobile-menu{
-      display:none;
-      flex-direction:column;
-      background:rgba(26,26,26,0.95);
-      padding:12px;
-      position:absolute;
-      left:0;
-      right:0;
-      top:60px;
-      z-index:2000;  /* ✔ ON TOP of cards */
-    }
-    .mobile-menu button{
-      background:transparent;
-      border:none;
-      font-size:16px;
-      color:white;
-      padding:14px;
-      text-align:left;
-    }
-    .mobile-menu button.active{
-      color:#ffd6ff;
-      font-weight:bold;
+    .logo-box {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 10px;
+      border-radius: 20%;
+      overflow: hidden;
+      box-shadow: 0 0 20px #C9A8E3;
+      animation: pulseLogo 2s infinite alternate;
     }
 
-    /* ---------- CONTENT ---------- */
-    .section-title{
-      margin:18px 10px;
-      font-size:20px;
-      font-weight:600;
-    }
-    .section{
-      display:flex;
-      gap:16px;
-      overflow-x:auto;
-      padding:8px 10px 20px;
+    @keyframes pulseLogo {
+      0% { transform: scale(1);}
+      100% { transform: scale(1.1);}
     }
 
-    .card{
-      background:rgba(255,255,255,0.12);
-      backdrop-filter:blur(8px);
-      padding:14px;
-      border-radius:14px;
-      min-width:260px;
-      max-width:310px;
-      box-shadow:0 6px 20px rgba(0,0,0,0.35);
-      transition:.25s;
-    }
-    .card:hover{
-      transform:translateY(-5px);
-      box-shadow:0 10px 28px rgba(0,0,0,0.55);
+    .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+    input {
+      width: 90%;
+      margin: 10px auto;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background: rgba(255,255,255,0.22);
+      color: white;
     }
 
-    .card-header{
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:6px;
+    input::placeholder { color: #ddd; }
+
+    button.action-btn {
+      width: 95%;
+      margin-top: 12px;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(90deg, #6A329F, #C9A8E3);
+      color: white;
+      font-weight: 600;
     }
 
-    .title{
-      font-size:16px;
-      font-weight:700;
-      text-transform:capitalize;
-    }
-    .ids{
-      font-size:12px;
-      opacity:.85;
+    .msg { height: 22px; margin-top: 10px; color: #ffbbbb; }
+
+    /* Bottom nav buttons */
+    .nav-btns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
     }
 
-    .main-line{
-      display:flex;
-      justify-content:space-between;
-      margin-top:8px;
+    .nav-btns button {
+      width: 31%;
+      padding: 10px 0;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255,255,255,0.25);
+      color: white;
+      cursor: pointer;
     }
-    .main-label{font-size:14px;color:#ffd6ff;}
-    .main-value{font-size:28px;font-weight:700;}
 
-    .sub-line{
-      display:flex;
-      justify-content:space-between;
-      margin-top:6px;
+    .nav-btns .active {
+      background: #C9A8E3;
+      color: #3B1C5B;
+      font-weight: bold;
     }
-    .sub-label{font-size:13px;opacity:.85;}
-    .sub-value{font-size:16px;font-weight:600;}
+
+    footer {
+      position: absolute;
+      bottom: 12px;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+      opacity: 0.7;
+    }
   </style>
 </head>
 
 <body>
 
-<!-- NAV -->
-<div class="top-nav">
-  <div class="logo">Voltraxx</div>
+  <div class="login-wrapper">
+    <div class="logo-box">
+      <img src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+    </div>
 
-  <div class="nav-buttons">
-    <button class="active" onclick="navigate('index.html',this)">Monitoring</button>
-    <button onclick="navigate('analysis.html',this)">Analysis</button>
-    <button onclick="navigate('history.html',this)">History</button>
-    <button onclick="navigate('settings.html',this)">Settings</button>
-    <button onclick="navigate('logout.html',this)">Logout</button>
+    <h2 id="titleText">Sign In</h2>
+
+    <!-- SIGNIN FORM -->
+    <div id="signinForm">
+      <input id="signin_id" placeholder="Enter ID">
+      <input id="signin_pin" type="password" placeholder="Enter PIN">
+      <button class="action-btn" onclick="signin()">Login</button>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signupForm" style="display:none;">
+      <input id="su_device" placeholder="Device ID">
+      <input id="su_otp" placeholder="OTP">
+      <input id="su_client" placeholder="Client Name">
+      <input id="su_mobile" placeholder="Mobile Number">
+      <input id="su_id" placeholder="Create ID">
+      <input id="su_pin" placeholder="Create PIN">
+      <button class="action-btn" onclick="signup()">Create Account</button>
+    </div>
+
+    <!-- RESET FORM -->
+    <div id="resetForm" style="display:none;">
+      <input id="re_device" placeholder="Device ID">
+      <input id="re_mobile" placeholder="Mobile Number">
+      <input id="re_otp" placeholder="OTP">
+      <input id="re_newid" placeholder="New ID (optional)">
+      <input id="re_newpin" placeholder="New PIN (optional)">
+      <button class="action-btn" onclick="resetAcc()">Reset</button>
+    </div>
+
+    <div class="msg" id="responseMsg"></div>
+
+    <!-- Bottom Navigation -->
+    <div class="nav-btns">
+      <button id="btnSignin" class="active" onclick="showForm('signin')">Signin</button>
+      <button id="btnSignup" onclick="showForm('signup')">Signup</button>
+      <button id="btnReset" onclick="showForm('reset')">Reset</button>
+    </div>
   </div>
 
-  <div class="hamburger" onclick="toggleMenu()">
-    <div></div><div></div><div></div>
-  </div>
-</div>
-
-<!-- MOBILE MENU -->
-<div id="mobileMenu" class="mobile-menu">
-  <button class="active" onclick="navigate('index.html',this)">Monitoring</button>
-  <button onclick="navigate('analysis.html',this)">Analysis</button>
-  <button onclick="navigate('history.html',this)">History</button>
-  <button onclick="navigate('settings.html',this)">Settings</button>
-  <button onclick="navigate('logout.html',this)">Logout</button>
-</div>
-
-<!-- CONTENT SECTIONS -->
-<div class="section-wrap">
-
-  <h2 class="section-title">Distance</h2>
-  <div class="section" id="distance"></div>
-
-  <h2 class="section-title">Flow</h2>
-  <div class="section" id="flow"></div>
-
-  <h2 class="section-title">Temperature</h2>
-  <div class="section" id="temperature"></div>
-
-  <h2 class="section-title">None</h2>
-  <div class="section" id="none"></div>
-
-</div>
+<footer>© 2025 Voltraxx Technologies</footer>
 
 <script>
-/* ------------ NAVIGATION ------------ */
-function toggleMenu(){
-  const m=document.getElementById('mobileMenu');
-  m.style.display=(m.style.display==='flex')?'none':'flex';
-}
-function navigate(page,btn){
-  document.querySelectorAll('.nav-buttons button,.mobile-menu button')
-    .forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  window.location.href=page;
+const API = "https://script.google.com/macros/s/AKfycbw5odTGe31kzctGeTrOkCMTbzz9CGfe36yqy0xaXy1xVJlDB4F6dXGWY91Qdzbl9y4/exec";
+
+function showLoading(state) {
+  responseMsg.style.color = "white";
+  responseMsg.textContent = state ? "Please wait..." : "";
 }
 
-/* ------------ API ------------ */
-const BASE_URL="https://script.google.com/macros/s/AKfycbzk7j1g31Z_9p7a0TDTYfWJIk8LW89j5UAN6W3FFtOb2L8UzHl5W3o_aS-7fydHTgdq9w/exec";
+/* Switch Forms */
+function showForm(type){
+  document.getElementById("signinForm").style.display = (type === "signin") ? "block" : "none";
+  document.getElementById("signupForm").style.display = (type === "signup") ? "block" : "none";
+  document.getElementById("resetForm").style.display = (type === "reset") ? "block" : "none";
 
-let cards={};
-let lastSet={};
+  document.getElementById("btnSignin").classList.remove("active");
+  document.getElementById("btnSignup").classList.remove("active");
+  document.getElementById("btnReset").classList.remove("active");
 
-loadData();
-setInterval(loadData,600);
+  document.getElementById(`btn${type.charAt(0).toUpperCase()+type.slice(1)}`).classList.add("active");
 
-/* ------------ FETCH ------------ */
-function loadData(){
-  fetch(`${BASE_URL}?page=monitoring`)
-    .then(r=>r.json())
-    .then(data=>{
-      renderCategory("distance",data.distance||[]);
-      renderCategory("flow",data.flow||[]);
-      renderCategory("temperature",data.temperature||[]);
-      renderCategory("none",data.none||[]);
-    })
-    .catch(err=>console.log(err));
+  document.getElementById("titleText").innerText =
+    type === "signin" ? "Sign In" :
+    type === "signup" ? "Sign Up" :
+    "Reset Account";
+
+  responseMsg.textContent = "";
 }
 
-/* ------------ BUILD CARDS ------------ */
-function renderCategory(sectionID, array){
-  const container = document.getElementById(sectionID);
+/* SIGNIN */
+async function signin(){
+  const id = signin_id.value.trim();
+  const pin = signin_pin.value.trim();
+  if(!id || !pin){ return showMsg("Enter both ID & PIN"); }
 
-  if(!cards[sectionID]) cards[sectionID]={};
-  if(!lastSet[sectionID]) lastSet[sectionID]={};
+  showLoading(true);
 
-  // clear old cards first
-  container.innerHTML = "";
-  cards[sectionID] = {};
+  let res = await fetch(`${API}?read=signin&id=${id}&pin=${pin}`);
+  let data = await res.json();
 
-  array.forEach(item => {
+  if(data.status === "ok"){
+    // Clear fields
+    signin_id.value = "";
+    signin_pin.value = "";
 
-    // 🔥 Skip if mainData is empty or invalid
-    if(
-      item.mainData === "" ||
-      item.mainData === null ||
-      item.mainData === undefined ||
-      item.mainData === "-" ||
-      (typeof item.mainData === "string" && item.mainData.trim().length === 0)
-    ){
-      return;
-    }
+    sessionStorage.setItem("BASE_URL", data.base_url);
+    sessionStorage.setItem("CLIENT", data.client);
+    sessionStorage.setItem("DEVICE_ID", id);
+    window.location = "monitoring.html";
+  } else {
+    showMsg("Invalid ID or PIN");
+  }
+}
 
-    const key=`${item.controllerID}-${item.sensorID}`;
+/* SIGNUP */
+async function signup(){
+  const q = {
+    device_id: su_device.value.trim(),
+    otp: su_otp.value.trim(),
+    client: su_client.value.trim(),
+    mobile: su_mobile.value.trim(),
+    id: su_id.value.trim(),
+    pin: su_pin.value.trim(),
+  };
 
-    // create card
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=`
-      <div class="card-header">
-        <div class="title"></div>
-        <div class="ids"></div>
-      </div>
+  if (Object.values(q).some(v => v === "")) {
+    return showMsg("All fields required.");
+  }
 
-      <div class="main-line">
-        <div class="main-label"></div>
-        <div class="main-value"></div>
-      </div>
+  showLoading(true);
 
-      <div class="sub-line">
-        <div class="sub-label"></div>
-        <div class="sub-value"></div>
-      </div>
-    `;
-    container.appendChild(card);
+  let url = `${API}?read=signup&device_id=${q.device_id}&otp=${q.otp}&client=${q.client}&mobile=${q.mobile}&id=${q.id}&pin=${q.pin}`;
+  let res = await fetch(url);
+  let data = await res.json();
 
-    cards[sectionID][key] = {
-      el:card,
-      title: card.querySelector(".title"),
-      ids: card.querySelector(".ids"),
-      mainLabel: card.querySelector(".main-label"),
-      mainValue: card.querySelector(".main-value"),
-      subLabel: card.querySelector(".sub-label"),
-      subValue: card.querySelector(".sub-value"),
-    };
+  showMsg(data.message);
 
-    const c=cards[sectionID][key];
+  if (data.status === "ok") {
+    // Clear fields
+    su_device.value = "";
+    su_otp.value = "";
+    su_client.value = "";
+    su_mobile.value = "";
+    su_id.value = "";
+    su_pin.value = "";
+  }
+}
 
-    const cID=item.controllerID;
-    const sID=item.sensorID;
-    const label=item.label;
+/* RESET */
+async function resetAcc(){
+  let d = re_device.value.trim();
+  let m = re_mobile.value.trim();
+  let o = re_otp.value.trim();
+  let nid = re_newid.value.trim();
+  let npin = re_newpin.value.trim();
 
-    // Title
-    if(label && label !== ""){
-      c.title.innerText = label;
-    } else {
-      c.title.innerText = `Sensor C${cID}:S${sID}`;
-    }
+  if(!d || !m || !o) return showMsg("Device ID, Mobile & OTP required");
 
-    c.ids.innerText = `C${cID}:S${sID}`;
+  showLoading(true);
 
-    c.mainLabel.innerText = item.mainLabel||"";
-    c.mainValue.innerText = `${item.mainData}${item.mainUnit||""}`;
+  let url = `${API}?read=reset&device_id=${d}&mobile=${m}&otp=${o}&new_id=${nid}&new_pin=${npin}`;
+  let res = await fetch(url);
+  let data = await res.json();
 
-    c.subLabel.innerText = item.subLabel||"";
-    c.subValue.innerText =
-      (item.subData!="" && item.subData!=null)
-        ? `${item.subData}${item.subUnit||""}`
-        : "";
+  showMsg(data.message);
 
-    // ---- Border alert ----
-    let color="#e69df4";
-    if(item.high && item.mainData>item.high) color="#ff4d4f";
-    else if(item.low && item.mainData<item.low) color="#17c964";
+  if (data.status === "ok") {
+    // Clear fields
+    re_device.value = "";
+    re_mobile.value = "";
+    re_otp.value = "";
+    re_newid.value = "";
+    re_newpin.value = "";
+  }
+}
 
-    c.el.style.borderLeft=`6px solid ${color}`;
-  });
+/* Helper */
+function showMsg(msg){
+  responseMsg.style.color = "white";
+  responseMsg.textContent = msg;
 }
 </script>
+
+
 </body>
 </html>

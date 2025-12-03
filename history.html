@@ -195,7 +195,7 @@
     <button onclick="nav('analysis.html')">Analysis</button>
     <button class="active" onclick="nav('history.html')">History</button>
     <button onclick="nav('settings.html')">Settings</button>
-    <button onclick="nav('logout.html')">Logout</button>
+    <button onclick="logoutUser()">Logout</button>
   </div>
 
   <div class="hamburger" onclick="toggleMenu()">
@@ -208,7 +208,7 @@
   <button onclick="nav('analysis.html')">Analysis</button>
   <button class="active" onclick="nav('history.html')">History</button>
   <button onclick="nav('settings.html')">Settings</button>
-  <button onclick="nav('logout.html')">Logout</button>
+  <button onclick="logoutUser()">Logout</button>
 </div>
 
 <!-- FILTER -->
@@ -235,7 +235,19 @@ function toggleMenu(){
   m.style.display=m.style.display==="flex"?"none":"flex";
 }
 
-const BASE_URL="https://script.google.com/macros/s/AKfycbzefzhucyqigki40hyaEZT1vnQXOP4B4EibOlW7xPSRiPl-QAIJCkKdGcDYsKyXGVntGQ/exec";
+function logoutUser() {
+  sessionStorage.clear();
+  window.location = "index.html";
+}
+
+
+const BASE_URL = sessionStorage.getItem("BASE_URL");
+
+if (!BASE_URL) {
+  // If user opens monitoring.html directly without login
+  alert("Session expired. Please log in again.");
+  window.location = "index.html";
+}
 
 let lastRow=null;
 

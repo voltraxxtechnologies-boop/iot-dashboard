@@ -164,7 +164,7 @@
       <button class="active" onclick="navigate('analysis.html', this)">Analysis</button>
       <button onclick="navigate('history.html', this)">History</button>
       <button onclick="navigate('settings.html', this)">Settings</button>
-      <button onclick="navigate('logout.html', this)">Logout</button>
+      <button onclick="logoutUser()">Logout</button>
     </div>
     <div class="hamburger" onclick="toggleMenu()">
       <div></div><div></div><div></div>
@@ -176,7 +176,7 @@
     <button class="active" onclick="navigate('analysis.html', this)">Analysis</button>
     <button onclick="navigate('history.html', this)">History</button>
     <button onclick="navigate('settings.html', this)">Settings</button>
-    <button onclick="navigate('logout.html', this)">Logout</button>
+    <button onclick="logoutUser()">Logout</button>
   </div>
 
   <div id="sections" class="section-wrap"></div>
@@ -201,8 +201,20 @@ function navigate(page, btn){
   window.location.href = page;
 }
 
+function logoutUser() {
+  sessionStorage.clear();
+  window.location = "index.html";
+}
+
+
 /* ---------------- CONFIG ---------------- */
-const BASE_URL = "https://script.google.com/macros/s/AKfycbwvBsB33ObFrowL-mMc6KR6UBTyk00GsaQMMa3SIkvUxJC4TE5dGe8w-XGD6r2HP5OUPA/exec";
+const BASE_URL = sessionStorage.getItem("BASE_URL");
+
+if (!BASE_URL) {
+  // If user opens monitoring.html directly without login
+  alert("Session expired. Please log in again.");
+  window.location = "index.html";
+}
 
 /* ---------------- FETCH ---------------- */
 fetch(`${BASE_URL}?page=analysis`)
