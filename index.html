@@ -26,7 +26,6 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Card */
     .login-wrapper {
       width: 90%;
       max-width: 380px;
@@ -49,8 +48,8 @@
     }
 
     @keyframes pulseLogo {
-      0% { transform: scale(1);}
-      100% { transform: scale(1.1);}
+      0% { transform: scale(1); }
+      100% { transform: scale(1.1); }
     }
 
     .logo-box img { width: 100%; height: 100%; object-fit: cover; }
@@ -82,9 +81,8 @@
       font-weight: 600;
     }
 
-    .msg { height: 22px; margin-top: 10px; color: #ffbbbb; }
+    .msg { height: 22px; margin-top: 10px; color: white; }
 
-    /* Bottom nav buttons */
     .nav-btns {
       display: flex;
       justify-content: space-between;
@@ -130,7 +128,10 @@
     <!-- SIGNIN FORM -->
     <div id="signinForm">
       <input id="signin_id" placeholder="Enter ID">
-      <input id="signin_pin" type="password" placeholder="Enter PIN">
+
+      <input id="signin_pin" type="password" placeholder="Enter PIN"
+             inputmode="numeric" pattern="[0-9]*">
+
       <button class="action-btn" onclick="signin()">Login</button>
     </div>
 
@@ -140,8 +141,12 @@
       <input id="su_otp" placeholder="OTP">
       <input id="su_client" placeholder="Client Name">
       <input id="su_mobile" placeholder="Mobile Number">
+
       <input id="su_id" placeholder="Create ID">
-      <input id="su_pin" placeholder="Create PIN">
+
+      <input id="su_pin" placeholder="Create PIN"
+             inputmode="numeric" pattern="[0-9]*">
+
       <button class="action-btn" onclick="signup()">Create Account</button>
     </div>
 
@@ -150,8 +155,12 @@
       <input id="re_device" placeholder="Device ID">
       <input id="re_mobile" placeholder="Mobile Number">
       <input id="re_otp" placeholder="OTP">
+
       <input id="re_newid" placeholder="New ID (optional)">
-      <input id="re_newpin" placeholder="New PIN (optional)">
+
+      <input id="re_newpin" placeholder="New PIN (optional)"
+             inputmode="numeric" pattern="[0-9]*">
+
       <button class="action-btn" onclick="resetAcc()">Reset</button>
     </div>
 
@@ -168,11 +177,15 @@
 <footer>© 2025 Voltraxx Technologies</footer>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbw5odTGe31kzctGeTrOkCMTbzz9CGfe36yqy0xaXy1xVJlDB4F6dXGWY91Qdzbl9y4/exec";
+const API = "https://script.google.com/macros/s/AKfycbwWPko9KArysDEx7KhzHK7Cp9z7c9kRGF20VNG8cR-s0jnaAQttV5QFku-exHcj288/exec";
 
 function showLoading(state) {
   responseMsg.style.color = "white";
   responseMsg.textContent = state ? "Please wait..." : "";
+}
+
+function isNumeric(val) {
+  return /^[0-9]+$/.test(val);
 }
 
 /* Switch Forms */
@@ -199,7 +212,9 @@ function showForm(type){
 async function signin(){
   const id = signin_id.value.trim();
   const pin = signin_pin.value.trim();
-  if(!id || !pin){ return showMsg("Enter both ID & PIN"); }
+
+  if(!id || !pin) return showMsg("Enter ID & PIN");
+  if(!isNumeric(pin)) return showMsg("PIN must be numbers only");
 
   showLoading(true);
 
@@ -207,7 +222,6 @@ async function signin(){
   let data = await res.json();
 
   if(data.status === "ok"){
-    // Clear fields
     signin_id.value = "";
     signin_pin.value = "";
 
@@ -235,6 +249,8 @@ async function signup(){
     return showMsg("All fields required.");
   }
 
+  if(!isNumeric(q.pin)) return showMsg("PIN must be numbers only");
+
   showLoading(true);
 
   let url = `${API}?read=signup&device_id=${q.device_id}&otp=${q.otp}&client=${q.client}&mobile=${q.mobile}&id=${q.id}&pin=${q.pin}`;
@@ -244,7 +260,6 @@ async function signup(){
   showMsg(data.message);
 
   if (data.status === "ok") {
-    // Clear fields
     su_device.value = "";
     su_otp.value = "";
     su_client.value = "";
@@ -264,6 +279,9 @@ async function resetAcc(){
 
   if(!d || !m || !o) return showMsg("Device ID, Mobile & OTP required");
 
+  if(npin && !isNumeric(npin))
+    return showMsg("New PIN must be numbers only");
+
   showLoading(true);
 
   let url = `${API}?read=reset&device_id=${d}&mobile=${m}&otp=${o}&new_id=${nid}&new_pin=${npin}`;
@@ -273,7 +291,6 @@ async function resetAcc(){
   showMsg(data.message);
 
   if (data.status === "ok") {
-    // Clear fields
     re_device.value = "";
     re_mobile.value = "";
     re_otp.value = "";
@@ -288,7 +305,6 @@ function showMsg(msg){
   responseMsg.textContent = msg;
 }
 </script>
-
 
 </body>
 </html>
