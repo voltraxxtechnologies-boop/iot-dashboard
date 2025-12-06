@@ -22,7 +22,8 @@
       padding:18px 24px;
       background:rgba(26,26,26,0.35);
       position:relative;
-      z-index:1000; /* ✔ brings nav above cards */
+      z-index:1000;
+      height:60px;
     }
     .logo{font-size:26px;font-weight:700;}
 
@@ -62,7 +63,7 @@
     }
 
     /* ---------- MOBILE MENU ---------- */
-    .mobile-menu{
+    .mobile-menu {
       display:none;
       flex-direction:column;
       background:rgba(26,26,26,0.95);
@@ -70,9 +71,10 @@
       position:absolute;
       left:0;
       right:0;
-      top:60px;
-      z-index:2000;  /* ✔ ON TOP of cards */
+      top:90px;
+      z-index:6000;   /* ABOVE loading screen */
     }
+
     .mobile-menu button{
       background:transparent;
       border:none;
@@ -88,7 +90,7 @@
 
     /* ---------- CONTENT ---------- */
     .section-title{
-      margin:18px 10px;
+      margin:20px 8px;
       font-size:20px;
       font-weight:600;
     }
@@ -145,10 +147,57 @@
     }
     .sub-label{font-size:13px;opacity:.85;}
     .sub-value{font-size:16px;font-weight:600;}
+
+
+
+    /* ---------- LOADING SCREEN (NAV visible) ---------- */
+    #loadingScreen {
+      position: fixed;
+      top: 90px;      /* NAVBAR visible */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(20,20,20,0.92);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 5000;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .loader {
+      width: 55px;
+      height: 55px;
+      border: 5px solid #ffffff55;
+      border-top-color: #C9A8E3;
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
   </style>
 </head>
 
 <body>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <div class="loader"></div>
+  <p>Loading...</p>
+</div>
+
+<script>
+function hideLoader(){
+  const l = document.getElementById("loadingScreen");
+  if(l) l.style.display = "none";
+}
+</script>
 
 <!-- NAV -->
 <div class="top-nav">
@@ -176,7 +225,7 @@
   <button onclick="logoutUser()">Logout</button>
 </div>
 
-<!-- CONTENT SECTIONS -->
+<!-- CONTENT -->
 <div class="section-wrap">
 
   <h2 class="section-title">Distance</h2>
@@ -216,7 +265,6 @@ function logoutUser() {
 const BASE_URL = sessionStorage.getItem("BASE_URL");
 
 if (!BASE_URL) {
-  // If user opens monitoring.html directly without login
   alert("Session expired. Please log in again.");
   window.location = "index.html";
 }
@@ -227,6 +275,7 @@ let lastSet={};
 loadData();
 setInterval(loadData,600);
 
+
 /* ------------ FETCH ------------ */
 function loadData(){
   fetch(`${BASE_URL}?page=monitoring`)
@@ -236,9 +285,12 @@ function loadData(){
       renderCategory("flow",data.flow||[]);
       renderCategory("temperature",data.temperature||[]);
       renderCategory("none",data.none||[]);
+
+      hideLoader();   // ✔ LOAD FINISHED
     })
     .catch(err=>console.log(err));
 }
+
 
 /* ------------ BUILD CARDS ------------ */
 function renderCategory(sectionID, array){
@@ -247,13 +299,11 @@ function renderCategory(sectionID, array){
   if(!cards[sectionID]) cards[sectionID]={};
   if(!lastSet[sectionID]) lastSet[sectionID]={};
 
-  // clear old cards first
   container.innerHTML = "";
   cards[sectionID] = {};
 
   array.forEach(item => {
 
-    // 🔥 Skip if mainData is empty or invalid
     if(
       item.mainData === "" ||
       item.mainData === null ||
@@ -266,7 +316,6 @@ function renderCategory(sectionID, array){
 
     const key=`${item.controllerID}-${item.sensorID}`;
 
-    // create card
     const card=document.createElement("div");
     card.className="card";
     card.innerHTML=`
@@ -303,7 +352,6 @@ function renderCategory(sectionID, array){
     const sID=item.sensorID;
     const label=item.label;
 
-    // Title
     if(label && label !== ""){
       c.title.innerText = label;
     } else {
@@ -321,7 +369,6 @@ function renderCategory(sectionID, array){
         ? `${item.subData}${item.subUnit||""}`
         : "";
 
-    // ---- Border alert ----
     let color="#e69df4";
     if(item.high && item.mainData>item.high) color="#ff4d4f";
     else if(item.low && item.mainData<item.low) color="#17c964";
@@ -330,5 +377,6 @@ function renderCategory(sectionID, array){
   });
 }
 </script>
+
 </body>
 </html>

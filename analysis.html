@@ -23,7 +23,8 @@
       padding: 18px 24px;
       background: rgba(26,26,26,0.35);
       position: relative;
-      z-index: 10;
+      z-index: 1000;
+      height: 60px;
     }
     .logo { font-size: 26px; font-weight: bold; }
     .nav-buttons { display: flex; gap: 20px; }
@@ -43,7 +44,13 @@
       color: #fff;
     }
     .nav-buttons button:hover { border: 2px solid #C9A8E3; }
-    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
     .hamburger div { height: 3px; width: 28px; background: white; border-radius: 2px; }
 
     @media(max-width:600px) { 
@@ -59,8 +66,8 @@
       position: absolute;
       left: 0;
       right: 0;
-      top: 60px;
-      z-index: 10;
+      top: 90px;
+      z-index: 6000;   /* ABOVE LOADING SCREEN */
       animation: slideDown 0.35s ease;
     }
 
@@ -152,10 +159,50 @@
     #infoContent { white-space: pre-wrap; font-size:15px; line-height:1.5; color:#e6e6e6; }
 
     .muted { opacity:0.8; font-size:13px; margin-top:6px; }
+
+    /* ---------- LOADING SCREEN (NAV visible) ---------- */
+    #loadingScreen {
+      position: fixed;
+      top: 90px;   /* navbar height */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(20,20,20,0.92);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 5000;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .loader {
+      width: 55px;
+      height: 55px;
+      border: 5px solid #ffffff55;
+      border-top-color: #C9A8E3;
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 
 <body>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <div class="loader"></div>
+  <p>Loading...</p>
+</div>
+
+<script>
+function hideLoader(){
+  const l = document.getElementById("loadingScreen");
+  if(l) l.style.display = "none";
+}
+</script>
 
   <div class="top-nav">
     <div class="logo">Voltraxx</div>
@@ -211,7 +258,6 @@ function logoutUser() {
 const BASE_URL = sessionStorage.getItem("BASE_URL");
 
 if (!BASE_URL) {
-  // If user opens monitoring.html directly without login
   alert("Session expired. Please log in again.");
   window.location = "index.html";
 }
@@ -220,15 +266,14 @@ if (!BASE_URL) {
 fetch(`${BASE_URL}?page=analysis`)
   .then(r => r.json())
   .then(json => {
+    hideLoader();   // ✔ REMOVE LOADING ONCE DATA ARRIVES
+
     const wrapper = document.getElementById('sections');
 
-    // custom category order
     const order = ["distance","flow","temperature"];
 
-    // get existing API keys except status
     let keys = Object.keys(json).filter(k => k !== 'status');
 
-    // put in order
     keys.sort((a,b)=>{
       const ai = order.indexOf(a.toLowerCase());
       const bi = order.indexOf(b.toLowerCase());
@@ -255,6 +300,7 @@ fetch(`${BASE_URL}?page=analysis`)
     });
   })
   .catch(err => {
+    hideLoader();
     console.error('fetch error', err);
     document.getElementById('sections').innerHTML =
       '<div class="muted">Could not load data from API.</div>';
@@ -298,14 +344,12 @@ function createCard(item){
 function renderChart(canvas, item){
   const labels = Array.from({length:24}, (_,i)=> String(i));
 
-  // preserve empty and -1
   let rawValues = labels.map(key => {
     const v = item[key];
     if (v === -1 || v === "" || v === null || v === undefined) return null;
     return Number(v);
   });
 
-  // apply percentage ONLY to Distance
   if(item["Sensor Type"] === "Distance"){
     const H = Number(item["Tank Height"]) || 0;
     const O = Number(item["Offset Error"]) || 0;
@@ -368,8 +412,7 @@ function openPopup(item){
   for(let i=1;i<=5;i++){
     const ck = `custom ${i}`;
     const vk = `value ${i}`;
-    if(item[ck] !== -1 && item[ck] !== ""
-    && item[vk] !== -1 && item[vk] !== ""){
+    if(item[ck] !== -1 && item[ck] !== "" && item[vk] !== -1 && item[vk] !== ""){
       lines.push(`${item[ck]}: ${item[vk]}`);
     }
   }
@@ -379,6 +422,7 @@ function openPopup(item){
   document.getElementById('infoContent').innerText = lines.join("\n");
   document.getElementById('extraInfo').style.display = 'block';
 }
+
 function closeExtraInfo(){
   document.getElementById('extraInfo').style.display = 'none';
 }

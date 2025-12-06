@@ -23,6 +23,7 @@
       background:rgba(26,26,26,0.35);
       position:relative;
       z-index:1000;
+      height:60px;
     }
     .logo{font-size:26px;font-weight:700;}
 
@@ -73,8 +74,8 @@
       position:absolute;
       left:0;
       right:0;
-      top:60px;
-      z-index:2000;
+      top:90px;
+      z-index:6000; /* ABOVE LOADING SCREEN */
     }
     .mobile-menu button{
       background:transparent;
@@ -118,7 +119,6 @@
       transition:.3s;
     }
 
-    /* MATCH History.html button behavior */
     .updateBtn.loading{
       background:#ffca2c !important;
       color:#111 !important;
@@ -157,10 +157,51 @@
       padding:8px 4px;
       border-bottom:1px solid rgba(255,255,255,0.14);
     }
+
+    /* ---------- LOADING SCREEN ---------- */
+    #loadingScreen {
+      position: fixed;
+      top: 90px;  /* NAV BAR VISIBLE */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(20,20,20,0.92);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 5000;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .loader {
+      width: 55px;
+      height: 55px;
+      border: 5px solid #ffffff55;
+      border-top-color: #C9A8E3;
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
   </style>
 </head>
 
 <body>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <div class="loader"></div>
+  <p>Loading...</p>
+</div>
+
+<script>
+function hideLoader(){
+  const l=document.getElementById("loadingScreen");
+  if(l) l.style.display="none";
+}
+</script>
 
 <!-- NAV -->
 <div class="top-nav">
@@ -191,7 +232,7 @@
 function nav(p){ window.location.href=p; }
 function toggleMenu(){
   let m=document.getElementById("mobileMenu");
-  m.style.display = (m.style.display==="flex") ? "none" : "flex";
+  m.style.display = (m.style.display==="flex") ? "none":"flex";
 }
 </script>
 
@@ -200,24 +241,7 @@ function toggleMenu(){
   <select id="sensorSelect"></select>
 
   <select id="metaSelect">
-    <option value="">Select MetaData</option>
-    <option value="Label">Label</option>
-    <option value="High Reading">High Reading</option>
-    <option value="LOW Reading">LOW Reading</option>
-    <option value="Tank Volume">Tank Volume</option>
-    <option value="Tank Height">Tank Height</option>
-    <option value="Offset Error">Offset Error</option>
-
-    <option value="custom 1">custom 1</option>
-    <option value="value 1">value 1</option>
-    <option value="custom 2">custom 2</option>
-    <option value="value 2">value 2</option>
-    <option value="custom 3">custom 3</option>
-    <option value="value 3">value 3</option>
-    <option value="custom 4">custom 4</option>
-    <option value="value 4">value 4</option>
-    <option value="custom 5">custom 5</option>
-    <option value="value 5">value 5</option>
+    <option value="">Select Metadata</option>
   </select>
 
   <input type="text" id="valueBox" placeholder="Enter value">
@@ -232,7 +256,6 @@ function toggleMenu(){
 </div>
 
 <script>
-
 function logoutUser() {
   sessionStorage.clear();
   window.location = "index.html";
@@ -241,7 +264,6 @@ function logoutUser() {
 const BASE_URL = sessionStorage.getItem("BASE_URL");
 
 if (!BASE_URL) {
-  // If user opens monitoring.html directly without login
   alert("Session expired. Please log in again.");
   window.location = "index.html";
 }
@@ -250,22 +272,50 @@ let allRows = [];
 
 /* ============= LOAD SETTINGS ============= */
 async function loadSettings() {
-  const res = await fetch(BASE_URL + "?page=settings");
-  const data = await res.json();
+  try {
+    const res = await fetch(BASE_URL + "?page=settings");
+    const data = await res.json();
 
-  if (!data.rows) return;
+    if (!data.rows) return;
 
-  allRows = data.rows;
+    allRows = data.rows;
 
-  const sensorSel = document.getElementById("sensorSelect");
-  sensorSel.innerHTML = "<option value=''>Select Sensor</option>";
+    /* ----- SENSOR LIST ----- */
+    const sensorSel = document.getElementById("sensorSelect");
+    sensorSel.innerHTML = "<option value=''>Select Sensor</option>";
 
-  data.rows.forEach(r => {
-    sensorSel.innerHTML += `
-      <option value="${r["sensor ID"]}">
-        ${r["sensor ID"]} (${r["Sensor Type"]})
-      </option>`;
-  });
+    data.rows.forEach(r => {
+      sensorSel.innerHTML += `
+        <option value="${r["sensor ID"]}">
+          ${r["sensor ID"]} (${r["Sensor Type"]})
+        </option>`;
+    });
+
+    /* ----- DYNAMIC METADATA LIST ----- */
+    const metaSel = document.getElementById("metaSelect");
+    metaSel.innerHTML = `<option value="">Select Metadata</option>`;
+
+    const firstRow = data.rows[0];
+
+    Object.keys(firstRow).forEach(key => {
+
+      // Skip unwanted fields
+      if (
+        key === "sensor ID" ||
+        key === "controller ID" ||
+        key === "" ||
+        key === null
+      ) return;
+
+      // Include everything else including Sensor Type
+      metaSel.innerHTML += `<option value="${key}">${key}</option>`;
+    });
+
+    hideLoader();
+
+  } catch (e) {
+    hideLoader();
+  }
 }
 
 loadSettings();
@@ -300,7 +350,6 @@ function showPreview() {
 async function updateMeta() {
   const btn = document.querySelector(".updateBtn");
 
-  // Set loading
   btn.classList.remove("success","error");
   btn.classList.add("loading");
   btn.innerText = "Updating...";
@@ -322,30 +371,28 @@ async function updateMeta() {
     "&value=" + encodeURIComponent(val);
 
   try {
-    const res = await fetch(BASE_URL, {
+
+    await fetch(BASE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: payload
     });
 
-    // SUCCESS
     btn.classList.remove("loading");
     btn.classList.add("success");
     btn.innerText = "Updated ✔";
 
-    // Reset fields
     document.getElementById("sensorSelect").value = "";
     document.getElementById("metaSelect").value = "";
     document.getElementById("valueBox").value = "";
     document.getElementById("previewCard").style.display = "none";
 
-    await loadSettings(); // reload fresh data
+    await loadSettings();
 
   } catch (e) {
     btn.classList.remove("loading");
     btn.classList.add("error");
     btn.innerText = "Error!";
-    return;
   }
 
   setTimeout(()=>{

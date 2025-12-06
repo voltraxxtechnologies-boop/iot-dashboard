@@ -22,6 +22,8 @@
       padding:18px 24px;
       background:rgba(26,26,26,0.35);
       position: relative;
+      z-index: 1000;
+      height: 60px;
     }
     .logo{font-size:26px;font-weight:700;}
 
@@ -56,8 +58,8 @@
       background:rgba(26,26,26,0.95);
       padding:12px;
       position:absolute;
-      left:0;right:0;top:60px;
-      z-index:10;
+      left:0;right:0;top:90px;
+      z-index:6000; /* ABOVE LOADING SCREEN */
     }
     .mobile-menu button{
       background:transparent;border:none;font-size:16px;
@@ -146,7 +148,7 @@
     .chart-container{
       width:100%;
       margin-top:6px;
-      height:180px; /* mobile default */
+      height:180px;
     }
 
     canvas{
@@ -154,14 +156,9 @@
       height:180px!important;
     }
 
-    /* bigger on larger screens */
     @media(min-width:768px){
-      .chart-container{
-        height:340px;
-      }
-      canvas{
-        height:340px!important;
-      }
+      .chart-container{ height:340px; }
+      canvas{ height:340px!important; }
     }
 
     /* TABLE */
@@ -180,11 +177,51 @@
       width:42%;
       font-weight:500;
     }
+
+    /* ---------- LOADING SCREEN (NAV visible) ---------- */
+    #loadingScreen {
+      position: fixed;
+      top: 90px;   /* navbar height */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(20,20,20,0.92);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 5000;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .loader {
+      width: 55px;
+      height: 55px;
+      border: 5px solid #ffffff55;
+      border-top-color: #C9A8E3;
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
   </style>
 </head>
 
-
 <body>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <div class="loader"></div>
+  <p>Loading...</p>
+</div>
+
+<script>
+function hideLoader(){
+  let l = document.getElementById("loadingScreen");
+  if(l) l.style.display = "none";
+}
+</script>
 
 <!-- NAV -->
 <div class="top-nav">
@@ -240,11 +277,9 @@ function logoutUser() {
   window.location = "index.html";
 }
 
-
 const BASE_URL = sessionStorage.getItem("BASE_URL");
 
 if (!BASE_URL) {
-  // If user opens monitoring.html directly without login
   alert("Session expired. Please log in again.");
   window.location = "index.html";
 }
@@ -257,6 +292,8 @@ window.onload=()=>{
   fetch(`${BASE_URL}?page=history`)
   .then(r=>r.json())
   .then(j=>{
+    hideLoader();  // ✔ remove loader after initial load
+
     const sel=document.getElementById("sensorSelect");
     if(j.AvailableSensors){
       j.AvailableSensors.forEach(id=>{
@@ -266,12 +303,15 @@ window.onload=()=>{
         sel.appendChild(o);
       });
     }
-  });
+  })
+  .catch(()=>hideLoader());
 };
 
 
 /******** FETCH DATA *********/
 function getHistory(){
+  hideLoader(); // in case user clicks again
+
   const btn=document.querySelector(".fetchBtn");
   btn.classList.remove("success","error");
   btn.classList.add("loading");
@@ -293,16 +333,18 @@ function getHistory(){
   fetch(`${BASE_URL}?page=history&sensorid=${s}&date=${final}`)
   .then(r=>r.json())
   .then(j=>{
-    if(j.status!=="ok"){fail();}
-    else{
-      lastRow=j.row;
-      renderHistory(j.row);
-      btn.classList.remove("loading");
-      btn.classList.add("success");
-      btn.innerText="Fetched ✔";
+    if(j.status!=="ok"){fail(); return;}
 
-      document.getElementById("downloadBlock").style.display="flex";
-    }
+    lastRow=j.row;
+    renderHistory(j.row);
+
+    btn.classList.remove("loading");
+    btn.classList.add("success");
+    btn.innerText="Fetched ✔";
+
+    document.getElementById("downloadBlock").style.display="flex";
+
+    hideLoader();  // ✔ remove loader after fetch
   })
   .catch(fail);
 
@@ -310,6 +352,7 @@ function getHistory(){
     btn.classList.remove("loading");
     btn.classList.add("error");
     btn.innerText="Error";
+    hideLoader();
   }
 }
 
@@ -441,9 +484,7 @@ function renderChart(canvas,item){
 }
 
 
-/******************************************************
-   COMBINE GRAPH + TABLE => SINGLE JPEG
-******************************************************/
+/******** COMBINE GRAPH + TABLE AS JPEG *********/
 function downloadJPEG(){
 
   const graphCanvas = document.querySelector("canvas");
@@ -454,17 +495,14 @@ function downloadJPEG(){
     return;
   }
 
-  // Extract table rows
   const rows = [...table.rows].map(r => [...r.cells].map(c => c.innerText));
 
-  // DYNAMIC canvas size
   const w = 1000;
   const logoHeight = 90;
   const spacing = 40;
   const tableHeight = rows.length * 38;
   const graphH = graphCanvas.height;
 
-  // total height
   const h = logoHeight + spacing + graphH + spacing + tableHeight + 100;
 
   const out = document.createElement("canvas");
@@ -472,20 +510,16 @@ function downloadJPEG(){
   out.height = h;
   const ctx = out.getContext("2d");
 
-  // background
   ctx.fillStyle = "#222233";
   ctx.fillRect(0, 0, w, h);
 
-  /************ DRAW LOGO ************/
   ctx.fillStyle = "#ffffff";
   ctx.font = "32px Segoe UI";
   ctx.textAlign = "center";
   ctx.fillText("VOLTRAXX", w / 2, 60);
 
-  /************ GRAPH ************/
   ctx.drawImage(graphCanvas, 50, logoHeight + 20, 900, graphH);
 
-  /************ TABLE ************/
   ctx.textAlign = "left";
   ctx.font = "18px Segoe UI";
   ctx.fillStyle = "#fff";
@@ -497,7 +531,6 @@ function downloadJPEG(){
     y += 34;
   }
 
-  /************ DOWNLOAD ************/
   const a = document.createElement("a");
   a.download = "history_export.jpeg";
   a.href = out.toDataURL("image/jpeg", 0.95);
