@@ -3,6 +3,11 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>History Dashboard</title>
+
+  <!-- TAB ICON -->
+  <link rel="icon" type="image/png"
+    href="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -12,32 +17,75 @@
       font-family:'Segoe UI',sans-serif;
       background:linear-gradient(135deg,#6A329F,#3B1C5B);
       color:white;
+      overflow-x:hidden;
     }
 
-    /* NAVIGATION */
+    /* ---------- NAV ---------- */
     .top-nav{
       display:flex;
-      justify-content:space-between;
       align-items:center;
+      justify-content:space-between;
       padding:18px 24px;
       background:rgba(26,26,26,0.35);
-      position: relative;
-      z-index: 1000;
-      height: 60px;
+      position:relative;
+      z-index:1000;
+      height:60px;
     }
-    .logo{font-size:26px;font-weight:700;}
 
-    .nav-buttons{display:flex;gap:20px;}
-    .nav-buttons button{
-      background:transparent;color:#fff;
-      padding:8px 14px;font-size:16px;
-      border:none;border-radius:6px;
-      cursor:pointer;transition:.25s;
+    /* BRAND (logo + Voltraxx) */
+    .nav-brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-shrink:0;
+      white-space:nowrap;
     }
+
+    .nav-logo-box{
+      width:40px;
+      height:40px;
+      border-radius:10px;
+      overflow:hidden;
+      flex-shrink:0;
+    }
+
+    .nav-logo-box img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .logo{
+      font-size:26px;
+      font-weight:700;
+      flex-shrink:0;
+    }
+
+    /* NAV BUTTONS */
+    .nav-buttons{
+      display:flex;
+      gap:20px;
+      flex-shrink:1;
+    }
+
+    .nav-buttons button{
+      background:transparent;
+      color:white;
+      padding:8px 14px;
+      font-size:16px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      transition:.25s;
+      white-space:nowrap;
+    }
+
     .nav-buttons button.active{
       background:linear-gradient(135deg,#C9A8E3,#6A329F);
-      color:#fff;font-weight:700;
+      font-weight:700;
+      color:white;
     }
+
     .nav-buttons button:hover{
       border:2px solid #C9A8E3;
     }
@@ -48,25 +96,11 @@
       flex-direction:column;
       gap:5px;
       cursor:pointer;
+      margin-left:20px;
+      flex-shrink:0;
     }
     .hamburger div{
-      height:3px;width:28px;background:white;border-radius:2px;
-    }
-    .mobile-menu{
-      display:none;
-      flex-direction:column;
-      background:rgba(26,26,26,0.95);
-      padding:12px;
-      position:absolute;
-      left:0;right:0;top:90px;
-      z-index:6000; /* ABOVE LOADING SCREEN */
-    }
-    .mobile-menu button{
-      background:transparent;border:none;font-size:16px;
-      color:white;padding:14px;text-align:left;
-    }
-    .mobile-menu button.active{
-      font-weight:bold;color:#ffd6ff;
+      width:28px;height:3px;background:white;border-radius:2px;
     }
 
     @media(max-width:600px){
@@ -74,13 +108,41 @@
       .hamburger{display:flex;}
     }
 
-    /* FILTERS */
+    /* ---------- MOBILE MENU ---------- */
+    .mobile-menu{
+      display:none;
+      flex-direction:column;
+      background:rgba(26,26,26,0.95);
+      padding:12px;
+      position:absolute;
+      left:0;
+      right:0;
+      top:90px;  /* YOU REQUESTED */
+      z-index:6000;
+    }
+
+    .mobile-menu button{
+      background:transparent;
+      border:none;
+      font-size:16px;
+      color:white;
+      padding:14px;
+      text-align:left;
+      white-space:nowrap;
+    }
+    .mobile-menu button.active{
+      color:#ffd6ff;
+      font-weight:bold;
+    }
+
+    /* ---------- FILTER BAR ---------- */
     .filters{
       padding:14px;
       display:flex;
       justify-content:center;
       gap:12px;
       flex-wrap:wrap;
+      margin-top:10px;
     }
     select,input[type="date"],button.fetchBtn{
       padding:10px;font-size:15px;border-radius:8px;border:none;
@@ -94,20 +156,11 @@
       cursor:pointer;
       transition:0.3s;
     }
-    button.fetchBtn.loading{
-      background:#ffca2c;
-      color:#111;
-    }
-    button.fetchBtn.success{
-      background:#17c964;
-      color:white;
-    }
-    button.fetchBtn.error{
-      background:#ff4d4f;
-      color:white;
-    }
+    button.fetchBtn.loading{ background:#ffca2c;color:#111; }
+    button.fetchBtn.success{ background:#17c964;color:white; }
+    button.fetchBtn.error{ background:#ff4d4f;color:white; }
 
-    /* DOWNLOAD BUTTON */
+    /* DOWNLOAD BTN */
     .download-wrap{
       display:none;
       justify-content:center;
@@ -125,7 +178,7 @@
       transition:0.35s;
     }
 
-    /* CONTAINERS */
+    /* ---------- CONTENT ---------- */
     .section-wrap{
       padding:20px;
       display:flex;
@@ -144,24 +197,18 @@
     .title{font-size:18px;font-weight:700;}
     .subtitle{opacity:.85;margin-bottom:10px;}
 
-    /* GRAPH */
     .chart-container{
       width:100%;
       margin-top:6px;
       height:180px;
     }
-
-    canvas{
-      width:100%!important;
-      height:180px!important;
-    }
+    canvas{ width:100%!important;height:180px!important; }
 
     @media(min-width:768px){
       .chart-container{ height:340px; }
       canvas{ height:340px!important; }
     }
 
-    /* TABLE */
     table{
       width:100%;
       border-collapse:collapse;
@@ -178,32 +225,32 @@
       font-weight:500;
     }
 
-    /* ---------- LOADING SCREEN (NAV visible) ---------- */
-    #loadingScreen {
+    /* ---------- LOADING SCREEN ---------- */
+    #loadingScreen{
       position: fixed;
-      top: 90px;   /* navbar height */
+      top: 90px;  /* YOU REQUESTED */
       left: 0;
       right: 0;
       bottom: 0;
       background: rgba(20,20,20,0.92);
       backdrop-filter: blur(4px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 5000;
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      z-index:5000;
+      color:white;
+      text-align:center;
     }
-    .loader {
-      width: 55px;
-      height: 55px;
-      border: 5px solid #ffffff55;
-      border-top-color: #C9A8E3;
-      border-radius: 50%;
-      animation: spin .9s linear infinite;
+    .loader{
+      width:55px;height:55px;
+      border:5px solid #ffffff55;
+      border-top-color:#C9A8E3;
+      border-radius:50%;
+      animation:spin .9s linear infinite;
+      margin-bottom:10px;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
 
   </style>
 </head>
@@ -218,14 +265,19 @@
 
 <script>
 function hideLoader(){
-  let l = document.getElementById("loadingScreen");
-  if(l) l.style.display = "none";
+  document.getElementById("loadingScreen").style.display="none";
 }
 </script>
 
-<!-- NAV -->
+<!-- NAVIGATION -->
 <div class="top-nav">
-  <div class="logo">Voltraxx</div>
+
+  <div class="nav-brand">
+    <div class="nav-logo-box">
+      <img src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+    </div>
+    <div class="logo">Voltraxx</div>
+  </div>
 
   <div class="nav-buttons">
     <button onclick="nav('monitoring.html')">Monitoring</button>
@@ -238,8 +290,10 @@ function hideLoader(){
   <div class="hamburger" onclick="toggleMenu()">
     <div></div><div></div><div></div>
   </div>
+
 </div>
 
+<!-- MOBILE MENU -->
 <div id="mobileMenu" class="mobile-menu">
   <button onclick="nav('monitoring.html')">Monitoring</button>
   <button onclick="nav('analysis.html')">Analysis</button>
@@ -248,7 +302,7 @@ function hideLoader(){
   <button onclick="logoutUser()">Logout</button>
 </div>
 
-<!-- FILTER -->
+<!-- FILTER BAR -->
 <div class="filters">
   <select id="sensorSelect">
     <option value="">Select Sensor</option>
@@ -259,41 +313,36 @@ function hideLoader(){
 
 <div id="sections" class="section-wrap"></div>
 
-<!-- DOWNLOAD -->
+<!-- DOWNLOAD EXPORT -->
 <div class="download-wrap" id="downloadBlock">
   <button class="downloadBtn" onclick="downloadJPEG()">⬇ Download Graph + Table</button>
 </div>
 
 
 <script>
-function nav(p){window.location.href=p;}
+function nav(p){ window.location.href=p; }
 function toggleMenu(){
-  let m=document.getElementById("mobileMenu");
-  m.style.display=m.style.display==="flex"?"none":"flex";
+  const m=document.getElementById("mobileMenu");
+  m.style.display=(m.style.display==="flex") ? "none" : "flex";
 }
-
-function logoutUser() {
+function logoutUser(){
   sessionStorage.clear();
-  window.location = "index.html";
+  window.location="index.html";
 }
 
-const BASE_URL = sessionStorage.getItem("BASE_URL");
-
-if (!BASE_URL) {
-  alert("Session expired. Please log in again.");
-  window.location = "index.html";
+const BASE_URL=sessionStorage.getItem("BASE_URL");
+if(!BASE_URL){
+  alert("Session expired.");window.location="index.html";
 }
 
 let lastRow=null;
 
-
-/******** INITIAL SENSOR LIST *********/
+/* INITIAL LOAD */
 window.onload=()=>{
   fetch(`${BASE_URL}?page=history`)
   .then(r=>r.json())
   .then(j=>{
-    hideLoader();  // ✔ remove loader after initial load
-
+    hideLoader();
     const sel=document.getElementById("sensorSelect");
     if(j.AvailableSensors){
       j.AvailableSensors.forEach(id=>{
@@ -308,9 +357,9 @@ window.onload=()=>{
 };
 
 
-/******** FETCH DATA *********/
+/* FETCH HISTORY DATA */
 function getHistory(){
-  hideLoader(); // in case user clicks again
+  hideLoader(); // ensure clean state
 
   const btn=document.querySelector(".fetchBtn");
   btn.classList.remove("success","error");
@@ -320,7 +369,7 @@ function getHistory(){
   const s=document.getElementById("sensorSelect").value;
   const d=document.getElementById("dateSelect").value;
 
-  if(!s||!d){
+  if(!s || !d){
     btn.classList.remove("loading");
     btn.classList.add("error");
     btn.innerText="Select Both";
@@ -333,7 +382,7 @@ function getHistory(){
   fetch(`${BASE_URL}?page=history&sensorid=${s}&date=${final}`)
   .then(r=>r.json())
   .then(j=>{
-    if(j.status!=="ok"){fail(); return;}
+    if(j.status!=="ok"){fail();return;}
 
     lastRow=j.row;
     renderHistory(j.row);
@@ -343,8 +392,7 @@ function getHistory(){
     btn.innerText="Fetched ✔";
 
     document.getElementById("downloadBlock").style.display="flex";
-
-    hideLoader();  // ✔ remove loader after fetch
+    hideLoader();
   })
   .catch(fail);
 
@@ -357,7 +405,7 @@ function getHistory(){
 }
 
 
-/******** RENDER *********/
+/* RENDER HISTORY VIEW */
 function renderHistory(item){
   const wrap=document.getElementById("sections");
   wrap.innerHTML="";
@@ -366,8 +414,7 @@ function renderHistory(item){
   wrap.appendChild(tableCard(item));
 }
 
-
-/******** GRAPH CARD *********/
+/* GRAPH CARD */
 function graphCard(item){
   const card=document.createElement("div");
   card.className="card";
@@ -394,8 +441,7 @@ function graphCard(item){
   return card;
 }
 
-
-/******** TABLE CARD *********/
+/* TABLE CARD */
 function tableCard(item){
   const card=document.createElement("div");
   card.className="card";
@@ -414,14 +460,9 @@ function tableCard(item){
 
   const add=(k,v)=>{
     const tr=document.createElement("tr");
-    const td1=document.createElement("td");
-    const td2=document.createElement("td");
-    td1.innerText=k;
-    td2.innerText=v;
-    tr.appendChild(td1);
-    tr.appendChild(td2);
+    tr.innerHTML=`<td>${k}</td><td>${v}</td>`;
     t.appendChild(tr);
-  }
+  };
 
   const empty=v=>v===-1||v===""||v===null;
 
@@ -431,10 +472,12 @@ function tableCard(item){
     if(empty(item[k]))continue;
     add(k,item[k]);
   }
+
   for(let i=1;i<=5;i++){
-    let c=item[`custom ${i}`];
-    let v=item[`value ${i}`];
-    if(!empty(c)&&!empty(v))add(c,v);
+    const ck=`custom ${i}`;
+    const vk=`value ${i}`;
+    if(!empty(item[ck]) && !empty(item[vk]))
+      add(item[ck],item[vk]);
   }
 
   card.appendChild(t);
@@ -442,12 +485,12 @@ function tableCard(item){
 }
 
 
-/******** GRAPH BUILD *********/
+/* GRAPH RENDERING */
 function renderChart(canvas,item){
   const labels=Array.from({length:24},(_,i)=>i);
   let values=labels.map(i=>{
     const v=item[String(i)];
-    if(v===-1||v===""||v==null)return null;
+    if(v===-1 || v==="" || v==null) return null;
     return Number(v);
   });
 
@@ -456,7 +499,7 @@ function renderChart(canvas,item){
     const O=Number(item["Offset Error"]);
     if(H>0){
       values=values.map(v=>{
-        if(v===null)return null;
+        if(v===null) return null;
         return Math.max(0,Math.min(100,Math.round(((H-v+O)/H)*100)));
       });
     }
@@ -484,7 +527,7 @@ function renderChart(canvas,item){
 }
 
 
-/******** COMBINE GRAPH + TABLE AS JPEG *********/
+/* DOWNLOAD EXPORT */
 function downloadJPEG(){
 
   const graphCanvas = document.querySelector("canvas");
@@ -536,7 +579,6 @@ function downloadJPEG(){
   a.href = out.toDataURL("image/jpeg", 0.95);
   a.click();
 }
-
 </script>
 
 </body>

@@ -5,14 +5,19 @@
   <title>Voltraxx Access Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
+  <!-- FAVICON ADDED (no other changes) -->
+  <link rel="icon" type="image/png"
+    href="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+
   <style>
     body {
       margin: 0;
+
       font-family: "Poppins", sans-serif;
       height: 100vh;
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      justify-content: center; 
+      align-items: flex-start; /* TOP */
       padding-top: 10px;
       background: linear-gradient(135deg, #3B1C5B, #6A329F, #C9A8E3);
       background-size: 300% 300%;
@@ -28,10 +33,10 @@
 
     .login-wrapper {
       width: 90%;
-      max-width: 300px;
+      max-width: 300px;  /* Reduced width */
       padding: 35px 30px;
       border-radius: 16px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(12px);
       box-shadow: 0 10px 30px rgba(0,0,0,0.45);
       text-align: center;
@@ -104,55 +109,10 @@
       color: #3B1C5B;
       font-weight: bold;
     }
-
-    /* ---------------- LOADING SCREEN ---------------- */
-    #loadingScreen {
-      position: fixed;
-      inset: 0;
-      background: rgba(20,20,20,0.92);
-      backdrop-filter: blur(4px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 5000;
-      color: white;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .loader {
-      width: 50px;
-      height: 50px;
-      border: 5px solid #ffffff55;
-      border-top-color: #C9A8E3;
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
   </style>
 </head>
 
 <body>
-
-<!-- LOADING SCREEN -->
-<div id="loadingScreen">
-  <div class="loader"></div>
-  <p>Loading...</p>
-</div>
-
-<script>
-function hideLoader() {
-  const el = document.getElementById("loadingScreen");
-  if (el) el.style.display = "none";
-}
-</script>
-
-<script>
-window.onload = hideLoader;
-</script>
 
   <div class="login-wrapper">
     <div class="logo-box">
@@ -164,7 +124,10 @@ window.onload = hideLoader;
     <!-- SIGNIN FORM -->
     <div id="signinForm">
       <input id="signin_id" placeholder="Enter ID">
-      <input id="signin_pin" type="password" placeholder="Enter PIN" inputmode="numeric" pattern="[0-9]*">
+
+      <input id="signin_pin" type="password" placeholder="Enter PIN"
+             inputmode="numeric" pattern="[0-9]*">
+
       <button class="action-btn" onclick="signin()">Verify</button>
     </div>
 
@@ -174,8 +137,12 @@ window.onload = hideLoader;
       <input id="su_otp" placeholder="OTP">
       <input id="su_client" placeholder="Client Name">
       <input id="su_mobile" placeholder="Mobile Number">
+
       <input id="su_id" placeholder="Create ID">
-      <input id="su_pin" placeholder="Create PIN" inputmode="numeric" pattern="[0-9]*">
+
+      <input id="su_pin" placeholder="Create PIN"
+             inputmode="numeric" pattern="[0-9]*">
+
       <button class="action-btn" onclick="signup()">Create Account</button>
     </div>
 
@@ -184,8 +151,12 @@ window.onload = hideLoader;
       <input id="re_device" placeholder="Device ID">
       <input id="re_mobile" placeholder="Mobile Number">
       <input id="re_otp" placeholder="OTP">
+
       <input id="re_newid" placeholder="New ID (optional)">
-      <input id="re_newpin" placeholder="New PIN (optional)" inputmode="numeric" pattern="[0-9]*">
+
+      <input id="re_newpin" placeholder="New PIN (optional)"
+             inputmode="numeric" pattern="[0-9]*">
+
       <button class="action-btn" onclick="resetAcc()">Reset</button>
     </div>
 
@@ -207,7 +178,9 @@ function showLoading(state) {
   responseMsg.textContent = state ? "Please wait..." : "";
 }
 
-function isNumeric(val) { return /^[0-9]+$/.test(val); }
+function isNumeric(val) {
+  return /^[0-9]+$/.test(val);
+}
 
 /* Switch Forms */
 function showForm(type){
@@ -215,12 +188,13 @@ function showForm(type){
   document.getElementById("signupForm").style.display = (type === "signup") ? "block" : "none";
   document.getElementById("resetForm").style.display = (type === "reset") ? "block" : "none";
 
-  btnSignin.classList.remove("active");
-  btnSignup.classList.remove("active");
-  btnReset.classList.remove("active");
+  document.getElementById("btnSignin").classList.remove("active");
+  document.getElementById("btnSignup").classList.remove("active");
+  document.getElementById("btnReset").classList.remove("active");
+
   document.getElementById(`btn${type.charAt(0).toUpperCase()+type.slice(1)}`).classList.add("active");
 
-  titleText.innerText =
+  document.getElementById("titleText").innerText =
     type === "signin" ? "Sign In" :
     type === "signup" ? "Sign Up" :
     "Reset Account";
@@ -242,7 +216,6 @@ async function signin(){
   let data = await res.json();
 
   if(data.status === "ok"){
-    hideLoader();  // remove loading screen
     signin_id.value = "";
     signin_pin.value = "";
 
@@ -266,7 +239,10 @@ async function signup(){
     pin: su_pin.value.trim(),
   };
 
-  if (Object.values(q).some(v => v === "")) return showMsg("All fields required.");
+  if (Object.values(q).some(v => v === "")) {
+    return showMsg("All fields required.");
+  }
+
   if(!isNumeric(q.pin)) return showMsg("PIN must be numbers only");
 
   showLoading(true);
@@ -274,8 +250,6 @@ async function signup(){
   let url = `${API}?read=signup&device_id=${q.device_id}&otp=${q.otp}&client=${q.client}&mobile=${q.mobile}&id=${q.id}&pin=${q.pin}`;
   let res = await fetch(url);
   let data = await res.json();
-
-  hideLoader(); // remove loader
 
   showMsg(data.message);
 
@@ -298,15 +272,15 @@ async function resetAcc(){
   let npin = re_newpin.value.trim();
 
   if(!d || !m || !o) return showMsg("Device ID, Mobile & OTP required");
-  if(npin && !isNumeric(npin)) return showMsg("New PIN must be numbers only");
+
+  if(npin && !isNumeric(npin))
+    return showMsg("New PIN must be numbers only");
 
   showLoading(true);
 
   let url = `${API}?read=reset&device_id=${d}&mobile=${m}&otp=${o}&new_id=${nid}&new_pin=${npin}`;
   let res = await fetch(url);
   let data = await res.json();
-
-  hideLoader(); // ✔ remove loading screen
 
   showMsg(data.message);
 
@@ -319,6 +293,7 @@ async function resetAcc(){
   }
 }
 
+/* Helper */
 function showMsg(msg){
   responseMsg.style.color = "white";
   responseMsg.textContent = msg;

@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Settings</title>
+  <title>Sensor Settings</title>
+
+  <!-- TAB ICON -->
+  <link rel="icon" type="image/png"
+    href="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
 
   <style>
     body{
@@ -14,45 +19,86 @@
       overflow-x:hidden;
     }
 
-    /* ---------- NAV ---------- */
+    /* ---------- NAVIGATION BAR (UPDATED) ---------- */
     .top-nav{
       display:flex;
-      justify-content:space-between;
       align-items:center;
+      justify-content:space-between;
       padding:18px 24px;
       background:rgba(26,26,26,0.35);
+      height:60px;
       position:relative;
       z-index:1000;
-      height:60px;
     }
-    .logo{font-size:26px;font-weight:700;}
 
-    .nav-buttons{display:flex;gap:20px;}
+    /* Brand (Logo + Text) */
+    .nav-brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-shrink:0;        /* prevents compression */
+      white-space:nowrap;
+    }
+
+    .nav-logo-box{
+      width:40px;
+      height:40px;
+      flex-shrink:0;
+      border-radius:10px;
+      overflow:hidden;
+    }
+
+    .nav-logo-box img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .logo{
+      font-size:26px;
+      font-weight:700;
+      flex-shrink:0;        /* text never shrinks */
+    }
+
+    /* NAV BUTTONS */
+    .nav-buttons{
+      display:flex;
+      gap:20px;
+      flex-shrink:1;        /* buttons adapt instead of brand */
+    }
+
     .nav-buttons button{
       background:transparent;
-      color:#fff;
+      color:white;
       padding:8px 14px;
       font-size:16px;
       border:none;
       border-radius:6px;
       cursor:pointer;
       transition:.25s;
+      white-space:nowrap;
     }
+
     .nav-buttons button.active{
       background:linear-gradient(135deg,#C9A8E3,#6A329F);
       font-weight:700;
-      color:#fff;
+      color:white;
     }
+
     .nav-buttons button:hover{
       border:2px solid #C9A8E3;
     }
 
+    /* ---------- HAMBURGER ---------- */
     .hamburger{
       display:none;
       flex-direction:column;
       gap:5px;
       cursor:pointer;
+      margin-left:20px;
+      flex-shrink:0;
     }
+
     .hamburger div{
       width:28px;
       height:3px;
@@ -74,23 +120,56 @@
       position:absolute;
       left:0;
       right:0;
-      top:90px;
-      z-index:6000; /* ABOVE LOADING SCREEN */
+      top:90px;  /* YOU REQUESTED */
+      z-index:6000;
     }
+
     .mobile-menu button{
       background:transparent;
       border:none;
       font-size:16px;
       color:white;
-      padding:14px;
       text-align:left;
+      padding:14px;
+      white-space:nowrap;
     }
     .mobile-menu button.active{
       color:#ffd6ff;
       font-weight:bold;
     }
 
-    /* ---------- CONTENT ---------- */
+    /* ---------- LOADING SCREEN ---------- */
+    #loadingScreen{
+      position:fixed;
+      top:90px;   /* YOUR PREFERENCE */
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(20,20,20,0.92);
+      backdrop-filter:blur(4px);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      z-index:5000;
+      color:white;
+      text-align:center;
+    }
+
+    .loader{
+      width:55px;
+      height:55px;
+      border:5px solid #ffffff55;
+      border-top-color:#C9A8E3;
+      border-radius:50%;
+      animation:spin .9s linear infinite;
+      margin-bottom:10px;
+    }
+
+    @keyframes spin { to{ transform:rotate(360deg); } }
+
+    /* ---------- SETTINGS PAGE UI ---------- */
+
     .filter-bar{
       display:flex;
       gap:12px;
@@ -107,30 +186,21 @@
       font-size:15px;
     }
 
-    button.updateBtn{
+    .updateBtn{
       padding:10px 18px;
       background:#C9A8E3;
-      color:#111;
       border:none;
       border-radius:8px;
       font-size:15px;
       font-weight:600;
       cursor:pointer;
+      color:#111;
       transition:.3s;
     }
 
-    .updateBtn.loading{
-      background:#ffca2c !important;
-      color:#111 !important;
-    }
-    .updateBtn.success{
-      background:#17c964 !important;
-      color:white !important;
-    }
-    .updateBtn.error{
-      background:#ff4d4f !important;
-      color:white !important;
-    }
+    .updateBtn.loading{ background:#ffca2c !important; }
+    .updateBtn.success{ background:#17c964 !important;color:#fff !important; }
+    .updateBtn.error{ background:#ff4d4f !important;color:#fff !important; }
 
     .card{
       background:rgba(255,255,255,0.12);
@@ -143,12 +213,6 @@
       max-width:700px;
     }
 
-    .card h2{
-      text-align:center;
-      margin:8px 0 16px;
-      font-size:22px;
-    }
-
     .preview-table{
       width:100%;
       border-collapse:collapse;
@@ -157,33 +221,6 @@
       padding:8px 4px;
       border-bottom:1px solid rgba(255,255,255,0.14);
     }
-
-    /* ---------- LOADING SCREEN ---------- */
-    #loadingScreen {
-      position: fixed;
-      top: 90px;  /* NAV BAR VISIBLE */
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(20,20,20,0.92);
-      backdrop-filter: blur(4px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 5000;
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-    }
-    .loader {
-      width: 55px;
-      height: 55px;
-      border: 5px solid #ffffff55;
-      border-top-color: #C9A8E3;
-      border-radius: 50%;
-      animation: spin .9s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
   </style>
 </head>
@@ -203,9 +240,15 @@ function hideLoader(){
 }
 </script>
 
-<!-- NAV -->
+<!-- NAVBAR -->
 <div class="top-nav">
-  <div class="logo">Voltraxx</div>
+
+  <div class="nav-brand">
+    <div class="nav-logo-box">
+      <img src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+    </div>
+    <div class="logo">Voltraxx</div>
+  </div>
 
   <div class="nav-buttons">
     <button onclick="nav('monitoring.html')">Monitoring</button>
@@ -218,8 +261,10 @@ function hideLoader(){
   <div class="hamburger" onclick="toggleMenu()">
     <div></div><div></div><div></div>
   </div>
+
 </div>
 
+<!-- MOBILE MENU -->
 <div id="mobileMenu" class="mobile-menu">
   <button onclick="nav('monitoring.html')">Monitoring</button>
   <button onclick="nav('analysis.html')">Analysis</button>
@@ -227,14 +272,6 @@ function hideLoader(){
   <button class="active" onclick="nav('settings.html')">Settings</button>
   <button onclick="logoutUser()">Logout</button>
 </div>
-
-<script>
-function nav(p){ window.location.href=p; }
-function toggleMenu(){
-  let m=document.getElementById("mobileMenu");
-  m.style.display = (m.style.display==="flex") ? "none":"flex";
-}
-</script>
 
 <!-- FILTER BAR -->
 <div class="filter-bar">
@@ -244,161 +281,159 @@ function toggleMenu(){
     <option value="">Select Metadata</option>
   </select>
 
-  <input type="text" id="valueBox" placeholder="Enter value">
+  <input id="valueBox" type="text" placeholder="Enter Value">
 
   <button class="updateBtn" onclick="updateMeta()">UPDATE</button>
 </div>
 
 <!-- PREVIEW CARD -->
 <div class="card" id="previewCard" style="display:none;">
-  <h2>Sensor Metadata</h2>
-  <table class="preview-table" id="previewTable"></table>
+  <h2 style="text-align:center;margin:8px 0 16px;">Sensor Metadata</h2>
+  <table id="previewTable" class="preview-table"></table>
 </div>
 
 <script>
-function logoutUser() {
+function nav(p){ window.location.href=p; }
+
+function toggleMenu(){
+  const m=document.getElementById("mobileMenu");
+  m.style.display = (m.style.display==="flex") ? "none" : "flex";
+}
+
+function logoutUser(){
   sessionStorage.clear();
-  window.location = "index.html";
+  window.location="index.html";
 }
 
-const BASE_URL = sessionStorage.getItem("BASE_URL");
-
-if (!BASE_URL) {
-  alert("Session expired. Please log in again.");
-  window.location = "index.html";
+const BASE_URL=sessionStorage.getItem("BASE_URL");
+if(!BASE_URL){
+  alert("Session expired.");window.location="index.html";
 }
 
-let allRows = [];
+let allRows=[];
 
-/* ============= LOAD SETTINGS ============= */
-async function loadSettings() {
-  try {
-    const res = await fetch(BASE_URL + "?page=settings");
-    const data = await res.json();
+/* LOAD SETTINGS */
+async function loadSettings(){
+  try{
+    const res=await fetch(BASE_URL+"?page=settings");
+    const data=await res.json();
 
-    if (!data.rows) return;
+    allRows=data.rows;
 
-    allRows = data.rows;
+    /* SENSOR LIST */
+    const s=document.getElementById("sensorSelect");
+    s.innerHTML="<option value=''>Select Sensor</option>";
 
-    /* ----- SENSOR LIST ----- */
-    const sensorSel = document.getElementById("sensorSelect");
-    sensorSel.innerHTML = "<option value=''>Select Sensor</option>";
-
-    data.rows.forEach(r => {
-      sensorSel.innerHTML += `
-        <option value="${r["sensor ID"]}">
-          ${r["sensor ID"]} (${r["Sensor Type"]})
-        </option>`;
+    data.rows.forEach(r=>{
+      s.innerHTML+=`
+      <option value="${r["sensor ID"]}">
+        ${r["sensor ID"]} (${r["Sensor Type"]})
+      </option>`;
     });
 
-    /* ----- DYNAMIC METADATA LIST ----- */
-    const metaSel = document.getElementById("metaSelect");
-    metaSel.innerHTML = `<option value="">Select Metadata</option>`;
+    /* DYNAMIC METADATA LIST */
+    const meta=document.getElementById("metaSelect");
+    meta.innerHTML=`<option value="">Select Metadata</option>`;
 
-    const firstRow = data.rows[0];
+    const first=data.rows[0];
 
-    Object.keys(firstRow).forEach(key => {
-
-      // Skip unwanted fields
-      if (
-        key === "sensor ID" ||
-        key === "controller ID" ||
-        key === "" ||
-        key === null
+    Object.keys(first).forEach(key=>{
+      if(
+        key==="sensor ID" ||
+        key==="controller ID" ||
+        key==="" ||
+        key===null
       ) return;
 
-      // Include everything else including Sensor Type
-      metaSel.innerHTML += `<option value="${key}">${key}</option>`;
+      meta.innerHTML+=`<option value="${key}">${key}</option>`;
     });
 
     hideLoader();
 
-  } catch (e) {
-    hideLoader();
-  }
+  }catch(e){ hideLoader(); }
 }
 
 loadSettings();
 
-/* ============= PREVIEW ============= */
-document.getElementById("sensorSelect").addEventListener("change", showPreview);
+/* PREVIEW AREA */
+document.getElementById("sensorSelect").addEventListener("change",()=>{
+  const id=Number(document.getElementById("sensorSelect").value);
+  const card=document.getElementById("previewCard");
+  const table=document.getElementById("previewTable");
 
-function showPreview() {
-  const sid = Number(document.getElementById("sensorSelect").value);
-  const card = document.getElementById("previewCard");
-  const table = document.getElementById("previewTable");
-
-  if (!sid) { card.style.display = "none"; return; }
-
-  const row = allRows.find(r => r["sensor ID"] === sid);
-  if (!row) return;
-
-  let html = "";
-  Object.keys(row).forEach(k => {
-    html += `
-      <tr>
-        <td>${k}</td>
-        <td>${row[k] === "" ? "-" : row[k]}</td>
-      </tr>`;
-  });
-
-  table.innerHTML = html;
-  card.style.display = "block";
-}
-
-/* ============= UPDATE META ============= */
-async function updateMeta() {
-  const btn = document.querySelector(".updateBtn");
-
-  btn.classList.remove("success","error");
-  btn.classList.add("loading");
-  btn.innerText = "Updating...";
-
-  const sid = document.getElementById("sensorSelect").value;
-  const meta = document.getElementById("metaSelect").value;
-  const val = document.getElementById("valueBox").value;
-
-  if (!sid || !meta) {
-    btn.classList.remove("loading");
-    btn.classList.add("error");
-    btn.innerText = "Select Fields!";
+  if(!id){
+    card.style.display="none";
     return;
   }
 
-  const payload =
-    "sensorID=" + sid +
-    "&metaData=" + encodeURIComponent(meta) +
-    "&value=" + encodeURIComponent(val);
+  const row=allRows.find(r=>r["sensor ID"]===id);
+  if(!row)return;
 
-  try {
+  let html="";
+  Object.keys(row).forEach(k=>{
+    html+=`
+    <tr>
+      <td>${k}</td>
+      <td>${row[k] === "" ? "-" : row[k]}</td>
+    </tr>`;
+  });
 
-    await fetch(BASE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: payload
+  table.innerHTML=html;
+  card.style.display="block";
+});
+
+/* UPDATE METADATA */
+async function updateMeta(){
+  const btn=document.querySelector(".updateBtn");
+
+  btn.classList.remove("success","error");
+  btn.classList.add("loading");
+  btn.innerText="Updating...";
+
+  const sid=document.getElementById("sensorSelect").value;
+  const meta=document.getElementById("metaSelect").value;
+  const val=document.getElementById("valueBox").value;
+
+  if(!sid || !meta){
+    btn.classList.remove("loading");
+    btn.classList.add("error");
+    btn.innerText="Select Fields!";
+    return;
+  }
+
+  const payload=
+    "sensorID="+sid+
+    "&metaData="+encodeURIComponent(meta)+
+    "&value="+encodeURIComponent(val);
+
+  try{
+    await fetch(BASE_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/x-www-form-urlencoded"},
+      body:payload
     });
 
     btn.classList.remove("loading");
     btn.classList.add("success");
-    btn.innerText = "Updated ✔";
+    btn.innerText="Updated ✔";
 
-    document.getElementById("sensorSelect").value = "";
-    document.getElementById("metaSelect").value = "";
-    document.getElementById("valueBox").value = "";
-    document.getElementById("previewCard").style.display = "none";
+    document.getElementById("sensorSelect").value="";
+    document.getElementById("metaSelect").value="";
+    document.getElementById("valueBox").value="";
+    document.getElementById("previewCard").style.display="none";
 
     await loadSettings();
 
-  } catch (e) {
+  }catch(e){
     btn.classList.remove("loading");
     btn.classList.add("error");
-    btn.innerText = "Error!";
+    btn.innerText="Error!";
   }
 
   setTimeout(()=>{
     btn.classList.remove("success","error");
-    btn.innerText = "UPDATE";
-  }, 2000);
+    btn.innerText="UPDATE";
+  },2000);
 }
 </script>
 

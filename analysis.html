@@ -3,6 +3,11 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Analysis Dashboard</title>
+
+  <!-- TAB ICON -->
+  <link rel="icon" type="image/png"
+    href="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -15,19 +20,54 @@
       overflow-x: hidden;
     }
 
-    /* NAV */
+    /* ---------- NAVIGATION BAR ---------- */
     .top-nav {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;    /* FIXED */
       padding: 18px 24px;
       background: rgba(26,26,26,0.35);
       position: relative;
       z-index: 1000;
       height: 60px;
     }
-    .logo { font-size: 26px; font-weight: bold; }
-    .nav-buttons { display: flex; gap: 20px; }
+
+    /* BRAND (logo + Voltraxx) */
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;          /* ❗ Prevent compression */
+      white-space: nowrap;
+    }
+
+    .nav-logo-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    /* NAV BUTTONS */
+    .nav-buttons {
+      display: flex;
+      gap: 20px;
+      flex-shrink: 1;     /* buttons adapt instead of brand */
+    }
+
     .nav-buttons button {
       background: transparent;
       color: #f2f2f2;
@@ -37,27 +77,42 @@
       border-radius: 6px;
       cursor: pointer;
       transition: 0.25s;
+      white-space: nowrap;
     }
+
     .nav-buttons button.active {
       background: linear-gradient(135deg,#C9A8E3,#6A329F);
       font-weight: bold;
       color: #fff;
     }
-    .nav-buttons button:hover { border: 2px solid #C9A8E3; }
 
+    .nav-buttons button:hover {
+      border: 2px solid #C9A8E3;
+    }
+
+    /* HAMBURGER MENU */
     .hamburger {
       display: none;
       flex-direction: column;
       gap: 5px;
       cursor: pointer;
-    }
-    .hamburger div { height: 3px; width: 28px; background: white; border-radius: 2px; }
-
-    @media(max-width:600px) { 
-      .nav-buttons { display: none; } 
-      .hamburger { display: flex; } 
+      margin-left: 20px;
+      flex-shrink: 0;
     }
 
+    .hamburger div {
+      height: 3px;
+      width: 28px;
+      background: white;
+      border-radius: 2px;
+    }
+
+    @media(max-width:600px) {
+      .nav-buttons { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    /* MOBILE MENU */
     .mobile-menu {
       display: none;
       flex-direction: column;
@@ -66,9 +121,8 @@
       position: absolute;
       left: 0;
       right: 0;
-      top: 90px;
-      z-index: 6000;   /* ABOVE LOADING SCREEN */
-      animation: slideDown 0.35s ease;
+      top: 90px;       /* CONSISTENT WITH MONITORING */
+      z-index: 6000;
     }
 
     .mobile-menu button {
@@ -80,14 +134,12 @@
       text-align: left;
     }
 
-    .mobile-menu button.active { font-weight: bold; color: #ffd6ff; }
-
-    @keyframes slideDown {
-      from { opacity: 0.2; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .mobile-menu button.active {
+      font-weight: bold;
+      color: #ffd6ff;
     }
 
-    /* CONTENT */
+    /* ---------- CONTENT ---------- */
     .section-wrap { padding: 0; }
     .section-title {
       margin: 20px 8px;
@@ -113,6 +165,7 @@
       cursor: pointer;
       transition: 0.22s;
     }
+
     .card:hover {
       transform: translateY(-6px);
       box-shadow: 0 10px 28px rgba(0,0,0,0.55);
@@ -124,13 +177,14 @@
       align-items:center;
       margin-bottom:8px;
     }
-    .title { font-size:16px; font-weight:700; text-transform:capitalize; }
+
+    .title { font-size:16px; font-weight:700; }
     .ids { font-size:12px; opacity:0.85; }
 
     .chart-container { margin-top:6px; height:150px; }
     canvas { width:100% !important; height:150px !important; }
 
-    /* popup */
+    /* POPUP */
     #extraInfo {
       position: fixed;
       top: 50%;
@@ -147,6 +201,7 @@
       display:none;
       box-shadow: 0 12px 40px rgba(0,0,0,0.6);
     }
+
     #closeInfo {
       position:absolute;
       right:12px;
@@ -155,15 +210,16 @@
       color:#ff6b6b;
       font-size:18px;
     }
-    #infoTitle { margin:0 0 8px 0; font-weight:700; font-size:18px; text-transform:capitalize; }
+
+    #infoTitle { margin:0 0 8px 0; font-weight:700; font-size:18px; }
     #infoContent { white-space: pre-wrap; font-size:15px; line-height:1.5; color:#e6e6e6; }
 
     .muted { opacity:0.8; font-size:13px; margin-top:6px; }
 
-    /* ---------- LOADING SCREEN (NAV visible) ---------- */
+    /* --------- LOADING SCREEN (unchanged) --------- */
     #loadingScreen {
       position: fixed;
-      top: 90px;   /* navbar height */
+      top: 90px;
       left: 0;
       right: 0;
       bottom: 0;
@@ -175,8 +231,9 @@
       flex-direction: column;
       z-index: 5000;
       color: white;
-      font-family: 'Segoe UI', sans-serif;
+      text-align:center;
     }
+
     .loader {
       width: 55px;
       height: 55px;
@@ -184,8 +241,11 @@
       border-top-color: #C9A8E3;
       border-radius: 50%;
       animation: spin .9s linear infinite;
+      margin-bottom:10px;
     }
+
     @keyframes spin { to { transform: rotate(360deg); } }
+
   </style>
 </head>
 
@@ -199,208 +259,203 @@
 
 <script>
 function hideLoader(){
-  const l = document.getElementById("loadingScreen");
-  if(l) l.style.display = "none";
+  const l=document.getElementById("loadingScreen");
+  if(l) l.style.display="none";
 }
 </script>
 
-  <div class="top-nav">
+<!-- NAV -->
+<div class="top-nav">
+
+  <div class="nav-brand">
+    <div class="nav-logo-box">
+      <img src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+    </div>
     <div class="logo">Voltraxx</div>
-    <div class="nav-buttons">
-      <button onclick="navigate('monitoring.html', this)">Monitoring</button>
-      <button class="active" onclick="navigate('analysis.html', this)">Analysis</button>
-      <button onclick="navigate('history.html', this)">History</button>
-      <button onclick="navigate('settings.html', this)">Settings</button>
-      <button onclick="logoutUser()">Logout</button>
-    </div>
-    <div class="hamburger" onclick="toggleMenu()">
-      <div></div><div></div><div></div>
-    </div>
   </div>
 
-  <div id="mobileMenu" class="mobile-menu">
-    <button onclick="navigate('monitoring.html', this)">Monitoring</button>
-    <button class="active" onclick="navigate('analysis.html', this)">Analysis</button>
-    <button onclick="navigate('history.html', this)">History</button>
-    <button onclick="navigate('settings.html', this)">Settings</button>
+  <div class="nav-buttons">
+    <button onclick="navigate('monitoring.html')">Monitoring</button>
+    <button class="active" onclick="navigate('analysis.html')">Analysis</button>
+    <button onclick="navigate('history.html')">History</button>
+    <button onclick="navigate('settings.html')">Settings</button>
     <button onclick="logoutUser()">Logout</button>
   </div>
 
-  <div id="sections" class="section-wrap"></div>
-
-  <!-- popup -->
-  <div id="extraInfo">
-    <span id="closeInfo" onclick="closeExtraInfo()">✖</span>
-    <div id="infoTitle"></div>
-    <div id="infoContent"></div>
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div><div></div><div></div>
   </div>
 
+</div>
+
+<!-- MOBILE MENU -->
+<div id="mobileMenu" class="mobile-menu">
+  <button onclick="navigate('monitoring.html')">Monitoring</button>
+  <button class="active" onclick="navigate('analysis.html')">Analysis</button>
+  <button onclick="navigate('history.html')">History</button>
+  <button onclick="navigate('settings.html')">Settings</button>
+  <button onclick="logoutUser()">Logout</button>
+</div>
+
+<!-- CONTENT -->
+<div id="sections" class="section-wrap"></div>
+
+<!-- POPUP -->
+<div id="extraInfo">
+  <span id="closeInfo" onclick="closeExtraInfo()">✖</span>
+  <div id="infoTitle"></div>
+  <div id="infoContent"></div>
+</div>
+
 <script>
-/* NAV */
+/* NAVIGATION */
 function toggleMenu(){
-  const m = document.getElementById('mobileMenu');
-  m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-}
-function navigate(page, btn){
-  document.querySelectorAll('.nav-buttons button, .mobile-menu button')
-    .forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  window.location.href = page;
+  const m=document.getElementById("mobileMenu");
+  m.style.display = (m.style.display==="flex") ? "none" : "flex";
 }
 
-function logoutUser() {
+function navigate(p){ window.location.href=p; }
+
+function logoutUser(){
   sessionStorage.clear();
-  window.location = "index.html";
+  window.location="index.html";
 }
 
-
-/* ---------------- CONFIG ---------------- */
-const BASE_URL = sessionStorage.getItem("BASE_URL");
-
-if (!BASE_URL) {
-  alert("Session expired. Please log in again.");
-  window.location = "index.html";
+/* API CHECK */
+const BASE_URL=sessionStorage.getItem("BASE_URL");
+if(!BASE_URL){
+  alert("Session expired.");window.location="index.html";
 }
 
-/* ---------------- FETCH ---------------- */
+/* FETCH ANALYSIS DATA */
 fetch(`${BASE_URL}?page=analysis`)
-  .then(r => r.json())
-  .then(json => {
-    hideLoader();   // ✔ REMOVE LOADING ONCE DATA ARRIVES
+.then(r=>r.json())
+.then(json=>{
+  hideLoader();
 
-    const wrapper = document.getElementById('sections');
+  const wrapper=document.getElementById('sections');
+  const order=["distance","flow","temperature"];
+  let keys=Object.keys(json).filter(k=>k!=="status");
 
-    const order = ["distance","flow","temperature"];
-
-    let keys = Object.keys(json).filter(k => k !== 'status');
-
-    keys.sort((a,b)=>{
-      const ai = order.indexOf(a.toLowerCase());
-      const bi = order.indexOf(b.toLowerCase());
-      if(ai === -1 && bi === -1) return a.localeCompare(b);
-      if(ai === -1) return 1;
-      if(bi === -1) return -1;
-      return ai - bi;
-    });
-
-    keys.forEach(key => {
-      const arr = json[key];
-      if(!Array.isArray(arr) || arr.length === 0) return;
-
-      const title = document.createElement('h2');
-      title.className = 'section-title';
-      title.innerText = key.charAt(0).toUpperCase() + key.slice(1);
-      wrapper.appendChild(title);
-
-      const sec = document.createElement('div');
-      sec.className = 'section';
-      wrapper.appendChild(sec);
-
-      arr.forEach(sensor => sec.appendChild(createCard(sensor)));
-    });
-  })
-  .catch(err => {
-    hideLoader();
-    console.error('fetch error', err);
-    document.getElementById('sections').innerHTML =
-      '<div class="muted">Could not load data from API.</div>';
+  keys.sort((a,b)=>{
+    const ai=order.indexOf(a.toLowerCase());
+    const bi=order.indexOf(b.toLowerCase());
+    if(ai===-1 && bi===-1) return a.localeCompare(b);
+    if(ai===-1) return 1;
+    if(bi===-1) return -1;
+    return ai-bi;
   });
 
-/* ---------------- CARD ---------------- */
+  keys.forEach(key=>{
+    const arr=json[key];
+    if(!Array.isArray(arr) || arr.length===0) return;
+
+    const title=document.createElement('h2');
+    title.className='section-title';
+    title.innerText=key.charAt(0).toUpperCase()+key.slice(1);
+    wrapper.appendChild(title);
+
+    const sec=document.createElement('div');
+    sec.className='section';
+    wrapper.appendChild(sec);
+
+    arr.forEach(sensor=>sec.appendChild(createCard(sensor)));
+  });
+})
+.catch(err=>{
+  hideLoader();
+  console.error(err);
+  document.getElementById('sections').innerHTML =
+    '<div class="muted">Could not load data from API.</div>';
+});
+
+/* --- CARD BUILDER --- */
 function createCard(item){
-  const card = document.createElement('div');
-  card.className = 'card';
+  const card=document.createElement('div');
+  card.className='card';
 
-  const labelText = (item.Label && item.Label != -1) ? item.Label : '';
-  const cID = item["controller ID"] ?? '';
-  const sID = item["sensor ID"] ?? '';
-  const cSID = `C${cID}:S${sID}`;
+  const labelText = (item.Label && item.Label != -1) ? item.Label : "";
+  const cID=item["controller ID"], sID=item["sensor ID"];
+  const cSID=`C${cID}:S${sID}`;
 
-  const header = document.createElement('div');
-  header.className = 'card-header';
-  const t = document.createElement('div');
-  t.className = 'title';
+  const header=document.createElement('div');
+  header.className='card-header';
+  const t=document.createElement('div');
+  t.className='title';
   t.innerText = labelText || `Sensor ${cSID}`;
-  const ids = document.createElement('div');
-  ids.className = 'ids';
-  ids.innerText = cSID;
-  header.appendChild(t);
-  header.appendChild(ids);
+  const ids=document.createElement('div');
+  ids.className='ids';
+  ids.innerText=cSID;
+  header.appendChild(t);header.appendChild(ids);
   card.appendChild(header);
 
-  const chartWrap = document.createElement('div');
-  chartWrap.className = 'chart-container';
-  const canvas = document.createElement('canvas');
-  chartWrap.appendChild(canvas);
-  card.appendChild(chartWrap);
+  const wrap=document.createElement('div');
+  wrap.className='chart-container';
+  const canvas=document.createElement('canvas');
+  wrap.appendChild(canvas);
+  card.appendChild(wrap);
 
-  renderChart(canvas, item);
-  card.onclick = () => openPopup(item);
+  renderChart(canvas,item);
+  card.onclick=()=>openPopup(item);
 
   return card;
 }
 
-/* ---------------- GRAPH ---------------- */
-function renderChart(canvas, item){
-  const labels = Array.from({length:24}, (_,i)=> String(i));
-
-  let rawValues = labels.map(key => {
-    const v = item[key];
-    if (v === -1 || v === "" || v === null || v === undefined) return null;
+/* --- CHART RENDER --- */
+function renderChart(canvas,item){
+  const labels=Array.from({length:24},(_,i)=>String(i));
+  let rawValues=labels.map(k=>{
+    const v=item[k];
+    if(v===-1 || v==="" || v==null) return null;
     return Number(v);
   });
 
-  if(item["Sensor Type"] === "Distance"){
-    const H = Number(item["Tank Height"]) || 0;
-    const O = Number(item["Offset Error"]) || 0;
-
-    if(H > 0){
-      rawValues = rawValues.map(v => {
-        if(v === null) return null;
-        const pct = ((H - v + O) / H) * 100;
-        return Math.max(0, Math.min(100, Math.round(pct)));
+  if(item["Sensor Type"]==="Distance"){
+    const H=Number(item["Tank Height"])||0;
+    const O=Number(item["Offset Error"])||0;
+    if(H>0){
+      rawValues=rawValues.map(v=>{
+        if(v===null) return null;
+        return Math.max(0,Math.min(100,Math.round(((H-v+O)/H)*100)));
       });
     }
   }
 
-  new Chart(canvas.getContext('2d'), {
-    type: 'bar',
-    data: {
+  new Chart(canvas.getContext('2d'),{
+    type:'bar',
+    data:{
       labels,
-      datasets: [{
-        data: rawValues,
-        skipNull: true,
-        spanGaps: false,
-        backgroundColor: '#e69df4',
-        borderRadius: 6
+      datasets:[{
+        data:rawValues,
+        backgroundColor:'#e69df4',
+        borderRadius:6
       }]
     },
-    options: {
-      plugins: { legend:{display:false} },
-      scales: {
-        x:{ ticks:{color:'#fff'}, grid:{display:false}},
-        y:{ ticks:{color:'#fff'}, grid:{color:'rgba(255,255,255,0.06)'}}
+    options:{
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:'#fff'},grid:{display:false}},
+        y:{ticks:{color:'#fff'}}
       },
       maintainAspectRatio:false
     }
   });
 }
 
-/* ---------------- POPUP ---------------- */
+/* --- POPUP --- */
 function openPopup(item){
-  const cID = item["controller ID"];
-  const sID = item["sensor ID"];
-  const title = (item.Label && item.Label != -1)
+  const cID=item["controller ID"];
+  const sID=item["sensor ID"];
+  const title=(item.Label && item.Label!=-1)
       ? `${item.Label} C${cID}:S${sID}`
       : `Sensor C${cID}:S${sID}`;
 
-  document.getElementById('infoTitle').innerText = title;
+  document.getElementById('infoTitle').innerText=title;
 
-  let lines = [];
-
-  const add = (label,key)=>{
-    const v = item[key];
-    if(v !== undefined && v !== -1 && v !== "" && v !== null){
+  let lines=[];
+  const add=(label,key)=>{
+    const v=item[key];
+    if(v!==undefined && v!==-1 && v!=="" && v!==null){
       lines.push(`${label}: ${v}`);
     }
   };
@@ -410,21 +465,21 @@ function openPopup(item){
   add("Offset Error","Offset Error");
 
   for(let i=1;i<=5;i++){
-    const ck = `custom ${i}`;
-    const vk = `value ${i}`;
-    if(item[ck] !== -1 && item[ck] !== "" && item[vk] !== -1 && item[vk] !== ""){
+    const ck=`custom ${i}`;
+    const vk=`value ${i}`;
+    if(item[ck]!==-1 && item[ck]!=="" && item[vk]!==-1 && item[vk]!==""){
       lines.push(`${item[ck]}: ${item[vk]}`);
     }
   }
 
-  if(lines.length === 0) lines.push("(no extra info)");
+  document.getElementById('infoContent').innerText =
+    lines.length===0 ? "(no extra info)" : lines.join("\n");
 
-  document.getElementById('infoContent').innerText = lines.join("\n");
-  document.getElementById('extraInfo').style.display = 'block';
+  document.getElementById('extraInfo').style.display='block';
 }
 
 function closeExtraInfo(){
-  document.getElementById('extraInfo').style.display = 'none';
+  document.getElementById('extraInfo').style.display='none';
 }
 </script>
 

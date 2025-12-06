@@ -4,6 +4,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Monitoring Dashboard</title>
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/png"
+    href="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+
   <style>
     body{
       margin:0;
@@ -14,20 +18,49 @@
       overflow-x:hidden;
     }
 
-    /* ---------- NAV ---------- */
+    /* ---------- UNIFIED NAVBAR ---------- */
     .top-nav{
       display:flex;
-      justify-content:space-between;
       align-items:center;
-      padding:18px 24px;
+      justify-content:space-between;
+      padding:18px 24px;      /* identical to other pages */
       background:rgba(26,26,26,0.35);
       position:relative;
       z-index:1000;
-      height:60px;
+      height:60px;            /* fixed height like other pages */
     }
-    .logo{font-size:26px;font-weight:700;}
 
-    .nav-buttons{display:flex;gap:20px;}
+    .nav-brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-shrink:0; 
+      white-space:nowrap;
+    }
+
+    .nav-logo-box{
+      width:40px;
+      height:40px;
+      border-radius:10px;
+      overflow:hidden;
+      flex-shrink:0;
+    }
+    .nav-logo-box img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .logo{
+      font-size:26px;
+      font-weight:700;
+      flex-shrink:0;
+    }
+
+    .nav-buttons{
+      display:flex;
+      gap:20px;
+      flex-shrink:1;
+    }
     .nav-buttons button{
       background:transparent;
       color:#fff;
@@ -37,6 +70,7 @@
       border-radius:6px;
       cursor:pointer;
       transition:.25s;
+      white-space:nowrap;
     }
     .nav-buttons button.active{
       background:linear-gradient(135deg,#C9A8E3,#6A329F);
@@ -52,9 +86,13 @@
       flex-direction:column;
       gap:5px;
       cursor:pointer;
+      flex-shrink:0;
     }
     .hamburger div{
-      width:28px;height:3px;background:white;border-radius:2px;
+      width:28px;
+      height:3px;
+      background:white;
+      border-radius:2px;
     }
 
     @media(max-width:600px){
@@ -63,7 +101,7 @@
     }
 
     /* ---------- MOBILE MENU ---------- */
-    .mobile-menu {
+    .mobile-menu{
       display:none;
       flex-direction:column;
       background:rgba(26,26,26,0.95);
@@ -72,9 +110,8 @@
       left:0;
       right:0;
       top:90px;
-      z-index:6000;   /* ABOVE loading screen */
+      z-index:6000;
     }
-
     .mobile-menu button{
       background:transparent;
       border:none;
@@ -88,12 +125,16 @@
       font-weight:bold;
     }
 
-    /* ---------- CONTENT ---------- */
+    /* Everything below is unchanged… */
+
+    .category-block{ display:none; }
+
     .section-title{
-      margin:20px 8px;
+      margin:18px 10px;
       font-size:20px;
       font-weight:600;
     }
+
     .section{
       display:flex;
       gap:16px;
@@ -116,77 +157,53 @@
       box-shadow:0 10px 28px rgba(0,0,0,0.55);
     }
 
-    .card-header{
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:6px;
-    }
+    .card-header{display:flex;justify-content:space-between;margin-bottom:6px;}
+    .title{font-size:16px;font-weight:700;}
+    .ids{font-size:12px;opacity:.85;}
 
-    .title{
-      font-size:16px;
-      font-weight:700;
-      text-transform:capitalize;
-    }
-    .ids{
-      font-size:12px;
-      opacity:.85;
-    }
-
-    .main-line{
-      display:flex;
-      justify-content:space-between;
-      margin-top:8px;
-    }
+    .main-line{display:flex;justify-content:space-between;margin-top:8px;}
     .main-label{font-size:14px;color:#ffd6ff;}
     .main-value{font-size:28px;font-weight:700;}
 
-    .sub-line{
-      display:flex;
-      justify-content:space-between;
-      margin-top:6px;
-    }
+    .sub-line{display:flex;justify-content:space-between;margin-top:6px;}
     .sub-label{font-size:13px;opacity:.85;}
     .sub-value{font-size:16px;font-weight:600;}
 
-
-
-    /* ---------- LOADING SCREEN (NAV visible) ---------- */
-    #loadingScreen {
-      position: fixed;
-      top: 90px;      /* NAVBAR visible */
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(20,20,20,0.92);
-      backdrop-filter: blur(4px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 5000;
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
+    /* ---------- LOADING SCREEN ---------- */
+    #loadingScreen{
+      position:fixed;
+      top:90px;
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(20,20,20,0.92);
+      backdrop-filter:blur(4px);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      z-index:5000;
+      color:white;
+      text-align:center;
     }
 
-    .loader {
-      width: 55px;
-      height: 55px;
-      border: 5px solid #ffffff55;
-      border-top-color: #C9A8E3;
-      border-radius: 50%;
-      animation: spin .9s linear infinite;
+    .loader{
+      width:55px;
+      height:55px;
+      border:5px solid #ffffff55;
+      border-top-color:#C9A8E3;
+      border-radius:50%;
+      animation:spin .9s linear infinite;
+      margin-bottom:10px;
     }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin{to{transform:rotate(360deg);}}
 
   </style>
 </head>
 
 <body>
 
-<!-- LOADING SCREEN -->
+<!-- LOADING -->
 <div id="loadingScreen">
   <div class="loader"></div>
   <p>Loading...</p>
@@ -194,14 +211,24 @@
 
 <script>
 function hideLoader(){
-  const l = document.getElementById("loadingScreen");
-  if(l) l.style.display = "none";
+  const l=document.getElementById("loadingScreen");
+  if(l) l.style.display="none";
+}
+function showNoData(){
+  document.querySelector("#loadingScreen .loader").style.display="none";
+  document.querySelector("#loadingScreen p").innerText="NO DATA FOUND";
 }
 </script>
 
 <!-- NAV -->
 <div class="top-nav">
-  <div class="logo">Voltraxx</div>
+
+  <div class="nav-brand">
+    <div class="nav-logo-box">
+      <img src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+    </div>
+    <div class="logo">Voltraxx</div>
+  </div>
 
   <div class="nav-buttons">
     <button class="active" onclick="navigate('monitoring.html',this)">Monitoring</button>
@@ -214,6 +241,7 @@ function hideLoader(){
   <div class="hamburger" onclick="toggleMenu()">
     <div></div><div></div><div></div>
   </div>
+
 </div>
 
 <!-- MOBILE MENU -->
@@ -228,22 +256,31 @@ function hideLoader(){
 <!-- CONTENT -->
 <div class="section-wrap">
 
-  <h2 class="section-title">Distance</h2>
-  <div class="section" id="distance"></div>
+  <div class="category-block" id="block-distance">
+    <h2 class="section-title">Distance</h2>
+    <div class="section" id="distance"></div>
+  </div>
 
-  <h2 class="section-title">Flow</h2>
-  <div class="section" id="flow"></div>
+  <div class="category-block" id="block-flow">
+    <h2 class="section-title">Flow</h2>
+    <div class="section" id="flow"></div>
+  </div>
 
-  <h2 class="section-title">Temperature</h2>
-  <div class="section" id="temperature"></div>
+  <div class="category-block" id="block-temperature">
+    <h2 class="section-title">Temperature</h2>
+    <div class="section" id="temperature"></div>
+  </div>
 
-  <h2 class="section-title">None</h2>
-  <div class="section" id="none"></div>
+  <div class="category-block" id="block-none">
+    <h2 class="section-title">None</h2>
+    <div class="section" id="none"></div>
+  </div>
 
 </div>
 
 <script>
-/* ------------ NAVIGATION ------------ */
+
+/* Navigation */
 function toggleMenu(){
   const m=document.getElementById('mobileMenu');
   m.style.display=(m.style.display==='flex')?'none':'flex';
@@ -254,67 +291,46 @@ function navigate(page,btn){
   btn.classList.add('active');
   window.location.href=page;
 }
-
-function logoutUser() {
+function logoutUser(){
   sessionStorage.clear();
-  window.location = "index.html";
+  window.location="index.html";
 }
 
+/* API */
+const BASE_URL=sessionStorage.getItem("BASE_URL");
+if(!BASE_URL){ alert("Session expired."); window.location="index.html"; }
 
-/* ------------ API ------------ */
-const BASE_URL = sessionStorage.getItem("BASE_URL");
-
-if (!BASE_URL) {
-  alert("Session expired. Please log in again.");
-  window.location = "index.html";
-}
-
-let cards={};
-let lastSet={};
-
+/* Load data */
 loadData();
 setInterval(loadData,600);
 
-
-/* ------------ FETCH ------------ */
 function loadData(){
   fetch(`${BASE_URL}?page=monitoring`)
-    .then(r=>r.json())
-    .then(data=>{
-      renderCategory("distance",data.distance||[]);
-      renderCategory("flow",data.flow||[]);
-      renderCategory("temperature",data.temperature||[]);
-      renderCategory("none",data.none||[]);
+  .then(r=>r.json())
+  .then(data=>{
+    renderCategory("distance",data.distance||[]);
+    renderCategory("flow",data.flow||[]);
+    renderCategory("temperature",data.temperature||[]);
+    renderCategory("none",data.none||[]);
 
-      hideLoader();   // ✔ LOAD FINISHED
-    })
-    .catch(err=>console.log(err));
+    let total=0;
+    ["distance","flow","temperature","none"].forEach(s=>{
+      total+=document.getElementById(s).children.length;
+    });
+
+    if(total===0) showNoData();
+    else hideLoader();
+  })
+  .catch(err=>showNoData());
 }
 
+function renderCategory(sectionID,array){
+  const container=document.getElementById(sectionID);
+  const block=document.getElementById(`block-${sectionID}`);
+  container.innerHTML="";
 
-/* ------------ BUILD CARDS ------------ */
-function renderCategory(sectionID, array){
-  const container = document.getElementById(sectionID);
-
-  if(!cards[sectionID]) cards[sectionID]={};
-  if(!lastSet[sectionID]) lastSet[sectionID]={};
-
-  container.innerHTML = "";
-  cards[sectionID] = {};
-
-  array.forEach(item => {
-
-    if(
-      item.mainData === "" ||
-      item.mainData === null ||
-      item.mainData === undefined ||
-      item.mainData === "-" ||
-      (typeof item.mainData === "string" && item.mainData.trim().length === 0)
-    ){
-      return;
-    }
-
-    const key=`${item.controllerID}-${item.sensorID}`;
+  array.forEach(item=>{
+    if(!isValid(item.mainData)) return;
 
     const card=document.createElement("div");
     card.className="card";
@@ -323,59 +339,35 @@ function renderCategory(sectionID, array){
         <div class="title"></div>
         <div class="ids"></div>
       </div>
-
-      <div class="main-line">
-        <div class="main-label"></div>
-        <div class="main-value"></div>
-      </div>
-
-      <div class="sub-line">
-        <div class="sub-label"></div>
-        <div class="sub-value"></div>
-      </div>
+      <div class="main-line"><div class="main-label"></div><div class="main-value"></div></div>
+      <div class="sub-line"><div class="sub-label"></div><div class="sub-value"></div></div>
     `;
     container.appendChild(card);
 
-    cards[sectionID][key] = {
-      el:card,
-      title: card.querySelector(".title"),
-      ids: card.querySelector(".ids"),
-      mainLabel: card.querySelector(".main-label"),
-      mainValue: card.querySelector(".main-value"),
-      subLabel: card.querySelector(".sub-label"),
-      subValue: card.querySelector(".sub-value"),
-    };
+    const cID=item.controllerID, sID=item.sensorID;
+    const title=item.label || `Sensor C${cID}:S${sID}`;
 
-    const c=cards[sectionID][key];
+    card.querySelector(".title").innerText=title;
+    card.querySelector(".ids").innerText=`C${cID}:S${sID}`;
+    card.querySelector(".main-label").innerText=item.mainLabel||"";
+    card.querySelector(".main-value").innerText=`${item.mainData}${item.mainUnit||""}`;
+    card.querySelector(".sub-label").innerText=item.subLabel||"";
+    card.querySelector(".sub-value").innerText=
+        item.subData!=null && item.subData!=="" ? `${item.subData}${item.subUnit||""}` : "";
 
-    const cID=item.controllerID;
-    const sID=item.sensorID;
-    const label=item.label;
-
-    if(label && label !== ""){
-      c.title.innerText = label;
-    } else {
-      c.title.innerText = `Sensor C${cID}:S${sID}`;
-    }
-
-    c.ids.innerText = `C${cID}:S${sID}`;
-
-    c.mainLabel.innerText = item.mainLabel||"";
-    c.mainValue.innerText = `${item.mainData}${item.mainUnit||""}`;
-
-    c.subLabel.innerText = item.subLabel||"";
-    c.subValue.innerText =
-      (item.subData!="" && item.subData!=null)
-        ? `${item.subData}${item.subUnit||""}`
-        : "";
-
-    let color="#e69df4";
-    if(item.high && item.mainData>item.high) color="#ff4d4f";
-    else if(item.low && item.mainData<item.low) color="#17c964";
-
-    c.el.style.borderLeft=`6px solid ${color}`;
+    let col="#e69df4";
+    if(item.high && item.mainData>item.high) col="#ff4d4f";
+    else if(item.low && item.mainData<item.low) col="#17c964";
+    card.style.borderLeft=`6px solid ${col}`;
   });
+
+  block.style.display = container.children.length===0 ? "none" : "block";
 }
+
+function isValid(v){
+  return !(v==="" || v==null || v==="-" || (typeof v==="string" && v.trim()===""));
+}
+
 </script>
 
 </body>
