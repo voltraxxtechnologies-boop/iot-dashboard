@@ -328,39 +328,40 @@ if(!BASE_URL){
 }
 
 /* FETCH ANALYSIS DATA */
+function loadAnalysis(){
+
 fetch(`${BASE_URL}?page=analysis`)
 .then(r=>r.json())
 .then(json=>{
+
   hideLoader();
 
   const wrapper=document.getElementById('sections');
-  const order=["distance","flow","temperature"];
-  let keys=Object.keys(json).filter(k=>k!=="status");
+  wrapper.innerHTML="";
 
-  keys.sort((a,b)=>{
-    const ai=order.indexOf(a.toLowerCase());
-    const bi=order.indexOf(b.toLowerCase());
-    if(ai===-1 && bi===-1) return a.localeCompare(b);
-    if(ai===-1) return 1;
-    if(bi===-1) return -1;
-    return ai-bi;
-  });
+  const groups=json.groups || {};
+  const keys=Object.keys(groups).sort((a,b)=>a.localeCompare(b));
 
-  keys.forEach(key=>{
-    const arr=json[key];
-    if(!Array.isArray(arr) || arr.length===0) return;
+  keys.forEach(groupName=>{
+
+    const sensors=groups[groupName];
+    if(!Array.isArray(sensors) || sensors.length===0) return;
 
     const title=document.createElement('h2');
     title.className='section-title';
-    title.innerText=key.charAt(0).toUpperCase()+key.slice(1);
+    title.innerText=groupName;
     wrapper.appendChild(title);
 
     const sec=document.createElement('div');
     sec.className='section';
     wrapper.appendChild(sec);
 
-    arr.forEach(sensor=>sec.appendChild(createCard(sensor)));
+    sensors.forEach(sensor=>{
+      sec.appendChild(createCard(sensor));
+    });
+
   });
+
 })
 .catch(err=>{
   hideLoader();
@@ -368,6 +369,14 @@ fetch(`${BASE_URL}?page=analysis`)
   document.getElementById('sections').innerHTML =
     '<div class="muted">Could not load data from API.</div>';
 });
+
+}
+
+/* INITIAL LOAD */
+loadAnalysis();
+
+/* AUTO REFRESH EVERY 30s */
+setInterval(loadAnalysis,30000);
 
 /* --- CARD BUILDER --- */
 function createCard(item){
