@@ -171,7 +171,7 @@
   </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwWPko9KArysDEx7KhzHK7Cp9z7c9kRGF20VNG8cR-s0jnaAQttV5QFku-exHcj288/exec";
+const API = "https://script.google.com/macros/s/AKfycbwRNgiUk63S4TyRuW1teRxazuqSQeH7XW13vsyntXT0yN7qINkeiqJdUeNTUEpFdck/exec";
 
 function showLoading(state) {
   responseMsg.style.color = "white";
@@ -215,7 +215,7 @@ async function signin(){
   let res = await fetch(`${API}?read=signin&id=${id}&pin=${pin}`);
   let data = await res.json();
 
-  if(data.status === "ok"){
+  if(data.status === "Online"){
     signin_id.value = "";
     signin_pin.value = "";
 
@@ -223,7 +223,9 @@ async function signin(){
     sessionStorage.setItem("CLIENT", data.client);
     sessionStorage.setItem("DEVICE_ID", id);
     window.location = "monitoring.html";
-  } else {
+  } else if(data.status === "Offline"){
+    showMsg("Login restricted");
+  }else {
     showMsg("Invalid ID or PIN");
   }
 }
