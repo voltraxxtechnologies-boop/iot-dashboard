@@ -148,22 +148,33 @@
       color: #fff;
     }
     .section {
-      display: flex;
-      gap: 16px;
-      overflow-x: auto;
-      padding: 8px 8px 22px 8px;
+      display:flex;
+      flex-wrap:wrap;     /* allow next row */
+      gap:12px;
+      padding:8px 10px 22px;
     }
 
     .card {
       background: rgba(255,255,255,0.12);
       backdrop-filter: blur(8px);
-      padding: 12px;
-      border-radius: 14px;
-      min-width: 260px;
-      max-width: 320px;
+      padding:10px;
+      border-radius:12px;
+      width:210px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.35);
-      cursor: pointer;
-      transition: 0.22s;
+      cursor:pointer;
+      transition:0.22s;
+    }
+
+    @media (max-width:1200px){
+      .card{ width:200px; }
+    }
+
+    @media (max-width:900px){
+      .card{ width:180px; }
+    }
+
+    @media (max-width:600px){
+      .card{ width:160px; }
     }
 
     .card:hover {
@@ -340,12 +351,24 @@ fetch(`${BASE_URL}?page=analysis`)
   wrapper.innerHTML="";
 
   const groups=json.groups || {};
-  const keys=Object.keys(groups).sort((a,b)=>a.localeCompare(b));
+  const keys = Object.keys(groups).sort((a,b)=>{
+
+    if(a==="All") return 1;
+    if(b==="All") return -1;
+
+    return a.localeCompare(b);
+
+  });
 
   keys.forEach(groupName=>{
 
-    const sensors=groups[groupName];
-    if(!Array.isArray(sensors) || sensors.length===0) return;
+    const sensors = groups[groupName] || [];
+
+    const validSensors = sensors.filter(sensor=>{
+      return Object.values(sensor).some(v=>v!==-1 && v!=="" && v!==null);
+    });
+
+    if(validSensors.length===0) return;
 
     const title=document.createElement('h2');
     title.className='section-title';
@@ -356,7 +379,7 @@ fetch(`${BASE_URL}?page=analysis`)
     sec.className='section';
     wrapper.appendChild(sec);
 
-    sensors.forEach(sensor=>{
+    validSensors.forEach(sensor=>{
       sec.appendChild(createCard(sensor));
     });
 
