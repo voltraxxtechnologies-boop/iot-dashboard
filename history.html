@@ -1,585 +1,577 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>History Dashboard</title>
 
-  <!-- TAB ICON -->
   <link rel="icon" type="image/png"
     href="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
-    body{
-      margin:0;
-      padding:0;
-      font-family:'Segoe UI',sans-serif;
-      background:linear-gradient(135deg,#6A329F,#3B1C5B);
-      color:white;
-      overflow-x:hidden;
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #6A329F, #3B1C5B);
+      color: white;
+      overflow-x: hidden;
     }
 
     /* ---------- NAV ---------- */
-    .top-nav{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:18px 24px;
-      background:rgba(26,26,26,0.35);
-      position:relative;
-      z-index:1000;
-      height:60px;
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      background: rgba(26, 26, 26, 0.35);
+      position: relative;
+      z-index: 1000;
+      height: 60px;
     }
 
     /* BRAND (logo + Voltraxx) */
-    .nav-brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-shrink:0;
-      white-space:nowrap;
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
-    .nav-logo-box{
-      width:40px;
-      height:40px;
-      border-radius:10px;
-      overflow:hidden;
-      flex-shrink:0;
+    .nav-logo-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
-    .nav-logo-box img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
+    .nav-logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
-    .logo{
-      font-size:26px;
-      font-weight:700;
-      flex-shrink:0;
+    .logo {
+      font-size: 26px;
+      font-weight: 700;
+      flex-shrink: 0;
     }
 
     /* NAV BUTTONS */
-    .nav-buttons{
-      display:flex;
-      gap:20px;
-      flex-shrink:1;
+    .nav-buttons {
+      display: flex;
+      gap: 20px;
+      flex-shrink: 1;
     }
 
-    .nav-buttons button{
-      background:transparent;
-      color:white;
-      padding:8px 14px;
-      font-size:16px;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      transition:.25s;
-      white-space:nowrap;
+    .nav-buttons button {
+      background: transparent;
+      color: white;
+      padding: 8px 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: .25s;
+      white-space: nowrap;
     }
 
-    .nav-buttons button.active{
-      background:linear-gradient(135deg,#C9A8E3,#6A329F);
-      font-weight:700;
-      color:white;
+    .nav-buttons button.active {
+      background: linear-gradient(135deg, #C9A8E3, #6A329F);
+      font-weight: 700;
+      color: white;
     }
 
-    .nav-buttons button:hover{
-      border:2px solid #C9A8E3;
+    .nav-buttons button:hover {
+      border: 2px solid #C9A8E3;
     }
 
     /* HAMBURGER */
-    .hamburger{
-      display:none;
-      flex-direction:column;
-      gap:5px;
-      cursor:pointer;
-      margin-left:20px;
-      flex-shrink:0;
-    }
-    .hamburger div{
-      width:28px;height:3px;background:white;border-radius:2px;
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      margin-left: 20px;
+      flex-shrink: 0;
     }
 
-    @media(max-width:600px){
-      .nav-buttons{display:none;}
-      .hamburger{display:flex;}
+    .hamburger div {
+      width: 28px;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+    }
+
+
+    @media(max-width:600px) {
+      .nav-buttons {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
     }
 
     /* ---------- MOBILE MENU ---------- */
-    .mobile-menu{
-      display:none;
-      flex-direction:column;
-      background:rgba(26,26,26,0.95);
-      padding:12px;
-      position:absolute;
-      left:0;
-      right:0;
-      top:90px;  /* YOU REQUESTED */
-      z-index:6000;
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: rgba(26, 26, 26, 0.95);
+      padding: 12px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 90px;
+      /* YOU REQUESTED */
+      z-index: 6000;
     }
 
-    .mobile-menu button{
-      background:transparent;
-      border:none;
-      font-size:16px;
-      color:white;
-      padding:14px;
-      text-align:left;
-      white-space:nowrap;
+    .mobile-menu button {
+      background: transparent;
+      border: none;
+      font-size: 16px;
+      color: white;
+      padding: 14px;
+      text-align: left;
+      white-space: nowrap;
     }
-    .mobile-menu button.active{
-      color:#ffd6ff;
-      font-weight:bold;
+
+    .mobile-menu button.active {
+      color: #ffd6ff;
+      font-weight: bold;
     }
 
     /* ---------- FILTER BAR ---------- */
-    .filters{
-      padding:14px;
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-    select,input[type="date"],button.fetchBtn{
-      padding:10px;font-size:15px;border-radius:8px;border:none;
+    .filters {
+      padding: 14px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
     }
 
-    /* BUTTON STATES */
-    button.fetchBtn{
-      background:#C9A8E3;
-      color:#111;
-      font-weight:600;
-      cursor:pointer;
-      transition:0.3s;
-    }
-    button.fetchBtn.loading{ background:#ffca2c;color:#111; }
-    button.fetchBtn.success{ background:#17c964;color:white; }
-    button.fetchBtn.error{ background:#ff4d4f;color:white; }
-
-    /* DOWNLOAD BTN */
-    .download-wrap{
-      display:none;
-      justify-content:center;
-      margin:12px 0 30px;
-    }
-    button.downloadBtn{
-      background:#00b7ff;
-      color:#111;
-      padding:10px 18px;
-      border:none;
-      border-radius:8px;
-      font-size:16px;
-      font-weight:600;
-      cursor:pointer;
-      transition:0.35s;
+    select,
+    input {
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      font-size: 13px;
     }
 
-    /* ---------- CONTENT ---------- */
-    .section-wrap{
-      padding:20px;
-      display:flex;
-      flex-direction:column;
-      gap:22px;
-      max-width:900px;
-      margin:auto;
-    }
-    .card{
-      background:rgba(255,255,255,0.12);
-      backdrop-filter:blur(8px);
-      border-radius:14px;
-      padding:16px;
-      box-shadow:0 6px 20px rgba(0,0,0,0.35);
-    }
-    .title{font-size:18px;font-weight:700;}
-    .subtitle{opacity:.85;margin-bottom:10px;}
-
-    .chart-container{
-      width:100%;
-      margin-top:6px;
-      height:180px;
-    }
-    canvas{ width:100%!important;height:180px!important; }
-
-    @media(min-width:768px){
-      .chart-container{ height:340px; }
-      canvas{ height:340px!important; }
+    button.fetchBtn {
+      padding: 9px 14px;
+      border: none;
+      border-radius: 8px;
+      background: #C9A8E3;
+      cursor: pointer;
+      font-weight: 600;
     }
 
-    table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:10px;
-      font-size:15px;
-    }
-    td{
-      padding:8px 4px;
-      border-bottom:1px solid rgba(255,255,255,0.14);
-    }
-    td:first-child{
-      opacity:.85;
-      width:42%;
-      font-weight:500;
+    /* FETCH BUTTON STATES */
+
+    button.fetchBtn.loading {
+      background: #ffca2c;
+      color: #111;
+      cursor: wait;
+      position: relative;
     }
 
-    /* ---------- LOADING SCREEN ---------- */
-    #loadingScreen{
-      position: fixed;
-      top: 90px;  /* YOU REQUESTED */
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(20,20,20,0.92);
-      backdrop-filter: blur(4px);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      flex-direction:column;
-      z-index:5000;
-      color:white;
-      text-align:center;
+    button.fetchBtn.loading::after {
+      content: "";
+      width: 14px;
+      height: 14px;
+      border: 2px solid #333;
+      border-top-color: transparent;
+      border-radius: 50%;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      animation: spin .7s linear infinite;
     }
-    .loader{
-      width:55px;height:55px;
-      border:5px solid #ffffff55;
-      border-top-color:#C9A8E3;
-      border-radius:50%;
-      animation:spin .9s linear infinite;
-      margin-bottom:10px;
-    }
-    @keyframes spin{ to{ transform:rotate(360deg); } }
 
+    button.fetchBtn.success {
+      background: #17c964;
+      color: white;
+    }
+
+    button.fetchBtn.error {
+      background: #ff4d4f;
+      color: white;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* PAGE CONTAINER */
+
+    .section-wrap {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    /* TABLE CARD */
+
+    .card {
+      background: white;
+      color: black;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    /* TABLE SCROLL (only when needed) */
+    .tableScroll {
+      width: 100%;
+      overflow-x: auto;
+      /* scrollbar appears only if content overflows */
+      overflow-y: hidden;
+    }
+
+    .tableScroll table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    /* TABLE */
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      color: black;
+    }
+
+    th,
+    td {
+      padding: 3px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background: #eeeeee;
+      font-weight: 600;
+    }
+
+    .titleRow {
+      font-weight: 700;
+      text-align: left;
+      padding: 10px;
+      font-size: 15px;
+      border-bottom: none;
+    }
+
+    .headerSpacer {
+      height: 12px;
+    }
+
+    .dataRow td {
+      font-size: 9px;
+    }
+
+    .downloadBtn {
+      margin-top: 12px;
+      background: #00b7ff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
   </style>
 </head>
 
 <body>
 
-<!-- LOADING SCREEN -->
-<div id="loadingScreen">
-  <div class="loader"></div>
-  <p>Loading...</p>
-</div>
+  <!-- NAVIGATION -->
 
-<script>
-function hideLoader(){
-  document.getElementById("loadingScreen").style.display="none";
-}
-</script>
+  <div class="top-nav">
 
-<!-- NAVIGATION -->
-<div class="top-nav">
-
-  <div class="nav-brand">
-    <div class="nav-logo-box">
-      <img src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+    <div class="nav-brand">
+      <div class="nav-logo-box">
+        <img
+          src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+      </div>
+      <div class="logo">Voltraxx</div>
     </div>
-    <div class="logo">Voltraxx</div>
+
+    <div class="nav-buttons">
+      <button onclick="nav('monitoring.html')">Monitoring</button>
+      <button onclick="nav('analysis.html')">Analysis</button>
+      <button class="active" onclick="nav('history.html')">History</button>
+      <button onclick="nav('settings.html')">Settings</button>
+      <button onclick="logoutUser()">Logout</button>
+    </div>
+
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
   </div>
 
-  <div class="nav-buttons">
+  <div id="mobileMenu" class="mobile-menu">
     <button onclick="nav('monitoring.html')">Monitoring</button>
     <button onclick="nav('analysis.html')">Analysis</button>
-    <button class="active" onclick="nav('history.html')">History</button>
+    <button onclick="nav('history.html')">History</button>
     <button onclick="nav('settings.html')">Settings</button>
     <button onclick="logoutUser()">Logout</button>
   </div>
 
-  <div class="hamburger" onclick="toggleMenu()">
-    <div></div><div></div><div></div>
+  <!-- FILTER -->
+
+  <div class="filters">
+
+    <div class="filter-box">
+      <label>Sensor</label>
+      <select id="sensorSelect">
+        <option value="">Select</option>
+      </select>
+    </div>
+
+    <div class="filter-box">
+      <label>Date From</label>
+      <input type="date" id="fromDate">
+    </div>
+
+    <div class="filter-box">
+      <label>Date To</label>
+      <input type="date" id="toDate">
+    </div>
+
+    <button class="fetchBtn" onclick="getHistory()">Fetch</button>
+
   </div>
 
-</div>
+  <div id="sections" class="section-wrap"></div>
 
-<!-- MOBILE MENU -->
-<div id="mobileMenu" class="mobile-menu">
-  <button onclick="nav('monitoring.html')">Monitoring</button>
-  <button onclick="nav('analysis.html')">Analysis</button>
-  <button class="active" onclick="nav('history.html')">History</button>
-  <button onclick="nav('settings.html')">Settings</button>
-  <button onclick="logoutUser()">Logout</button>
-</div>
+  <script>
 
-<!-- FILTER BAR -->
-<div class="filters">
-  <select id="sensorSelect">
-    <option value="">Select Sensor</option>
-  </select>
-  <input type="date" id="dateSelect">
-  <button class="fetchBtn" onclick="getHistory()">Fetch</button>
-</div>
+    function nav(p) { window.location.href = p }
 
-<div id="sections" class="section-wrap"></div>
-
-<!-- DOWNLOAD EXPORT -->
-<div class="download-wrap" id="downloadBlock">
-  <button class="downloadBtn" onclick="downloadJPEG()">⬇ Download Graph + Table</button>
-</div>
-
-
-<script>
-function nav(p){ window.location.href=p; }
-function toggleMenu(){
-  const m=document.getElementById("mobileMenu");
-  m.style.display=(m.style.display==="flex") ? "none" : "flex";
-}
-function logoutUser(){
-  sessionStorage.clear();
-  window.location="index.html";
-}
-
-const BASE_URL=sessionStorage.getItem("BASE_URL");
-if(!BASE_URL){
-  alert("Session expired.");window.location="index.html";
-}
-
-let lastRow=null;
-
-/* INITIAL LOAD */
-window.onload=()=>{
-  fetch(`${BASE_URL}?page=history`)
-  .then(r=>r.json())
-  .then(j=>{
-    hideLoader();
-    const sel=document.getElementById("sensorSelect");
-    if(j.AvailableSensors){
-      j.AvailableSensors.forEach(id=>{
-        const o=document.createElement("option");
-        o.value=id;
-        o.innerText=`Sensor ${id}`;
-        sel.appendChild(o);
-      });
+    function toggleMenu() {
+      const m = document.getElementById("mobileMenu")
+      m.style.display = (m.style.display === "flex") ? "none" : "flex"
     }
-  })
-  .catch(()=>hideLoader());
-};
 
-
-/* FETCH HISTORY DATA */
-function getHistory(){
-  hideLoader(); // ensure clean state
-
-  const btn=document.querySelector(".fetchBtn");
-  btn.classList.remove("success","error");
-  btn.classList.add("loading");
-  btn.innerText="Loading...";
-
-  const s=document.getElementById("sensorSelect").value;
-  const d=document.getElementById("dateSelect").value;
-
-  if(!s || !d){
-    btn.classList.remove("loading");
-    btn.classList.add("error");
-    btn.innerText="Select Both";
-    return;
-  }
-
-  const p=d.split("-");
-  const final=`${p[2]}/${p[1]}/${p[0]}`;
-
-  fetch(`${BASE_URL}?page=history&sensorid=${s}&date=${final}`)
-  .then(r=>r.json())
-  .then(j=>{
-    if(j.status!=="ok"){fail();return;}
-
-    lastRow=j.row;
-    renderHistory(j.row);
-
-    btn.classList.remove("loading");
-    btn.classList.add("success");
-    btn.innerText="Fetched ✔";
-
-    document.getElementById("downloadBlock").style.display="flex";
-    hideLoader();
-  })
-  .catch(fail);
-
-  function fail(){
-    btn.classList.remove("loading");
-    btn.classList.add("error");
-    btn.innerText="Error";
-    hideLoader();
-  }
-}
-
-
-/* RENDER HISTORY VIEW */
-function renderHistory(item){
-  const wrap=document.getElementById("sections");
-  wrap.innerHTML="";
-
-  wrap.appendChild(graphCard(item));
-  wrap.appendChild(tableCard(item));
-}
-
-/* GRAPH CARD */
-function graphCard(item){
-  const card=document.createElement("div");
-  card.className="card";
-
-  const head=document.createElement("div");
-  head.className="title";
-  head.innerText = (item.Label && item.Label!=-1)
-    ? item.Label
-    : `Sensor C${item["controller ID"]}:S${item["sensor ID"]}`;
-  card.appendChild(head);
-
-  const sub=document.createElement("div");
-  sub.className="subtitle";
-  sub.innerText=item.date;
-  card.appendChild(sub);
-
-  const cc=document.createElement("div");
-  cc.className="chart-container";
-  const c=document.createElement("canvas");
-  cc.appendChild(c);
-  card.appendChild(cc);
-
-  renderChart(c,item);
-  return card;
-}
-
-/* TABLE CARD */
-function tableCard(item){
-  const card=document.createElement("div");
-  card.className="card";
-
-  const head=document.createElement("div");
-  head.className="title";
-  head.innerText="Sensor Details";
-  card.appendChild(head);
-
-  const t=document.createElement("table");
-
-  const skip=[
-    "readings","Main data","Sub data",
-    ...Array.from({length:24},(_,i)=>String(i))
-  ];
-
-  const add=(k,v)=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${k}</td><td>${v}</td>`;
-    t.appendChild(tr);
-  };
-
-  const empty=v=>v===-1||v===""||v===null;
-
-  for(const k in item){
-    if(skip.includes(k))continue;
-    if(!isNaN(k))continue;
-    if(empty(item[k]))continue;
-    add(k,item[k]);
-  }
-
-  for(let i=1;i<=5;i++){
-    const ck=`custom ${i}`;
-    const vk=`value ${i}`;
-    if(!empty(item[ck]) && !empty(item[vk]))
-      add(item[ck],item[vk]);
-  }
-
-  card.appendChild(t);
-  return card;
-}
-
-
-/* GRAPH RENDERING */
-function renderChart(canvas,item){
-  const labels=Array.from({length:24},(_,i)=>i);
-  let values=labels.map(i=>{
-    const v=item[String(i)];
-    if(v===-1 || v==="" || v==null) return null;
-    return Number(v);
-  });
-
-  if(item["Sensor Type"]==="Distance"){
-    const H=Number(item["Tank Height"]);
-    const O=Number(item["Offset Error"]);
-    if(H>0){
-      values=values.map(v=>{
-        if(v===null) return null;
-        return Math.max(0,Math.min(100,Math.round(((H-v+O)/H)*100)));
-      });
+    function logoutUser() {
+      sessionStorage.clear()
+      window.location = "index.html"
     }
-  }
 
-  new Chart(canvas.getContext("2d"),{
-    type:"bar",
-    data:{
-      labels,
-      datasets:[{
-        data:values,
-        backgroundColor:"#e69df4",
-        borderRadius:6
-      }]
-    },
-    options:{
-      plugins:{legend:{display:false}},
-      scales:{
-        x:{ticks:{color:'#fff'},grid:{display:false}},
-        y:{ticks:{color:'#fff'}}
-      },
-      maintainAspectRatio:false
+    const BASE_URL = sessionStorage.getItem("BASE_URL")
+
+    window.onload = () => {
+
+      fetch(`${BASE_URL}?page=history`)
+        .then(r => r.json())
+        .then(j => {
+
+          const sel = document.getElementById("sensorSelect")
+
+          if (j.AvailableSensors) {
+
+            j.AvailableSensors.forEach(id => {
+
+              const o = document.createElement("option")
+              o.value = id
+              o.innerText = `Sensor ${id}`
+
+              sel.appendChild(o)
+
+            })
+
+          }
+
+        })
+
     }
-  });
-}
 
+    async function getHistory() {
 
-/* DOWNLOAD EXPORT */
-function downloadJPEG(){
+      const btn = document.querySelector(".fetchBtn")
 
-  const graphCanvas = document.querySelector("canvas");
-  const table = document.querySelector("table");
+      btn.classList.remove("success", "error")
+      btn.classList.add("loading")
+      btn.innerText = "Fetching..."
 
-  if(!graphCanvas || !table){
-    alert("Missing graph or table");
-    return;
-  }
+      const sensor = document.getElementById("sensorSelect").value
+      const from = document.getElementById("fromDate").value
+      const to = document.getElementById("toDate").value
 
-  const rows = [...table.rows].map(r => [...r.cells].map(c => c.innerText));
+      if (!sensor || !from) {
+        btn.classList.remove("loading")
+        btn.classList.add("error")
+        btn.innerText = "Select Inputs"
+        return
+      }
 
-  const w = 1000;
-  const logoHeight = 90;
-  const spacing = 40;
-  const tableHeight = rows.length * 38;
-  const graphH = graphCanvas.height;
+      const format = d => {
+        const p = d.split("-")
+        return `${p[2]}/${p[1]}/${p[0]}`
+      }
 
-  const h = logoHeight + spacing + graphH + spacing + tableHeight + 100;
+      let url = `${BASE_URL}?page=history&sensorid=${sensor}&from=${format(from)}`
 
-  const out = document.createElement("canvas");
-  out.width = w;
-  out.height = h;
-  const ctx = out.getContext("2d");
+      if (to) url += `&to=${format(to)}`
 
-  ctx.fillStyle = "#222233";
-  ctx.fillRect(0, 0, w, h);
+      try {
 
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "32px Segoe UI";
-  ctx.textAlign = "center";
-  ctx.fillText("VOLTRAXX", w / 2, 60);
+        const res = await fetch(url)
+        const j = await res.json()
 
-  ctx.drawImage(graphCanvas, 50, logoHeight + 20, 900, graphH);
+        if (j.status !== "ok") {
+          throw new Error("No Data")
+        }
 
-  ctx.textAlign = "left";
-  ctx.font = "18px Segoe UI";
-  ctx.fillStyle = "#fff";
+        renderTables(j.sheetName, j.header, j.rows)
 
-  let y = logoHeight + 20 + graphH + 40;
+        btn.classList.remove("loading")
+        btn.classList.add("success")
+        btn.innerText = "Fetched ✔"
 
-  for (const r of rows) {
-    ctx.fillText(`${r[0]}: ${r[1]}`, 60, y);
-    y += 34;
-  }
+      }
+      catch (e) {
 
-  const a = document.createElement("a");
-  a.download = "history_export.jpeg";
-  a.href = out.toDataURL("image/jpeg", 0.95);
-  a.click();
-}
-</script>
+        btn.classList.remove("loading")
+        btn.classList.add("error")
+        btn.innerText = "Error"
+
+      }
+
+    }
+
+    function renderTables(clientID, header, rows) {
+
+      const wrap = document.getElementById("sections")
+      wrap.innerHTML = ""
+
+      const controller = rows[0][1]
+      const sensor = rows[0][2]
+
+      const hourIndex = []
+
+      for (let i = 0; i < 24; i++) {
+        hourIndex.push(header.indexOf(i))
+      }
+
+      const chunkSize = 40
+      const totalPages = Math.ceil(rows.length / chunkSize)
+
+      for (let p = 0; p < totalPages; p++) {
+
+        const start = p * chunkSize
+        const end = start + chunkSize
+        const pageRows = rows.slice(start, end)
+
+        const card = document.createElement("div")
+        card.className = "card"
+
+        const table = document.createElement("table")
+        table.id = `tablePage${p + 1}`
+
+        let html = ""
+
+        html += `<tr><td colspan="25" style="height:15px;border:none;"></td></tr>`
+
+        html += `
+<tr>
+<td colspan="25" class="titleRow">
+VOLTRAXX TECHNOLOGIES, client id: ${clientID}, Controller ID: ${controller}, Sensor ID: ${sensor}, page: ${p + 1}
+</td>
+</tr>
+`
+
+        html += `<tr class="headerSpacer"><td colspan="25"></td></tr>`
+
+        html += "<tr><th>Date</th>"
+
+        for (let i = 0; i < 24; i++) {
+          html += `<th>${i}</th>`
+        }
+
+        html += "</tr>"
+
+        pageRows.forEach(r => {
+
+          html += "<tr class='dataRow'>"
+          html += `<td>${r[0]}</td>`
+
+          hourIndex.forEach(i => {
+            html += `<td>${(r[i] === null || r[i] === "" || r[i] === undefined) ? "." : r[i]}</td>`
+          })
+
+          html += "</tr>"
+
+        })
+
+        table.innerHTML = html
+
+        const scroll = document.createElement("div")
+        scroll.className = "tableScroll"
+
+        scroll.appendChild(table)
+
+        card.appendChild(scroll)
+
+        const btn = document.createElement("button")
+        btn.className = "downloadBtn"
+        btn.innerText = `Download Page ${p + 1}`
+
+        btn.onclick = () => downloadPDF(table.id, p + 1, clientID, sensor)
+
+        card.appendChild(btn)
+
+        wrap.appendChild(card)
+
+      }
+
+    }
+
+    async function downloadPDF(tableID, page, clientID, sensor) {
+
+      const { jsPDF } = window.jspdf
+
+      const table = document.getElementById(tableID)
+
+      const canvas = await html2canvas(table, { scale: 2 })
+
+      const img = canvas.toDataURL("image/png")
+
+      const pdf = new jsPDF("p", "mm", "a4")
+
+      const width = 210
+      const topMargin = 15
+      const height = (canvas.height * (width - 10)) / canvas.width
+
+      pdf.addImage(img, "PNG", 5, topMargin, width - 10, height)
+
+      const from = document.getElementById("fromDate").value
+      const to = document.getElementById("toDate").value || from
+
+      const fileName = `${clientID}_S${sensor}_${from}_to_${to}_page_${page}.pdf`
+
+      pdf.save(fileName)
+
+    }
+
+  </script>
 
 </body>
+
 </html>
