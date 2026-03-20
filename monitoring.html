@@ -209,6 +209,72 @@
     }
     @keyframes spin{to{transform:rotate(360deg);}}
 
+    /* ===== TOGGLE SWITCH ===== */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input { opacity:0; width:0; height:0; }
+
+    .slider {
+      position:absolute;
+      inset:0;
+      background:#888;
+      border-radius:30px;
+      transition:.3s;
+    }
+
+    .slider:before {
+      content:"";
+      position:absolute;
+      height:20px;
+      width:20px;
+      left:3px;
+      bottom:3px;
+      background:white;
+      border-radius:50%;
+      transition:.3s;
+    }
+
+    input:checked + .slider {
+      background:#17c964;
+    }
+
+    input:checked + .slider:before {
+      transform:translateX(24px);
+    }
+
+    /* LABEL */
+    .switch-label{
+      font-size:14px;
+      font-weight:600;
+    }
+
+    /* LOADING */
+    .switch.loading .slider{
+      background: linear-gradient(90deg, #ffca2c, #ffd86b, #ffca2c);
+      background-size: 200% 100%;
+      animation: loadingMove 1s linear infinite;
+    }
+
+    @keyframes loadingMove{
+      0% { background-position: 0% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .switch.loading .slider:before{
+      animation: none;
+      opacity: 0.6;
+    }
+
+    @keyframes spinSwitch{
+      from{transform:rotate(0)}
+      to{transform:rotate(360deg)}
+    }
+
   </style>
 </head>
 
@@ -288,10 +354,11 @@ function logoutUser(){
 /* API */
 const BASE_URL=sessionStorage.getItem("BASE_URL");
 if(!BASE_URL){ alert("Session expired."); window.location="index.html"; }
+let pendingSwitches = {};
 
 /* Load data */
 loadData();
-setInterval(loadData,1500);
+let autoRefresh = setInterval(loadData,1500);
 
 function loadData(){
 
@@ -355,15 +422,29 @@ function loadData(){
         const card=document.createElement("div");
         card.className="card";
 
+        let isSwitch = item.sensorID >= 130;
+
         card.innerHTML=`
           <div class="card-header">
             <div class="title"></div>
             <div class="ids"></div>
           </div>
+
           <div class="main-line">
             <div class="main-label"></div>
-            <div class="main-value"></div>
+
+            ${
+              isSwitch
+              ? `
+                <label class="switch" id="wrap-${item.controllerID}-${item.sensorID}">
+                  <input type="checkbox" id="sw-${item.controllerID}-${item.sensorID}">
+                  <span class="slider"></span>
+                </label>
+              `
+              : `<div class="main-value"></div>`
+            }
           </div>
+
           <div class="sub-line">
             <div class="sub-label"></div>
             <div class="sub-value"></div>
@@ -380,14 +461,17 @@ function loadData(){
         card.querySelector(".title").innerText=title;
         card.querySelector(".ids").innerText=`C${cID}:S${sID}`;
 
-        card.querySelector(".main-label").innerText=item.mainLabel||"";
-        card.querySelector(".main-value").innerText=
-            `${value}${item.mainUnit||""}`;
+          card.querySelector(".main-label").innerText=item.mainLabel||"";
+          if(!isSwitch){
+            card.querySelector(".main-value").innerText=
+                `${value}${item.mainUnit||""}`;
+          }
 
-        card.querySelector(".sub-label").innerText=item.subLabel||"";
-        card.querySelector(".sub-value").innerText=
-            item.subData!=null && item.subData!=="" ?
-            `${item.subData}${item.subUnit||""}` : "";
+          card.querySelector(".sub-label").innerText=item.subLabel||"";
+          card.querySelector(".sub-value").innerText=
+              item.subData!=null && item.subData!=="" ?
+              `${item.subData}${item.subUnit||""}` : "";
+
 
         let col="#e69df4";
 
@@ -395,6 +479,53 @@ function loadData(){
         else if(item.low && item.mainData<item.low) col="#17c964";
 
         card.style.borderLeft=`6px solid ${col}`;
+
+        // ===== SWITCH LOGIC =====
+        if(isSwitch){
+
+          const checkbox = card.querySelector(`#sw-${cID}-${sID}`);
+          const wrapper  = card.querySelector(`#wrap-${cID}-${sID}`);
+
+          const key = `${cID}-${sID}`;
+
+          const serverValue = (value == 1 || value === "1");
+
+          if(pendingSwitches[key] !== undefined){
+
+            const pendingValue = (pendingSwitches[key] == "1");
+
+            checkbox.checked = pendingValue;
+
+            // ✅ ONLY unlock when server matches
+            if(serverValue === pendingValue){
+              delete pendingSwitches[key];
+            }
+
+          } else {
+
+            checkbox.checked = serverValue;
+
+          }
+          
+          checkbox.addEventListener("change", () => {
+
+            if(checkbox.disabled) return;
+
+            clearInterval(autoRefresh);
+
+            const newVal = checkbox.checked ? "1" : "0";
+
+            // 🔒 lock this switch
+            pendingSwitches[`${cID}-${sID}`] = newVal;
+
+            checkbox.disabled = true;
+            wrapper.classList.add("loading");
+
+            sendToGoogleSheet(cID, sID, newVal, checkbox, wrapper);
+
+          });
+
+        }
 
       });
 
@@ -409,6 +540,49 @@ function loadData(){
 
 function isValid(v){
   return !(v==="" || v==null || v==="-" || (typeof v==="string" && v.trim()===""));
+}
+
+function sendToGoogleSheet(controllerID, sensorID, reading, checkbox, wrapper){
+
+  fetch(BASE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body:
+      "controllerID=" + controllerID +
+      "&sensorID=" + sensorID +
+      "&reading=" + reading
+  })
+  .then(res => res.text())
+  .then(res => {
+
+    console.log("Updated:", res);
+
+    if(wrapper) wrapper.classList.remove("loading");
+    if(checkbox) checkbox.disabled = false;
+
+    setTimeout(() => {
+
+      // 🔒 ensure only one interval exists
+      clearInterval(autoRefresh);
+      autoRefresh = setInterval(loadData,1500);
+
+    }, 300);
+
+  })
+  .catch(err => {
+
+    console.error(err);
+
+    if(checkbox){
+      checkbox.checked = !checkbox.checked;
+      checkbox.disabled = false;
+    }
+
+    if(wrapper) wrapper.classList.remove("loading");
+
+  });
 }
 
 </script>
