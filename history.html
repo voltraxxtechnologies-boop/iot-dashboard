@@ -374,7 +374,44 @@
       window.location = "index.html"
     }
 
-    const BASE_URL = sessionStorage.getItem("BASE_URL")
+    const BASE_URL=sessionStorage.getItem("BASE_URL")
+    // ================= SESSION CONTROL =================
+
+    function logoutUser(){
+      sessionStorage.clear();
+      window.location = "index.html";
+    }
+
+    function checkSession(){
+
+      const loginTime = sessionStorage.getItem("LOGIN_TIME");
+
+      if(!loginTime){
+        logoutUser();
+        return;
+      }
+
+      const now = Date.now();
+      const oneHour = 60 * 60 * 1000;
+
+      if(now - loginTime > oneHour){
+        alert("Session expired. Please login again.");
+        logoutUser();
+      }
+    }
+
+    // Reset timer on user activity
+    function resetTimer(){
+      sessionStorage.setItem("LOGIN_TIME", Date.now());
+    }
+
+    // Track activity
+    document.addEventListener("click", resetTimer);
+    document.addEventListener("keydown", resetTimer);
+
+    // Run session check
+    checkSession();
+    setInterval(checkSession, 10000);
 
     window.onload = () => {
 

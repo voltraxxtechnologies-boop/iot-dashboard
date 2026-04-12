@@ -171,7 +171,7 @@
   </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbx59HvC512yE8ztSSSYm9HKzSkrqEcyNZtg7J9obvSNXW5pH6VfUwDzOpGGrNqYPTs/exec";
+const API = "https://script.google.com/macros/s/AKfycbw41ZLluGsuT7EA3gSYSD2kdrQNgMclfYkjEjFLz0rJILH0_kptXTToFoLRZayPT9g/exec";
 
 function showLoading(state) {
   responseMsg.style.color = "white";
@@ -222,6 +222,7 @@ async function signin(){
     sessionStorage.setItem("BASE_URL", data.base_url);
     sessionStorage.setItem("CLIENT", data.client);
     sessionStorage.setItem("DEVICE_ID", data.id);
+    sessionStorage.setItem("LOGIN_TIME", Date.now());
     window.location = "monitoring.html";
   } else if(data.status === "Offline"){
     showMsg("Login restricted");
