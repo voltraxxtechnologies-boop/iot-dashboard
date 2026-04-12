@@ -221,7 +221,7 @@ async function signin(){
 
     sessionStorage.setItem("BASE_URL", data.base_url);
     sessionStorage.setItem("CLIENT", data.client);
-    sessionStorage.setItem("DEVICE_ID", id);
+    sessionStorage.setItem("DEVICE_ID", data.id);
     window.location = "monitoring.html";
   } else if(data.status === "Offline"){
     showMsg("Login restricted");
