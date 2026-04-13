@@ -511,12 +511,22 @@ function loadData(){
               `${item.subData}${item.subUnit||""}` : "";
 
 
-        let col="#e69df4";
+        let col = "#e69df4";
 
-        if(item.high && item.mainData>item.high) col="#ff4d4f";
-        else if(item.low && item.mainData<item.low) col="#17c964";
+        // 🔵 Device (sID ≥ 130)
+        if(sID >= 130){
+          col = "#4dabf7";
+        }
 
-        card.style.borderLeft=`6px solid ${col}`;
+        // alerts override if needed
+        if(item.high && item.mainData > item.high){
+          col = "#ff4d4f";
+        }
+        else if(item.low && item.mainData < item.low){
+          col = "#17c964";
+        }
+
+        card.style.borderLeft = `6px solid ${col}`;
 
         // ===== SWITCH LOGIC =====
         if(isSwitch){
