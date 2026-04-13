@@ -481,10 +481,20 @@ function loadData(){
 
         section.appendChild(card);
 
-        const cID=item.controllerID;
-        const sID=item.sensorID;
+        const cID = item.controllerID;
+        const sID = item.sensorID;
 
-        const title=item.label || `Sensor C${cID}:S${sID}`;
+        let title;
+
+        if(item.label){
+          title = item.label;
+        }else{
+          if(sID >= 130){
+            title = `Device C${cID}:S${sID}`;
+          }else{
+            title = `Sensor C${cID}:S${sID}`;
+          }
+        }
 
         card.querySelector(".title").innerText=title;
         card.querySelector(".ids").innerText=`C${cID}:S${sID}`;
