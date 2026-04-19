@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Monitoring Dashboard</title>
@@ -9,205 +10,281 @@
     href="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
 
   <style>
-    body{
-      margin:0;
-      padding:0;
-      font-family:'Segoe UI',sans-serif;
-      background:linear-gradient(135deg,#6A329F,#3B1C5B);
-      color:white;
-      overflow-x:hidden;
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #6A329F, #3B1C5B);
+      color: white;
+      overflow-x: hidden;
     }
 
     /* ---------- UNIFIED NAVBAR ---------- */
-    .top-nav{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:18px 24px;      /* identical to other pages */
-      background:rgba(26,26,26,0.35);
-      position:relative;
-      z-index:1000;
-      height:60px;            /* fixed height like other pages */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      /* identical to other pages */
+      background: rgba(26, 26, 26, 0.35);
+      position: relative;
+      z-index: 1000;
+      /* height: 60px; */
+      /* fixed height like other pages */
     }
 
-    .nav-brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-shrink:0; 
-      white-space:nowrap;
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
-    .nav-logo-box{
-      width:40px;
-      height:40px;
-      border-radius:10px;
-      overflow:hidden;
-      flex-shrink:0;
-    }
-    .nav-logo-box img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-    }
-    .logo{
-      font-size:26px;
-      font-weight:700;
-      flex-shrink:0;
+    .nav-logo-box {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
-    .nav-buttons{
-      display:flex;
-      gap:20px;
-      flex-shrink:1;
-    }
-    .nav-buttons button{
-      background:transparent;
-      color:#fff;
-      padding:8px 14px;
-      font-size:16px;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      transition:.25s;
-      white-space:nowrap;
-    }
-    .nav-buttons button.active{
-      background:linear-gradient(135deg,#C9A8E3,#6A329F);
-      font-weight:700;
-      color:#fff;
-    }
-    .nav-buttons button:hover{
-      border:2px solid #C9A8E3;
+    .nav-logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
-    .hamburger{
-      display:none;
-      flex-direction:column;
-      gap:5px;
-      cursor:pointer;
-      flex-shrink:0;
-    }
-    .hamburger div{
-      width:28px;
-      height:3px;
-      background:white;
-      border-radius:2px;
+    .logo {
+      font-size: 26px;
+      font-weight: 700;
+      flex-shrink: 0;
     }
 
-    @media(max-width:600px){
-      .nav-buttons{display:none;}
-      .hamburger{display:flex;}
+    /* TEXT STACK (IMPORTANT) */
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.1;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 20px;
+      margin-left:30px;   /* 🔥 add this */
+      flex-shrink: 1;
+    }
+
+    .nav-buttons button {
+      background: transparent;
+      color: #fff;
+      padding: 8px 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: .25s;
+      white-space: nowrap;
+    }
+
+    .nav-buttons button.active {
+      background: linear-gradient(135deg, #C9A8E3, #6A329F);
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .nav-buttons button:hover {
+      border: 2px solid #C9A8E3;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .hamburger div {
+      width: 28px;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+    }
+
+    @media(max-width:600px) {
+      .nav-buttons {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
     }
 
     /* ---------- MOBILE MENU ---------- */
-    .mobile-menu{
-      display:none;
-      flex-direction:column;
-      background:rgba(26,26,26,0.95);
-      padding:12px;
-      position:absolute;
-      left:0;
-      right:0;
-      top:90px;
-      z-index:6000;
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: rgba(26, 26, 26, 0.95);
+      padding: 12px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 90px;
+      z-index: 6000;
     }
-    .mobile-menu button{
-      background:transparent;
-      border:none;
-      font-size:16px;
-      color:white;
-      padding:14px;
-      text-align:left;
+
+    .mobile-menu button {
+      background: transparent;
+      border: none;
+      font-size: 16px;
+      color: white;
+      padding: 14px;
+      text-align: left;
     }
-    .mobile-menu button.active{
-      color:#ffd6ff;
-      font-weight:bold;
+
+    .mobile-menu button.active {
+      color: #ffd6ff;
+      font-weight: bold;
     }
 
     /* Everything below is unchanged… */
 
-    .category-block{ display:none; }
-
-    .section-title{
-      margin:18px 10px;
-      font-size:20px;
-      font-weight:600;
+    .category-block {
+      display: none;
     }
 
-    .section{
-      display:flex;
-      flex-wrap:wrap;        /* allows cards to move to next row */
-      gap:12px;
-      padding:8px 10px 20px;
+    .section-title {
+      margin: 18px 10px;
+      font-size: 20px;
+      font-weight: 600;
     }
 
-    .card{
-      background:rgba(255,255,255,0.12);
-      backdrop-filter:blur(8px);
-      padding:11px;
-      border-radius:12px;
-      width:210px;                 /* ~20% smaller */
-      box-shadow:0 6px 20px rgba(0,0,0,0.35);
-      transition:.25s;
-    }
-    @media (max-width:1200px){
-      .card{ width:200px; }
+    .section {
+      display: flex;
+      flex-wrap: wrap;
+      /* allows cards to move to next row */
+      gap: 12px;
+      padding: 8px 10px 20px;
     }
 
-    @media (max-width:900px){
-      .card{ width:180px; }
+    .card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      padding: 11px;
+      border-radius: 12px;
+      width: 210px;
+      /* ~20% smaller */
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      transition: .25s;
     }
 
-    @media (max-width:600px){
-      .card{ width:160px; }
-    }
-    
-    .card:hover{
-      transform:translateY(-5px);
-      box-shadow:0 10px 28px rgba(0,0,0,0.55);
+    @media (max-width:1200px) {
+      .card {
+        width: 200px;
+      }
     }
 
-    .card-header{display:flex;justify-content:space-between;margin-bottom:6px;}
-    .title{font-size:16px;font-weight:700;}
-    .ids{font-size:12px;opacity:.85;}
+    @media (max-width:900px) {
+      .card {
+        width: 180px;
+      }
+    }
 
-    .main-line{display:flex;justify-content:space-between;margin-top:8px;}
-    .main-label{font-size:14px;color:#ffd6ff;}
-    .main-value{font-size:28px;font-weight:700;}
+    @media (max-width:600px) {
+      .card {
+        width: 160px;
+      }
+    }
 
-    .sub-line{display:flex;justify-content:space-between;margin-top:6px;}
-    .sub-label{font-size:13px;opacity:.85;}
-    .sub-value{font-size:16px;font-weight:600;}
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .ids {
+      font-size: 12px;
+      opacity: .85;
+    }
+
+    .main-line {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .main-label {
+      font-size: 14px;
+      color: #ffd6ff;
+    }
+
+    .main-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .sub-line {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .sub-label {
+      font-size: 13px;
+      opacity: .85;
+    }
+
+    .sub-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
 
     /* ---------- LOADING SCREEN ---------- */
-    #loadingScreen{
-      position:fixed;
-      top:90px;
-      left:0;
-      right:0;
-      bottom:0;
-      background:rgba(20,20,20,0.92);
-      backdrop-filter:blur(4px);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      flex-direction:column;
-      z-index:5000;
-      color:white;
-      text-align:center;
+    #loadingScreen {
+      position: fixed;
+      top: 90px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(20, 20, 20, 0.92);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 5000;
+      color: white;
+      text-align: center;
     }
 
-    .loader{
-      width:55px;
-      height:55px;
-      border:5px solid #ffffff55;
-      border-top-color:#C9A8E3;
-      border-radius:50%;
-      animation:spin .9s linear infinite;
-      margin-bottom:10px;
+    .loader {
+      width: 55px;
+      height: 55px;
+      border: 5px solid #ffffff55;
+      border-top-color: #C9A8E3;
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+      margin-bottom: 10px;
     }
-    @keyframes spin{to{transform:rotate(360deg);}}
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     /* ===== TOGGLE SWITCH ===== */
     .switch {
@@ -217,97 +294,140 @@
       height: 26px;
     }
 
-    .switch input { opacity:0; width:0; height:0; }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
 
     .slider {
-      position:absolute;
-      inset:0;
-      background:#888;
-      border-radius:30px;
-      transition:.3s;
+      position: absolute;
+      inset: 0;
+      background: #888;
+      border-radius: 30px;
+      transition: .3s;
     }
 
     .slider:before {
-      content:"";
-      position:absolute;
-      height:20px;
-      width:20px;
-      left:3px;
-      bottom:3px;
-      background:white;
-      border-radius:50%;
-      transition:.3s;
+      content: "";
+      position: absolute;
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: .3s;
     }
 
-    input:checked + .slider {
-      background:#17c964;
+    input:checked+.slider {
+      background: #17c964;
     }
 
-    input:checked + .slider:before {
-      transform:translateX(24px);
+    input:checked+.slider:before {
+      transform: translateX(24px);
     }
 
     /* LABEL */
-    .switch-label{
-      font-size:14px;
-      font-weight:600;
+    .switch-label {
+      font-size: 14px;
+      font-weight: 600;
     }
 
     /* LOADING */
-    .switch.loading .slider{
+    .switch.loading .slider {
       background: linear-gradient(90deg, #ffca2c, #ffd86b, #ffca2c);
       background-size: 200% 100%;
       animation: loadingMove 1s linear infinite;
     }
 
-    @keyframes loadingMove{
-      0% { background-position: 0% 0; }
-      100% { background-position: 200% 0; }
+    @keyframes loadingMove {
+      0% {
+        background-position: 0% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
     }
 
-    .switch.loading .slider:before{
+    .switch.loading .slider:before {
       animation: none;
       opacity: 0.6;
     }
 
-    @keyframes spinSwitch{
-      from{transform:rotate(0)}
-      to{transform:rotate(360deg)}
+    .user-info {
+      font-size: 13px;
+      line-height: 1.2;
+      opacity: 0.9;
     }
 
+    @keyframes spinSwitch {
+      from {
+        transform: rotate(0)
+      }
+
+      to {
+        transform: rotate(360deg)
+      }
+    }
   </style>
 </head>
 
 <body>
 
-<!-- LOADING -->
-<div id="loadingScreen">
-  <div class="loader"></div>
-  <p>Loading...</p>
-</div>
-
-<script>
-function hideLoader(){
-  const l=document.getElementById("loadingScreen");
-  if(l) l.style.display="none";
-}
-function showNoData(){
-  document.querySelector("#loadingScreen .loader").style.display="none";
-  document.querySelector("#loadingScreen p").innerText="NO DATA FOUND";
-}
-</script>
-
-<!-- NAV -->
-<div class="top-nav">
-
-  <div class="nav-brand">
-    <div class="nav-logo-box">
-      <img src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
-    </div>
-    <div class="logo">Voltraxx</div>
+  <!-- LOADING -->
+  <div id="loadingScreen">
+    <div class="loader"></div>
+    <p>Loading...</p>
   </div>
 
-  <div class="nav-buttons">
+  <script>
+    function hideLoader() {
+      const l = document.getElementById("loadingScreen");
+      if (l) l.style.display = "none";
+    }
+    function showNoData() {
+      document.querySelector("#loadingScreen .loader").style.display = "none";
+      document.querySelector("#loadingScreen p").innerText = "NO DATA FOUND";
+    }
+  </script>
+
+  <!-- NAV -->
+  <div class="top-nav">
+
+    <div class="nav-brand">
+
+      <div class="nav-logo-box">
+        <img
+          src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+      </div>
+
+      <div class="brand-text">
+        <div class="logo">Voltraxx</div>
+        <div class="user-info" id="userInfo"></div>
+      </div>
+
+    </div>
+
+    <div class="nav-buttons">
+      <button class="active" onclick="navigate('monitoring.html',this)">Monitoring</button>
+      <button onclick="navigate('analysis.html',this)">Analysis</button>
+      <button onclick="navigate('history.html',this)">History</button>
+      <button onclick="navigate('settings.html',this)">Settings</button>
+      <button onclick="logoutUser()">Logout</button>
+    </div>
+
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+  </div>
+
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu" class="mobile-menu">
     <button class="active" onclick="navigate('monitoring.html',this)">Monitoring</button>
     <button onclick="navigate('analysis.html',this)">Analysis</button>
     <button onclick="navigate('history.html',this)">History</button>
@@ -315,144 +435,144 @@ function showNoData(){
     <button onclick="logoutUser()">Logout</button>
   </div>
 
-  <div class="hamburger" onclick="toggleMenu()">
-    <div></div><div></div><div></div>
-  </div>
+  <!-- CONTENT -->
+  <div class="section-wrap" id="groupsContainer"></div>
 
-</div>
+  <script>
 
-<!-- MOBILE MENU -->
-<div id="mobileMenu" class="mobile-menu">
-  <button class="active" onclick="navigate('monitoring.html',this)">Monitoring</button>
-  <button onclick="navigate('analysis.html',this)">Analysis</button>
-  <button onclick="navigate('history.html',this)">History</button>
-  <button onclick="navigate('settings.html',this)">Settings</button>
-  <button onclick="logoutUser()">Logout</button>
-</div>
+    /* Navigation */
+    function toggleMenu() {
+      const m = document.getElementById('mobileMenu');
+      m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+    }
+    function navigate(page, btn) {
+      document.querySelectorAll('.nav-buttons button,.mobile-menu button')
+        .forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      window.location.href = page;
+    }
+    function logoutUser() {
+      sessionStorage.clear();
+      window.location = "index.html";
+    }
 
-<!-- CONTENT -->
-<div class="section-wrap" id="groupsContainer"></div>
+    /* API */
+    const BASE_URL = sessionStorage.getItem("BASE_URL");
+    if (!BASE_URL) { alert("Session expired."); window.location = "index.html"; }
+    let pendingSwitches = {};
 
-<script>
+    function loadUserInfo() {
 
-/* Navigation */
-function toggleMenu(){
-  const m=document.getElementById('mobileMenu');
-  m.style.display=(m.style.display==='flex')?'none':'flex';
-}
-function navigate(page,btn){
-  document.querySelectorAll('.nav-buttons button,.mobile-menu button')
-    .forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  window.location.href=page;
-}
-function logoutUser(){
-  sessionStorage.clear();
-  window.location="index.html";
-}
+      const client = sessionStorage.getItem("CLIENT") || "Unknown";
+      const device = sessionStorage.getItem("DEVICE_ID") || "-";
 
-/* API */
-const BASE_URL=sessionStorage.getItem("BASE_URL");
-if(!BASE_URL){ alert("Session expired."); window.location="index.html"; }
-let pendingSwitches = {};
+      const el = document.getElementById("userInfo");
 
-function checkSession(){
+      if (el) {
+        el.innerHTML = `${client} - ID: ${device}`;
+      }
+    }
 
-  const loginTime = sessionStorage.getItem("LOGIN_TIME");
+    // call it
+    loadUserInfo();
 
-  if(!loginTime){
-    logoutUser();
-    return;
-  }
+    function checkSession() {
 
-  const now = Date.now();
-  const oneHour = 60 * 60 * 1000;
+      const loginTime = sessionStorage.getItem("LOGIN_TIME");
 
-  if(now - loginTime > oneHour){
-    alert("Session expired. Please login again.");
-    logoutUser();
-  }
-}
+      if (!loginTime) {
+        logoutUser();
+        return;
+      }
 
-function resetTimer(){
-  sessionStorage.setItem("LOGIN_TIME", Date.now());
-}
+      const now = Date.now();
+      const oneHour = 60 * 60 * 1000;
 
-document.addEventListener("click", resetTimer);
-document.addEventListener("keydown", resetTimer);
+      if (now - loginTime > oneHour) {
+        alert("Session expired. Please login again.");
+        logoutUser();
+      }
+    }
 
-checkSession();
-setInterval(checkSession, 10000);
+    function resetTimer() {
+      sessionStorage.setItem("LOGIN_TIME", Date.now());
+    }
 
-/* Load data */
-loadData();
-let autoRefresh = setInterval(loadData,1500);
+    document.addEventListener("click", resetTimer);
+    document.addEventListener("keydown", resetTimer);
 
-function loadData(){
+    checkSession();
+    setInterval(checkSession, 10000);
 
-  fetch(`${BASE_URL}?page=monitoring`)
-  .then(r=>r.json())
-  .then(data=>{
+    /* Load data */
+    loadData();
+    let autoRefresh = setInterval(loadData, 1500);
 
-    const container=document.getElementById("groupsContainer");
-    container.innerHTML="";
+    function loadData() {
 
-    const groups=data.groups||{};
-    let total=0;
+      fetch(`${BASE_URL}?page=monitoring`)
+        .then(r => r.json())
+        .then(data => {
 
-    const groupKeys = Object.keys(groups).sort((a,b)=>{
+          const container = document.getElementById("groupsContainer");
+          container.innerHTML = "";
 
-      if(a === "All") return 1;     // push All to bottom
-      if(b === "All") return -1;
+          const groups = data.groups || {};
+          let total = 0;
 
-      return a.localeCompare(b);   // normal alphabetical order
+          const groupKeys = Object.keys(groups).sort((a, b) => {
 
-    });
+            if (a === "All") return 1;     // push All to bottom
+            if (b === "All") return -1;
 
-    groupKeys.forEach(groupName=>{
+            return a.localeCompare(b);   // normal alphabetical order
 
-      const sensors = groups[groupName] || [];
+          });
 
-      // keep only sensors with valid data
-      const validSensors = sensors.filter(item=>{
-        let value = item.mainData;
-        if(!isValid(value)) value = item.readings;
-        return isValid(value);
-      });
+          groupKeys.forEach(groupName => {
 
-      // if no sensors with data → skip section
-      if(validSensors.length === 0) return;
+            const sensors = groups[groupName] || [];
 
-      const block=document.createElement("div");
-      block.className="category-block";
-      block.style.display="block";
+            // keep only sensors with valid data
+            const validSensors = sensors.filter(item => {
+              let value = item.mainData;
+              if (!isValid(value)) value = item.readings;
+              return isValid(value);
+            });
 
-      block.innerHTML=`
+            // if no sensors with data → skip section
+            if (validSensors.length === 0) return;
+
+            const block = document.createElement("div");
+            block.className = "category-block";
+            block.style.display = "block";
+
+            block.innerHTML = `
         <h2 class="section-title">${groupName}</h2>
-        <div class="section" id="group-${groupName.replace(/\s+/g,'-')}"></div>
+        <div class="section" id="group-${groupName.replace(/\s+/g, '-')}"></div>
       `;
 
-      container.appendChild(block);
+            container.appendChild(block);
 
-      const section=block.querySelector(".section");
-      validSensors.forEach(item=>{
+            const section = block.querySelector(".section");
+            validSensors.forEach(item => {
 
-        let value = item.mainData;
+              let value = item.mainData;
 
-        if(!isValid(value)){
-          value = item.readings;
-        }
+              if (!isValid(value)) {
+                value = item.readings;
+              }
 
-        if(!isValid(value)) return;
+              if (!isValid(value)) return;
 
-        total++;
+              total++;
 
-        const card=document.createElement("div");
-        card.className="card";
+              const card = document.createElement("div");
+              card.className = "card";
 
-        let isSwitch = item.sensorID >= 130;
+              let isSwitch = item.sensorID >= 130;
 
-        card.innerHTML=`
+              card.innerHTML = `
           <div class="card-header">
             <div class="title"></div>
             <div class="ids"></div>
@@ -461,16 +581,15 @@ function loadData(){
           <div class="main-line">
             <div class="main-label"></div>
 
-            ${
-              isSwitch
-              ? `
+            ${isSwitch
+                  ? `
                 <label class="switch" id="wrap-${item.controllerID}-${item.sensorID}">
                   <input type="checkbox" id="sw-${item.controllerID}-${item.sensorID}">
                   <span class="slider"></span>
                 </label>
               `
-              : `<div class="main-value"></div>`
-            }
+                  : `<div class="main-value"></div>`
+                }
           </div>
 
           <div class="sub-line">
@@ -479,161 +598,166 @@ function loadData(){
           </div>
         `;
 
-        section.appendChild(card);
+              section.appendChild(card);
 
-        const cID = item.controllerID;
-        const sID = item.sensorID;
+              const cID = item.controllerID;
+              const sID = item.sensorID;
 
-        let title;
+              let title;
 
-        if(item.label){
-          title = item.label;
-        }else{
-          if(sID >= 130){
-            title = `Device C${cID}:S${sID}`;
-          }else{
-            title = `Sensor C${cID}:S${sID}`;
-          }
-        }
+              if (item.label) {
+                title = item.label;
+              } else {
+                if (sID >= 130) {
+                  title = `Device C${cID}:S${sID}`;
+                } else {
+                  title = `Sensor C${cID}:S${sID}`;
+                }
+              }
 
-        card.querySelector(".title").innerText=title;
-        card.querySelector(".ids").innerText=`C${cID}:S${sID}`;
+              card.querySelector(".title").innerText = title;
+              card.querySelector(".ids").innerText = `C${cID}:S${sID}`;
 
-          card.querySelector(".main-label").innerText=item.mainLabel||"";
-          if(!isSwitch){
-            card.querySelector(".main-value").innerText=
-                `${value}${item.mainUnit||""}`;
-          }
+              card.querySelector(".main-label").innerText = item.mainLabel || "";
+              if (!isSwitch) {
+                card.querySelector(".main-value").innerText =
+                  `${value}${item.mainUnit || ""}`;
+              }
 
-          card.querySelector(".sub-label").innerText=item.subLabel||"";
-          card.querySelector(".sub-value").innerText=
-              item.subData!=null && item.subData!=="" ?
-              `${item.subData}${item.subUnit||""}` : "";
+              card.querySelector(".sub-label").innerText = item.subLabel || "";
+              card.querySelector(".sub-value").innerText =
+                item.subData != null && item.subData !== "" ?
+                  `${item.subData}${item.subUnit || ""}` : "";
 
 
-        let col = "#e69df4";
+              let col = "#e69df4";
 
-        // 🔵 Device (sID ≥ 130)
-        if(sID >= 130){
-          col = "#4dabf7";
-        }
+              // 🔵 Device (sID ≥ 130)
+              if (sID >= 130) {
+                col = "#4dabf7";
+              }
 
-        // alerts override if needed
-        if(item.high && item.mainData > item.high){
-          col = "#ff4d4f";
-        }
-        else if(item.low && item.mainData < item.low){
-          col = "#17c964";
-        }
+              // alerts override if needed
+              if (item.high && item.mainData > item.high) {
+                col = "#ff4d4f";
+              }
+              else if (item.low && item.mainData < item.low) {
+                col = "#17c964";
+              }
 
-        card.style.borderLeft = `6px solid ${col}`;
+              card.style.borderLeft = `6px solid ${col}`;
 
-        // ===== SWITCH LOGIC =====
-        if(isSwitch){
+              // ===== SWITCH LOGIC =====
+              if (isSwitch) {
 
-          const checkbox = card.querySelector(`#sw-${cID}-${sID}`);
-          const wrapper  = card.querySelector(`#wrap-${cID}-${sID}`);
+                const checkbox = card.querySelector(`#sw-${cID}-${sID}`);
+                const wrapper = card.querySelector(`#wrap-${cID}-${sID}`);
 
-          const key = `${cID}-${sID}`;
+                const key = `${cID}-${sID}`;
 
-          const serverValue = (value == 1 || value === "1");
+                const serverValue = (value == 1 || value === "1");
 
-          if(pendingSwitches[key] !== undefined){
+                if (pendingSwitches[key] !== undefined) {
 
-            const pendingValue = (pendingSwitches[key] == "1");
+                  const pendingValue = (pendingSwitches[key] == "1");
 
-            checkbox.checked = pendingValue;
+                  checkbox.checked = pendingValue;
 
-            // ✅ ONLY unlock when server matches
-            if(serverValue === pendingValue){
-              delete pendingSwitches[key];
-            }
+                  // ✅ ONLY unlock when server matches
+                  if (serverValue === pendingValue) {
+                    delete pendingSwitches[key];
+                  }
 
-          } else {
+                } else {
 
-            checkbox.checked = serverValue;
+                  checkbox.checked = serverValue;
 
-          }
-          
-          checkbox.addEventListener("change", () => {
+                }
 
-            if(checkbox.disabled) return;
+                checkbox.addEventListener("change", () => {
 
-            clearInterval(autoRefresh);
+                  if (checkbox.disabled) return;
 
-            const newVal = checkbox.checked ? "1" : "0";
+                  clearInterval(autoRefresh);
 
-            // 🔒 lock this switch
-            pendingSwitches[`${cID}-${sID}`] = newVal;
+                  const newVal = checkbox.checked ? "1" : "0";
 
-            checkbox.disabled = true;
-            wrapper.classList.add("loading");
+                  // 🔒 lock this switch
+                  pendingSwitches[`${cID}-${sID}`] = newVal;
 
-            sendToGoogleSheet(cID, sID, newVal, checkbox, wrapper);
+                  checkbox.disabled = true;
+                  wrapper.classList.add("loading");
+
+                  sendToGoogleSheet(cID, sID, newVal, checkbox, wrapper);
+
+                });
+
+              }
+
+            });
 
           });
 
-        }
+          if (total === 0) showNoData();
+          else hideLoader();
 
-      });
-
-    });
-
-    if(total===0) showNoData();
-    else hideLoader();
-
-  })
-  .catch(()=>showNoData());
-}
-
-function isValid(v){
-  return !(v==="" || v==null || v==="-" || (typeof v==="string" && v.trim()===""));
-}
-
-function sendToGoogleSheet(controllerID, sensorID, reading, checkbox, wrapper){
-
-  fetch(BASE_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body:
-      "controllerID=" + controllerID +
-      "&sensorID=" + sensorID +
-      "&reading=" + reading
-  })
-  .then(res => res.text())
-  .then(res => {
-
-    console.log("Updated:", res);
-
-    if(wrapper) wrapper.classList.remove("loading");
-    if(checkbox) checkbox.disabled = false;
-
-    setTimeout(() => {
-
-      // 🔒 ensure only one interval exists
-      clearInterval(autoRefresh);
-      autoRefresh = setInterval(loadData,1500);
-
-    }, 300);
-
-  })
-  .catch(err => {
-
-    console.error(err);
-
-    if(checkbox){
-      checkbox.checked = !checkbox.checked;
-      checkbox.disabled = false;
+        })
+        .catch(() => showNoData());
     }
 
-    if(wrapper) wrapper.classList.remove("loading");
+    function isValid(v) {
+      return !(v === "" || v == null || v === "-" || (typeof v === "string" && v.trim() === ""));
+    }
 
-  });
-}
+    function sendToGoogleSheet(controllerID, sensorID, reading, checkbox, wrapper) {
 
-</script>
+      fetch(BASE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body:
+          "controllerID=" + controllerID +
+          "&sensorID=" + sensorID +
+          "&reading=" + reading
+      })
+        .then(res => res.text())
+        .then(res => {
+
+          console.log("Updated:", res);
+
+          if (wrapper) wrapper.classList.remove("loading");
+
+          // ⏳ keep disabled slightly longer
+          setTimeout(() => {
+            if (checkbox) checkbox.disabled = false;
+          }, 500);
+
+          setTimeout(() => {
+
+            // 🔒 ensure only one interval exists
+            clearInterval(autoRefresh);
+            autoRefresh = setInterval(loadData, 1500);
+
+          }, 300);
+
+        })
+        .catch(err => {
+
+          console.error(err);
+
+          if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+            checkbox.disabled = false;
+          }
+
+          if (wrapper) wrapper.classList.remove("loading");
+
+        });
+    }
+
+  </script>
 
 </body>
+
 </html>
