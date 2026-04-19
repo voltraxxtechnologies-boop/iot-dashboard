@@ -31,22 +31,29 @@
       background: rgba(26, 26, 26, 0.35);
       position: relative;
       z-index: 1000;
-      height: 60px;
+      /* height: 60px; */
     }
 
     /* BRAND (logo + Voltraxx) */
     .nav-brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       flex-shrink: 0;
       white-space: nowrap;
     }
 
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.1;
+    }
+
     .nav-logo-box {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
       overflow: hidden;
       flex-shrink: 0;
     }
@@ -63,10 +70,17 @@
       flex-shrink: 0;
     }
 
+    .user-info {
+      font-size: 13px;
+      line-height: 1.2;
+      opacity: 0.9;
+    }
+
     /* NAV BUTTONS */
     .nav-buttons {
       display: flex;
       gap: 20px;
+      margin-left: 30px;
       flex-shrink: 1;
     }
 
@@ -302,11 +316,17 @@
   <div class="top-nav">
 
     <div class="nav-brand">
+
       <div class="nav-logo-box">
         <img
           src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
       </div>
-      <div class="logo">Voltraxx</div>
+
+      <div class="brand-text">
+        <div class="logo">Voltraxx</div>
+        <div class="user-info" id="userInfo"></div>
+      </div>
+
     </div>
 
     <div class="nav-buttons">
@@ -369,24 +389,33 @@
       m.style.display = (m.style.display === "flex") ? "none" : "flex"
     }
 
-    function logoutUser() {
-      sessionStorage.clear()
-      window.location = "index.html"
+
+    const BASE_URL = sessionStorage.getItem("BASE_URL")
+    // ================= SESSION CONTROL =================
+    function loadUserInfo() {
+
+      const client = sessionStorage.getItem("CLIENT") || "Unknown";
+      const device = sessionStorage.getItem("DEVICE_ID") || "-";
+
+      const el = document.getElementById("userInfo");
+
+      if (el) {
+        el.innerHTML = `${client} - ID: ${device}`;
+      }
     }
 
-    const BASE_URL=sessionStorage.getItem("BASE_URL")
-    // ================= SESSION CONTROL =================
+    loadUserInfo();
 
-    function logoutUser(){
+    function logoutUser() {
       sessionStorage.clear();
       window.location = "index.html";
     }
 
-    function checkSession(){
+    function checkSession() {
 
       const loginTime = sessionStorage.getItem("LOGIN_TIME");
 
-      if(!loginTime){
+      if (!loginTime) {
         logoutUser();
         return;
       }
@@ -394,14 +423,14 @@
       const now = Date.now();
       const oneHour = 60 * 60 * 1000;
 
-      if(now - loginTime > oneHour){
+      if (now - loginTime > oneHour) {
         alert("Session expired. Please login again.");
         logoutUser();
       }
     }
 
     // Reset timer on user activity
-    function resetTimer(){
+    function resetTimer() {
       sessionStorage.setItem("LOGIN_TIME", Date.now());
     }
 
