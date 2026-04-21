@@ -594,8 +594,41 @@
           return;
         }
 
-        const header = sectionEl.querySelector(".section-header");
-        toggleSection(id, header);
+        const box = document.getElementById(id);
+
+        // close others
+        document.querySelectorAll(".section-body").forEach(el => {
+          if (el.id !== id) {
+            el.style.display = "none";
+            el.parentElement.classList.remove("open");
+          }
+        });
+
+        const isOpening = box.style.display !== "block";
+
+        if (isOpening) {
+          box.style.display = "block";
+          sectionEl.classList.add("open");
+
+          // ✅ MOBILE BEHAVIOR
+          const isMobile = window.innerWidth <= 600;
+
+          if (isMobile) {
+            setTimeout(() => {
+              const select = document.getElementById("sensorSelect");
+              if (select) {
+                select.focus();
+
+                // 🔥 Trick: scroll into view (feels like dropdown opens)
+                select.scrollIntoView({ behavior: "smooth", block: "center" });
+              }
+            }, 100);
+          }
+
+        } else {
+          box.style.display = "none";
+          sectionEl.classList.remove("open");
+        }
       }
 
       function updateSensorTitle() {
@@ -621,7 +654,7 @@
 
       /* LOAD SETTINGS */
       async function loadSettings() {
-        
+
         closeAllSections();
         try {
 
@@ -648,7 +681,7 @@
             const labelType = s.sensorID >= 130 ? "IO" : "Sensor";
             const o = document.createElement("option");
             o.value = s.sensorID;
-            o.textContent = `Controller ${s.controllerID} - ${labelType} ${s.sensorID}`;
+            o.textContent = `${labelType} ${s.sensorID}`;
             sel.appendChild(o);
 
             if (s.sensorID == 10) {
