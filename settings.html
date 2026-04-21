@@ -590,29 +590,12 @@
 
       function handleSectionClick(e, id, sectionEl) {
 
-        // ❌ ignore interactive elements
         if (e.target.closest("input, select, button, .group-chip, .add-chip, .group-dropdown, .group-option, #groupMasterDropdown")) {
           return;
         }
 
-        const box = document.getElementById(id);
-
-        // close others
-        document.querySelectorAll(".section-body").forEach(el => {
-          if (el.id !== id) {
-            el.style.display = "none";
-            el.parentElement.classList.remove("open");
-          }
-        });
-
-        // toggle THIS section
-        if (box.style.display === "block") {
-          box.style.display = "none";
-          sectionEl.classList.remove("open");
-        } else {
-          box.style.display = "block";
-          sectionEl.classList.add("open");
-        }
+        const header = sectionEl.querySelector(".section-header");
+        toggleSection(id, header);
       }
 
       function updateSensorTitle() {
@@ -638,7 +621,7 @@
 
       /* LOAD SETTINGS */
       async function loadSettings() {
-
+        
         closeAllSections();
         try {
 
