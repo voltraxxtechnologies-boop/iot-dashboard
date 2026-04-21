@@ -473,7 +473,7 @@
       </div>
 
       <div id="sensorBox" class="section-body">
-        <select id="sensorSelect" size="5" style="width:100%"></select>
+        <select id="sensorSelect" style="width:100%"></select>
       </div>
     </div>
 
@@ -619,10 +619,10 @@
               if (select) {
                 select.focus();
 
-                // 🔥 Trick: scroll into view (feels like dropdown opens)
-                select.scrollIntoView({ behavior: "smooth", block: "center" });
+                // 🔥 THIS triggers mobile dropdown
+                select.click();
               }
-            }, 100);
+            }, 150);
           }
 
         } else {
