@@ -473,7 +473,7 @@
       </div>
 
       <div id="sensorBox" class="section-body">
-        <select id="sensorSelect" style="width:100%"></select>
+        <select id="sensorSelect" size="5" style="width:100%"></select>
       </div>
     </div>
 
@@ -594,41 +594,8 @@
           return;
         }
 
-        const box = document.getElementById(id);
-
-        // close others
-        document.querySelectorAll(".section-body").forEach(el => {
-          if (el.id !== id) {
-            el.style.display = "none";
-            el.parentElement.classList.remove("open");
-          }
-        });
-
-        const isOpening = box.style.display !== "block";
-
-        if (isOpening) {
-          box.style.display = "block";
-          sectionEl.classList.add("open");
-
-          // ✅ MOBILE BEHAVIOR
-          const isMobile = window.innerWidth <= 600;
-
-          if (isMobile) {
-            setTimeout(() => {
-              const select = document.getElementById("sensorSelect");
-              if (select) {
-                select.focus();
-
-                // 🔥 THIS triggers mobile dropdown
-                select.click();
-              }
-            }, 150);
-          }
-
-        } else {
-          box.style.display = "none";
-          sectionEl.classList.remove("open");
-        }
+        const header = sectionEl.querySelector(".section-header");
+        toggleSection(id, header);
       }
 
       function updateSensorTitle() {
@@ -654,7 +621,7 @@
 
       /* LOAD SETTINGS */
       async function loadSettings() {
-
+        
         closeAllSections();
         try {
 
