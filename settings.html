@@ -280,11 +280,17 @@
 
     .saveBtn {
       margin-top: 12px;
-      padding: 10px 18px;
       background: #C9A8E3;
+      padding: 10px 18px;
       border: none;
       border-radius: 8px;
       font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .saveBtn:hover {
+      background: rgba(220, 112, 242, 0.4);
     }
 
     .arrow {
@@ -402,6 +408,163 @@
     .save-container {
       text-align: center;
     }
+
+    .formula-flex {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .formula-half {
+      width: 50%;
+    }
+
+    @media(max-width: 600px) {
+      .formula-flex {
+        flex-direction: column;
+      }
+
+      .formula-half {
+        width: 100%;
+      }
+    }
+
+    #formulaBox>table.settings-table {
+      width: 100%;
+    }
+
+    #formulaBox .settings-table {
+      width: 100%;
+    }
+
+    #formulaBox .settings-table tr {
+      padding: 10px 0;
+    }
+
+    #formulaBox .settings-table td:last-child {
+      flex: 1;
+    }
+
+    #formulaBox .settings-table td:first-child {
+      width: 25%;
+      /* label column */
+    }
+
+    #formulaBox .settings-table td:last-child {
+      width: 75%;
+      /* input/formula column */
+    }
+
+    #mainFormulaBox {
+      width: 100%;
+      margin-top: 6px;
+      padding: 1% 20px;
+      /* same as table */
+      box-sizing: border-box;
+    }
+
+    .formula-half .settings-table tr {
+      padding: 8px 12px;
+    }
+
+    .formula-chip-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 6px 8px;
+      min-height: 36px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+
+    .formula-chip.formula-v {     /* V CHIP (NO extra space) */
+      background: rgba(161, 38, 255, 0.45);
+      padding: 4px 8px;
+      padding-right: 8px;
+    }
+
+    .formula-chip.formula-v .remove {
+      display: none;
+    }
+
+    .formula-v {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 rgba(201, 168, 227, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 8px rgba(201, 168, 227, 0.7);
+      }
+
+      100% {
+        box-shadow: 0 0 0 rgba(201, 168, 227, 0.4);
+      }
+    }
+
+    /* hover = active slot */
+    .formula-v:hover {
+      background: rgba(107, 5, 161, 0.15);
+      box-shadow: 0 0 6px rgba(201, 168, 227, 0.6);
+    }
+
+    .formula-chip {
+      /* NORMAL CHIP (with remove space) */
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px dashed rgba(255, 255, 255, 0.4);
+      border-radius: 14px;
+      padding: 4px 8px;
+      padding-right: 22px;
+      font-size: 12px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .formula-chip .remove {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.2s;
+    }
+
+    .formula-chip.removeable:hover {
+      background: rgba(255, 80, 80, 0.4);
+    }
+
+    .formula-chip.removeable:hover .remove {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .formula-actions {
+      display: flex;
+      justify-content: flex-end;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .resetBtn {
+      color: #ffb3b3;
+      margin-top: 12px;
+      background: rgba(255, 80, 80, 0.2);
+      padding: 8px 14px;
+      border: 1px solid rgba(255, 80, 80, 0.6);
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .resetBtn:hover {
+      background: rgba(255, 80, 80, 0.4);
+    }
   </style>
 </head>
 
@@ -468,7 +631,7 @@
     <!-- 1 SENSOR -->
     <div class="section" onclick="handleSectionClick(event, 'sensorBox', this)">
       <div class="section-header">
-        <span id="sensorTitle">Sensor / IO</span>
+        <span id="sensorTitle">Select : Sensor / I/O</span>
         <span class="arrow">⌄</span>
       </div>
 
@@ -522,253 +685,344 @@
         <span class="arrow">⌄</span>
       </div>
       <div id="formulaBox" class="section-body">
-        (Next Phase)
+        <div class="formula-flex">
+
+          <table class="settings-table formula-half">
+            <!-- VARIABLE NAMES -->
+            <tr>
+              <td colspan="2"><b>Variable Names</b></td>
+            </tr>
+
+            <tr>
+              <td>Custom 1</td>
+              <td><input id="custom1" placeholder="Enter variable 1 name"></td>
+            </tr>
+            <tr>
+              <td>Custom 2</td>
+              <td><input id="custom2" placeholder="Enter variable 2 name"></td>
+            </tr>
+            <tr>
+              <td>Custom 3</td>
+              <td><input id="custom3" placeholder="Enter variable 3 name"></td>
+            </tr>
+            <tr>
+              <td>Custom 4</td>
+              <td><input id="custom4" placeholder="Enter variable 4 name"></td>
+            </tr>
+            <tr>
+              <td>Custom 5</td>
+              <td><input id="custom5" placeholder="Enter variable 5 name"></td>
+            </tr>
+          </table>
+
+          <table class="settings-table formula-half">
+            <!-- VARIABLE VALUES -->
+            <tr>
+              <td colspan="2"><b>Variable Values</b></td>
+            </tr>
+
+            <tr>
+              <td>Value 1</td>
+              <td><input id="value1" type="number" placeholder="Enter variable 1 value"></td>
+            </tr>
+            <tr>
+              <td>Value 2</td>
+              <td><input id="value2" type="number" placeholder="Enter variable 2 value"></td>
+            </tr>
+            <tr>
+              <td>Value 3</td>
+              <td><input id="value3" type="number" placeholder="Enter variable 3 value"></td>
+            </tr>
+            <tr>
+              <td>Value 4</td>
+              <td><input id="value4" type="number" placeholder="Enter variable 4 value"></td>
+            </tr>
+            <tr>
+              <td>Value 5</td>
+              <td><input id="value5" type="number" placeholder="Enter variable 5 value"></td>
+            </tr>
+          </table>
+        </div>
+        <hr style="margin:20px 0; opacity:0.3;">
+
+
+        <table class="settings-table">
+          <tr>
+            <td colspan="2"><b>Main Formula</b></td>
+          </tr>
+
+          <tr>
+            <td>Name</td>
+            <td><input id="mainFormulaName" placeholder="Enter Formula Name"></td>
+          </tr>
+
+          <tr>
+            <td>Formula</td>
+            <td>
+              <div id="formulaPreview" style="margin-top:10px; opacity:0.8; width:100%; word-break:break-word;">
+              </div>
+            </td>
+          </tr>
+        </table>
+
+
+        <!-- CHIP AREA -->
+        <div id="mainFormulaBox" class="formula-chip-box"></div>
+        <div class="formula-actions">
+          <button class="resetBtn" onclick="resetMainFormula()">Reset</button>
+          <button class="saveBtn" onclick="saveFormulaVariables()">Save</button>
+        </div>
+
+
       </div>
 
+      <script>
+        function nav(p) { window.location.href = p; }
 
-    </div>
-
-    <script>
-      function nav(p) { window.location.href = p; }
-
-      function toggleMenu() {
-        const m = document.getElementById("mobileMenu");
-        m.style.display = (m.style.display === "flex") ? "none" : "flex";
-      }
-
-      function logoutUser() {
-        sessionStorage.clear();
-        window.location = "index.html";
-      }
-
-      const BASE_URL = sessionStorage.getItem("BASE_URL");
-      if (!BASE_URL) {
-        alert("Session expired."); window.location = "index.html";
-      }
-
-      function loadUserInfo() {
-
-        const client = sessionStorage.getItem("CLIENT") || "Unknown";
-        const device = sessionStorage.getItem("DEVICE_ID") || "-";
-
-        const el = document.getElementById("userInfo");
-
-        if (el) {
-          el.innerHTML = `${client} - ID: ${device}`;
-        }
-      }
-
-      loadUserInfo();
-
-      function checkSession() {
-
-        const loginTime = sessionStorage.getItem("LOGIN_TIME");
-
-        if (!loginTime) {
-          logoutUser();
-          return;
+        function toggleMenu() {
+          const m = document.getElementById("mobileMenu");
+          m.style.display = (m.style.display === "flex") ? "none" : "flex";
         }
 
-        const now = Date.now();
-        const oneHour = 60 * 60 * 1000;
-
-        if (now - loginTime > oneHour) {
-          alert("Session expired. Please login again.");
-          logoutUser();
-        }
-      }
-
-      function resetTimer() {
-        sessionStorage.setItem("LOGIN_TIME", Date.now());
-      }
-
-      document.addEventListener("click", resetTimer);
-      document.addEventListener("keydown", resetTimer);
-
-      checkSession();
-      setInterval(checkSession, 10000);
-
-      function handleSectionClick(e, id, sectionEl) {
-
-        if (e.target.closest("input, select, button, .group-chip, .add-chip, .group-dropdown, .group-option, #groupMasterDropdown")) {
-          return;
+        function logoutUser() {
+          sessionStorage.clear();
+          window.location = "index.html";
         }
 
-        const header = sectionEl.querySelector(".section-header");
-        toggleSection(id, header);
-      }
-
-      function updateSensorTitle() {
-
-        const el = document.getElementById("sensorTitle");
-
-        if (!selected) {
-          el.innerText = "Sensor / IO";
-          return;
+        const BASE_URL = sessionStorage.getItem("BASE_URL");
+        if (!BASE_URL) {
+          alert("Session expired."); window.location = "index.html";
         }
 
-        const labelType = selected.sensorID >= 130 ? "IO" : "Sensor";
-        el.innerText = `${labelType} - ${selected.sensorID}`;
-      }
+        function loadUserInfo() {
 
-      let sensors = [];
-      let io = [];
-      let selected = null;
-      let groupList = [];
-      let masterGroups = [];     // current visible chips
-      let removedGroups = [];    // goes into + dropdown
-      let displayGroups = [];
+          const client = sessionStorage.getItem("CLIENT") || "Unknown";
+          const device = sessionStorage.getItem("DEVICE_ID") || "-";
 
-      /* LOAD SETTINGS */
-      async function loadSettings() {
-        
-        closeAllSections();
-        try {
+          const el = document.getElementById("userInfo");
 
-          const res = await fetch(BASE_URL + "?page=settings");
+          if (el) {
+            el.innerHTML = `${client} - ID: ${device}`;
+          }
+        }
 
-          if (!res.ok) throw new Error("Server error");
+        loadUserInfo();
 
-          const data = await res.json();
+        function checkSession() {
 
-          sensors = data.sensors || [];
-          io = data.io || [];
-          groupList = data.groups || [];
-          masterGroups = [...groupList];
-          removedGroups = [];
+          const loginTime = sessionStorage.getItem("LOGIN_TIME");
 
-          renderGroupMaster();
+          if (!loginTime) {
+            logoutUser();
+            return;
+          }
 
-          const sel = document.getElementById("sensorSelect");
-          sel.innerHTML = "<option value=''>Select Sensor</option>";
+          const now = Date.now();
+          const oneHour = 60 * 60 * 1000;
 
-          let defaultSensor = null;
+          if (now - loginTime > oneHour) {
+            alert("Session expired. Please login again.");
+            logoutUser();
+          }
+        }
 
-          [...sensors, ...io].forEach(s => {
-            const labelType = s.sensorID >= 130 ? "IO" : "Sensor";
-            const o = document.createElement("option");
-            o.value = s.sensorID;
-            o.textContent = `${labelType} ${s.sensorID}`;
-            sel.appendChild(o);
+        function resetTimer() {
+          sessionStorage.setItem("LOGIN_TIME", Date.now());
+        }
 
-            if (s.sensorID == 10) {
-              defaultSensor = s;
+        document.addEventListener("click", resetTimer);
+        document.addEventListener("keydown", resetTimer);
+
+        checkSession();
+        setInterval(checkSession, 10000);
+
+        function handleSectionClick(e, id, sectionEl) {
+
+          if (e.target.closest("input, select, button, .group-chip, .add-chip, .group-dropdown, .group-option, #groupMasterDropdown, .formula-chip")) {
+            return;
+          }
+
+          const header = sectionEl.querySelector(".section-header");
+          toggleSection(id, header);
+        }
+
+        function updateSensorTitle() {
+
+          const el = document.getElementById("sensorTitle");
+
+          if (!selected) {
+            el.innerText = "Select : Sensor or I/O";
+            return;
+          }
+
+          const labelType = selected.sensorID >= 130 ? "Selected I/O" : "Selected Sensor";
+          el.innerText = `${labelType} : ${selected.sensorID}`;
+        }
+
+        let sensors = [];
+        let io = [];
+        let selected = null;
+        let groupList = [];
+        let masterGroups = [];     // current visible chips
+        let removedGroups = [];    // goes into + dropdown
+        let displayGroups = [];
+        let mainTokens = [];
+
+        /* LOAD SETTINGS */
+        async function loadSettings() {
+
+          closeAllSections();
+          try {
+
+            const res = await fetch(BASE_URL + "?page=settings");
+
+            if (!res.ok) throw new Error("Server error");
+
+            const data = await res.json();
+
+            sensors = data.sensors || [];
+            io = data.io || [];
+            groupList = data.groups || [];
+            masterGroups = [...groupList];
+            removedGroups = [];
+
+            renderGroupMaster();
+
+            const sel = document.getElementById("sensorSelect");
+            sel.innerHTML = "<option value=''>Select Sensor</option>";
+
+            let defaultSensor = null;
+
+            [...sensors, ...io].forEach(s => {
+              const labelType = s.sensorID >= 130 ? "IO" : "Sensor";
+              const o = document.createElement("option");
+              o.value = s.sensorID;
+              o.textContent = `${labelType} ${s.sensorID}`;
+              sel.appendChild(o);
+
+              if (s.sensorID == 10) {
+                defaultSensor = s;
+              }
+            });
+
+            // ✅ Apply default selection AFTER loop
+            if (defaultSensor) {
+              selected = defaultSensor;
+              sel.value = defaultSensor.sensorID;
+              renderDisplay(); // prepare data only        
+              updateSensorTitle();
             }
-          });
 
-          // ✅ Apply default selection AFTER loop
-          if (defaultSensor) {
-            selected = defaultSensor;
-            sel.value = defaultSensor.sensorID;
-            renderDisplay(); // prepare data only        
+            // fallback
+            else if (sensors.length) {
+              selected = sensors[0];
+              sel.value = sensors[0].sensorID;
+              renderDisplay(); // only load, don't open
+            }
+
+            setTimeout(hideLoader, 200);
+
+          } catch (e) {
+            console.error(e);
+            setTimeout(hideLoader, 200);
+            alert("Failed to load settings. Check connection.");
+          }
+        }
+        function closeAllSections() {
+          document.querySelectorAll(".section-body").forEach(el => {
+            el.style.display = "none";
+            el.parentElement.classList.remove("open");
+          });
+        }
+
+        (async () => {
+          await loadSettings();
+        })();
+
+        /* SELECT SENSOR */
+        document.getElementById("sensorSelect").addEventListener("change", e => {
+
+          const id = Number(e.target.value);
+
+          if (!id) {
+            selected = null;
+            document.getElementById("displayTable").innerHTML = "";
+            document.getElementById("displayBox").style.display = "none";
+            updateSensorTitle();
+            return;
+          }
+
+          selected = [...sensors, ...io].find(s => s.sensorID === id);
+
+          if (selected) {
+            renderDisplay();
             updateSensorTitle();
           }
 
-          // fallback
-          else if (sensors.length) {
-            selected = sensors[0];
-            sel.value = sensors[0].sensorID;
-            renderDisplay(); // only load, don't open
-          }
-
-          setTimeout(hideLoader, 200);
-
-        } catch (e) {
-          console.error(e);
-          setTimeout(hideLoader, 200);
-          alert("Failed to load settings. Check connection.");
-        }
-      }
-      function closeAllSections() {
-        document.querySelectorAll(".section-body").forEach(el => {
-          el.style.display = "none";
-          el.parentElement.classList.remove("open");
-        });
-      }
-
-      (async () => {
-        await loadSettings();
-      })();
-
-      /* SELECT SENSOR */
-      document.getElementById("sensorSelect").addEventListener("change", e => {
-
-        const id = Number(e.target.value);
-
-        if (!id) {
-          selected = null;
-          document.getElementById("displayTable").innerHTML = "";
-          document.getElementById("displayBox").style.display = "none";
-          updateSensorTitle();
-          return;
-        }
-
-        selected = [...sensors, ...io].find(s => s.sensorID === id);
-
-        if (selected) {
-          renderDisplay();
-          updateSensorTitle();
-        }
-
-      });
-
-      /* TOGGLE */
-      function toggleSection(id, headerEl) {
-
-        document.querySelectorAll(".section-body").forEach(el => {
-          if (el.id !== id) {
-            el.style.display = "none";
-            el.parentElement.classList.remove("open");
-          }
         });
 
-        const box = document.getElementById(id);
-        const section = headerEl.parentElement;
+        /* TOGGLE */
+        function toggleSection(id, headerEl) {
 
-        if (box.style.display === "block") {
-          box.style.display = "none";
-          section.classList.remove("open");
-        } else {
-          box.style.display = "block";
-          section.classList.add("open");
-        }
-      }
+          document.querySelectorAll(".section-body").forEach(el => {
+            if (el.id !== id) {
+              el.style.display = "none";
+              el.parentElement.classList.remove("open");
+            }
+          });
 
-      /* DISPLAY TABLE */
-      function renderDisplay() {
+          const box = document.getElementById(id);
+          const section = headerEl.parentElement;
 
-        if (!selected) return;
-        const s = selected;
-        const isIO = s.sensorID >= 130;
-        const labelType = isIO ? "IO" : "Sensor";
-        let highOp = ">";
-        let highVal = "";
+          if (box.style.display === "block") {
+            box.style.display = "none";
+            section.classList.remove("open");
+          } else {
+            box.style.display = "block";
+            section.classList.add("open");
+            if (id === "formulaBox") {
+              renderFormulaVariables();
+              initMainFormula();
 
-        if (s.high) {
-          const match = s.high.match(/(>=|<=|>|<|=)(.*)/);
-          if (match) {
-            highOp = match[1];
-            highVal = match[2];
+            }
           }
         }
 
-        let lowOp = "<";
-        let lowVal = "";
+        /* DISPLAY TABLE */
+        function renderDisplay() {
 
-        if (s.low) {
-          const match = s.low.match(/(>=|<=|>|<|=)(.*)/);
-          if (match) {
-            lowOp = match[1];
-            lowVal = match[2];
+          if (!selected) return;
+          const s = selected;
+          const isIO = s.sensorID >= 130;
+          const labelType = isIO ? "I/O" : "Sensor";
+          let highOp = ">";
+          let highVal = "";
+
+          if (s.high) {
+            const match = s.high.match(/(>=|<=|>|<|=)(.*)/);
+            if (match) {
+              highOp = match[1];
+              highVal = match[2];
+            }
           }
-        }
 
-        displayGroups = (s.group || "")
-          .split(",")
-          .map(g => g.trim())
-          .filter(g => g);
+          let lowOp = "<";
+          let lowVal = "";
 
-        document.getElementById("displayTable").innerHTML = `
+          if (s.low) {
+            const match = s.low.match(/(>=|<=|>|<|=)(.*)/);
+            if (match) {
+              lowOp = match[1];
+              lowVal = match[2];
+            }
+          }
+
+          displayGroups = (s.group || "")
+            .split(",")
+            .map(g => g.trim())
+            .filter(g => g);
+
+          document.getElementById("displayTable").innerHTML = `
 
     <tr>
       <td>Controller</td>
@@ -833,325 +1087,533 @@
       </td>
     </tr>
     `;
-        renderGroupChips(displayGroups);
-      }
+          renderGroupChips(displayGroups);
+        }
 
-      function renderGroupChips(groups) {
+        function renderGroupChips(groups) {
 
-        const container = document.getElementById("groupContainer");
-        container.innerHTML = "";
+          const container = document.getElementById("groupContainer");
+          container.innerHTML = "";
 
-        // ➕ ADD BUTTON FIRST
-        const addWrapper = document.createElement("div");
-        addWrapper.style.position = "relative";
+          // ➕ ADD BUTTON FIRST
+          const addWrapper = document.createElement("div");
+          addWrapper.style.position = "relative";
 
-        const add = document.createElement("div");
-        add.className = "add-chip";
-        add.innerText = "+";
+          const add = document.createElement("div");
+          add.className = "add-chip";
+          add.innerText = "+";
 
-        add.onclick = (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          toggleGroupDropdown(addWrapper, groups);
-        };
+          add.onclick = (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            toggleGroupDropdown(addWrapper, groups);
+          };
 
-        addWrapper.appendChild(add);
+          addWrapper.appendChild(add);
 
-        container.appendChild(addWrapper);
+          container.appendChild(addWrapper);
 
-        // EXISTING CHIPS
-        groups.forEach(g => {
-          const chip = document.createElement("div");
-          chip.className = "group-chip";
-          chip.innerHTML = `
+          // EXISTING CHIPS
+          groups.forEach(g => {
+            const chip = document.createElement("div");
+            chip.className = "group-chip";
+            chip.innerHTML = `
           <span class="group-text">${g}</span>
           <span class="remove">✕</span>
         `;
 
-          chip.querySelector(".remove").onclick = (e) => {
-            e.stopPropagation();
-            displayGroups = displayGroups.filter(x => x !== g);
-            renderGroupChips(displayGroups);
-          };
-
-          container.appendChild(chip);
-        });
-      }
-
-      function toggleGroupDropdown(wrapper, current) {
-
-        // remove existing dropdown if open
-        const existing = document.getElementById("groupDropdown");
-        if (existing) {
-          existing.remove();
-          return;
-        }
-
-        const dropdown = document.createElement("div");
-        dropdown.id = "groupDropdown";
-        dropdown.className = "group-dropdown";
-
-        const remaining = groupList.filter(g => !current.includes(g));
-
-        if (!remaining.length) {
-          dropdown.innerHTML = "<div style='padding:8px;opacity:0.7;'>No groups</div>";
-        } else {
-          remaining.forEach(g => {
-            const item = document.createElement("div");
-            item.className = "group-option";
-            item.innerText = g;
-
-            item.onclick = () => {
-              if (current.includes(g)) return;
-              if (!displayGroups.includes(g)) {
-                displayGroups.push(g);
-              }
+            chip.querySelector(".remove").onclick = (e) => {
+              e.stopPropagation();
+              displayGroups = displayGroups.filter(x => x !== g);
               renderGroupChips(displayGroups);
             };
 
-            dropdown.appendChild(item);
+            container.appendChild(chip);
           });
         }
 
-        wrapper.appendChild(dropdown);
+        function toggleGroupDropdown(wrapper, current) {
 
-        // auto close on outside click
-        setTimeout(() => {
-          const handler = (e) => {
-            if (!wrapper.contains(e.target)) {
-              removeGroupDropdown();
-              document.removeEventListener("click", handler);
-            }
+          // remove existing dropdown if open
+          const existing = document.getElementById("groupDropdown");
+          if (existing) {
+            existing.remove();
+            return;
+          }
+
+          const dropdown = document.createElement("div");
+          dropdown.id = "groupDropdown";
+          dropdown.className = "group-dropdown";
+
+          const remaining = groupList.filter(g => !current.includes(g));
+
+          if (!remaining.length) {
+            dropdown.innerHTML = "<div style='padding:8px;opacity:0.7;'>No groups</div>";
+          } else {
+            remaining.forEach(g => {
+              const item = document.createElement("div");
+              item.className = "group-option";
+              item.innerText = g;
+
+              item.onclick = () => {
+                if (current.includes(g)) return;
+                if (!displayGroups.includes(g)) {
+                  displayGroups.push(g);
+                }
+                renderGroupChips(displayGroups);
+              };
+
+              dropdown.appendChild(item);
+            });
+          }
+
+          wrapper.appendChild(dropdown);
+
+          // auto close on outside click
+          setTimeout(() => {
+            const handler = (e) => {
+              if (!wrapper.contains(e.target)) {
+                removeGroupDropdown();
+                document.removeEventListener("click", handler);
+              }
+            };
+            document.addEventListener("click", handler);
+          }, 0);
+        }
+
+        function removeGroupDropdown() {
+          const d = document.getElementById("groupDropdown");
+          if (d) d.remove();
+        }
+
+        /* SAVE */
+        async function saveDisplay() {
+
+          if (!selected) {
+            alert("Select sensor first");
+            return;
+          }
+          const highOp = document.getElementById("highOp")?.value || "";
+          const highVal = document.getElementById("highVal")?.value || "";
+
+          const lowOp = document.getElementById("lowOp")?.value || "";
+          const lowVal = document.getElementById("lowVal")?.value || "";
+
+          const groups = displayGroups;
+
+          const groupString = groups.length ? [...new Set(groups)].join(",") + "," : "";
+
+          const params = new URLSearchParams({
+            mode: "display",
+            sensorID: selected.sensorID,
+            type: document.getElementById("type").value,
+            label: document.getElementById("label").value,
+            mainLabel: document.getElementById("mainLabel").value,
+            mainUnit: document.getElementById("mainUnit")?.value || "",
+            subLabel: document.getElementById("subLabel").value,
+            subUnit: document.getElementById("subUnit")?.value || "",
+            high: highVal ? highOp + highVal : "",
+            low: lowVal ? lowOp + lowVal : "",
+            group: groupString
+          });
+
+          const btn = document.querySelector("#displayBox .saveBtn");
+
+          try {
+            btn.innerText = "Saving...";
+
+            const res = await fetch(BASE_URL, {
+              method: "POST",
+              body: params
+            });
+
+            if (!res.ok) throw new Error();
+
+            // ✅ Show success FIRST
+            btn.innerText = "Saved ✓";
+
+            // ✅ Wait → THEN close + reload
+            setTimeout(async () => {
+              btn.innerText = "Save";
+              await loadSettings();
+            }, 1200);
+
+          } catch {
+            btn.innerText = "Error!";
+          }
+        }
+
+        function renderGroupMaster() {
+
+          const container = document.getElementById("groupMasterContainer");
+          if (!container) return;
+
+          container.innerHTML = "";
+
+          // ➕ ADD BUTTON FIRST
+          const addWrapper = document.createElement("div");
+          addWrapper.style.position = "relative";
+
+          const add = document.createElement("div");
+          add.className = "add-chip";
+          add.innerText = "+";
+
+          add.onclick = (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            toggleGroupMasterDropdown(addWrapper);
           };
-          document.addEventListener("click", handler);
-        }, 0);
-      }
 
-      function removeGroupDropdown() {
-        const d = document.getElementById("groupDropdown");
-        if (d) d.remove();
-      }
+          addWrapper.appendChild(add);
+          container.appendChild(addWrapper);
 
-      /* SAVE */
-      async function saveDisplay() {
-
-        if (!selected) {
-          alert("Select sensor first");
-          return;
-        }
-        const highOp = document.getElementById("highOp")?.value || "";
-        const highVal = document.getElementById("highVal")?.value || "";
-
-        const lowOp = document.getElementById("lowOp")?.value || "";
-        const lowVal = document.getElementById("lowVal")?.value || "";
-
-        const groups = displayGroups;
-
-        const groupString = groups.length ? [...new Set(groups)].join(",") + "," : "";
-
-        const params = new URLSearchParams({
-          mode: "display",
-          sensorID: selected.sensorID,
-          type: document.getElementById("type").value,
-          label: document.getElementById("label").value,
-          mainLabel: document.getElementById("mainLabel").value,
-          mainUnit: document.getElementById("mainUnit")?.value || "",
-          subLabel: document.getElementById("subLabel").value,
-          subUnit: document.getElementById("subUnit")?.value || "",
-          high: highVal ? highOp + highVal : "",
-          low: lowVal ? lowOp + lowVal : "",
-          group: groupString
-        });
-
-        const btn = document.querySelector("#displayBox .saveBtn");
-
-        try {
-          btn.innerText = "Saving...";
-
-          const res = await fetch(BASE_URL, {
-            method: "POST",
-            body: params
-          });
-
-          if (!res.ok) throw new Error();
-
-          // ✅ Show success FIRST
-          btn.innerText = "Saved ✓";
-
-          // ✅ Wait → THEN close + reload
-          setTimeout(async () => {
-            btn.innerText = "Save";
-            await loadSettings();
-          }, 1200);
-
-        } catch {
-          btn.innerText = "Error!";
-        }
-      }
-
-      function renderGroupMaster() {
-
-        const container = document.getElementById("groupMasterContainer");
-        if (!container) return;
-
-        container.innerHTML = "";
-
-        // ➕ ADD BUTTON FIRST
-        const addWrapper = document.createElement("div");
-        addWrapper.style.position = "relative";
-
-        const add = document.createElement("div");
-        add.className = "add-chip";
-        add.innerText = "+";
-
-        add.onclick = (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          toggleGroupMasterDropdown(addWrapper);
-        };
-
-        addWrapper.appendChild(add);
-        container.appendChild(addWrapper);
-
-        // EXISTING CHIPS
-        masterGroups.forEach(g => {
-          const chip = document.createElement("div");
-          chip.className = "group-chip";
-          chip.innerHTML = `
+          // EXISTING CHIPS
+          masterGroups.forEach(g => {
+            const chip = document.createElement("div");
+            chip.className = "group-chip";
+            chip.innerHTML = `
       <span class="group-text">${g}</span>
       <span class="remove">✕</span>
     `;
 
-          chip.querySelector(".remove").onclick = (e) => {
-            e.stopPropagation();
+            chip.querySelector(".remove").onclick = (e) => {
+              e.stopPropagation();
 
-            masterGroups = masterGroups.filter(x => x !== g);
-            removedGroups.push(g);
+              masterGroups = masterGroups.filter(x => x !== g);
+              removedGroups.push(g);
 
-            renderGroupMaster();
-          };
+              renderGroupMaster();
+            };
 
-          container.appendChild(chip);
-        });
-      }
-
-      function toggleGroupMasterDropdown(wrapper) {
-
-        const existing = document.getElementById("groupMasterDropdown");
-        if (existing) {
-          existing.remove();
-          return;
+            container.appendChild(chip);
+          });
         }
 
-        const dropdown = document.createElement("div");
-        dropdown.id = "groupMasterDropdown";
-        dropdown.className = "group-dropdown";
+        function toggleGroupMasterDropdown(wrapper) {
 
-        // 🔹 ADD NEW GROUP INPUT
-        const input = document.createElement("input");
-        input.placeholder = "Add group...";
-        input.style.width = "100%";
-        input.style.marginBottom = "6px";
-
-        input.onkeydown = (e) => {
-          if (e.key === "Enter") {
-            const val = input.value.trim();
-            if (!val) return;
-
-            if (!masterGroups.includes(val)) {
-              masterGroups.push(val);
-            }
-
-            input.value = "";
-            input.focus();
-            dropdown.remove();
-            renderGroupMaster();
+          const existing = document.getElementById("groupMasterDropdown");
+          if (existing) {
+            existing.remove();
+            return;
           }
-        };
 
-        dropdown.appendChild(input);
+          const dropdown = document.createElement("div");
+          dropdown.id = "groupMasterDropdown";
+          dropdown.className = "group-dropdown";
 
-        // 🔹 REMOVED GROUPS
-        if (removedGroups.length) {
+          // 🔹 ADD NEW GROUP INPUT
+          const input = document.createElement("input");
+          input.placeholder = "Add group...";
+          input.style.width = "100%";
+          input.style.marginBottom = "6px";
 
-          removedGroups.forEach(g => {
-            const item = document.createElement("div");
-            item.className = "group-option";
-            item.innerText = g;
+          input.onkeydown = (e) => {
+            if (e.key === "Enter") {
+              const val = input.value.trim();
+              if (!val) return;
 
-            item.onclick = () => {
-              if (!masterGroups.includes(g)) {
-                masterGroups.push(g);
+              if (!masterGroups.includes(val)) {
+                masterGroups.push(val);
               }
-              removedGroups = removedGroups.filter(x => x !== g);
 
+              input.value = "";
+              input.focus();
               dropdown.remove();
               renderGroupMaster();
+            }
+          };
+
+          dropdown.appendChild(input);
+
+          // 🔹 REMOVED GROUPS
+          if (removedGroups.length) {
+
+            removedGroups.forEach(g => {
+              const item = document.createElement("div");
+              item.className = "group-option";
+              item.innerText = g;
+
+              item.onclick = () => {
+                if (!masterGroups.includes(g)) {
+                  masterGroups.push(g);
+                }
+                removedGroups = removedGroups.filter(x => x !== g);
+
+                dropdown.remove();
+                renderGroupMaster();
+              };
+
+              dropdown.appendChild(item);
+            });
+
+          } else {
+            const empty = document.createElement("div");
+            empty.style.padding = "8px";
+            empty.style.opacity = "0.6";
+            empty.innerText = "No removed groups";
+            dropdown.appendChild(empty);
+          }
+
+          wrapper.appendChild(dropdown);
+
+          // outside click close
+          setTimeout(() => {
+            const handler = (e) => {
+              if (!wrapper.contains(e.target)) {
+                dropdown.remove();
+                document.removeEventListener("click", handler);
+              }
+            };
+            document.addEventListener("click", handler);
+          }, 0);
+        }
+
+        async function saveGroupList() {
+
+          const btn = document.querySelector("#groupBox .saveBtn");
+
+          const groupString = masterGroups.length
+            ? masterGroups.join(",") + ","
+            : "";
+
+          const params = new URLSearchParams({
+            mode: "groupList",
+            groups: groupString
+          });
+
+          try {
+            btn.innerText = "Saving...";
+
+            const res = await fetch(BASE_URL, {
+              method: "POST",
+              body: params
+            });
+
+            if (!res.ok) throw new Error();
+
+            // ✅ Show success
+            btn.innerText = "Saved ✓";
+
+            // ✅ Wait → then reload
+            setTimeout(async () => {
+              btn.innerText = "Save";
+              await loadSettings();
+            }, 1200);
+
+          } catch {
+            btn.innerText = "Error!";
+          }
+        }
+        function renderFormulaVariables() {
+
+          if (!selected) return;
+
+          document.getElementById("custom1").value = selected.custom1 || "";
+          document.getElementById("custom2").value = selected.custom2 || "";
+          document.getElementById("custom3").value = selected.custom3 || "";
+          document.getElementById("custom4").value = selected.custom4 || "";
+          document.getElementById("custom5").value = selected.custom5 || "";
+
+          document.getElementById("value1").value = selected.value1 || "";
+          document.getElementById("value2").value = selected.value2 || "";
+          document.getElementById("value3").value = selected.value3 || "";
+          document.getElementById("value4").value = selected.value4 || "";
+          document.getElementById("value5").value = selected.value5 || "";
+
+          const nameInput = document.getElementById("mainFormulaName");
+
+          nameInput.value = selected.mainFormulaName || "";
+
+          if (!selected.mainFormulaName) {
+            nameInput.placeholder = "Enter Formula Name";
+          }
+        }
+        async function saveFormulaVariables() {
+
+          if (!selected) {
+            alert("Select sensor first");
+            return;
+          }
+
+          const btn = document.querySelector("#formulaBox .saveBtn");
+
+          const params = new URLSearchParams({
+            mode: "formula",
+            sensorID: selected.sensorID,
+
+            custom1: document.getElementById("custom1").value,
+            value1: document.getElementById("value1").value,
+
+            custom2: document.getElementById("custom2").value,
+            value2: document.getElementById("value2").value,
+
+            custom3: document.getElementById("custom3").value,
+            value3: document.getElementById("value3").value,
+
+            custom4: document.getElementById("custom4").value,
+            value4: document.getElementById("value4").value,
+
+            custom5: document.getElementById("custom5").value,
+            value5: document.getElementById("value5").value
+          });
+
+          try {
+
+            btn.innerText = "Saving...";
+
+            const res = await fetch(BASE_URL, {
+              method: "POST",
+              body: params
+            });
+
+            if (!res.ok) throw new Error();
+
+            btn.innerText = "Saved ✓";
+
+            setTimeout(async () => {
+              btn.innerText = "Done";
+              await loadSettings();
+            }, 1200);
+
+          } catch {
+            btn.innerText = "Error!";
+          }
+        }
+
+        function initMainFormula() {
+
+          // CLEAN FORMULA STRING
+          const formulaText = getCleanFormula(selected.mainFormula);
+
+          // OPTIONAL: store raw formula (for future parsing)
+          mainTokens = [];
+
+          renderMainFormula();
+
+          // SHOW FORMULA TEXT BELOW (TEMP DISPLAY)
+          showFormulaPreview(formulaText);
+        }
+
+        function renderMainFormula() {
+
+          const box = document.getElementById("mainFormulaBox");
+          box.innerHTML = "";
+
+          // ALWAYS START WITH v
+          const firstV = createVChip(0);
+          box.appendChild(firstV);
+
+          mainTokens.forEach((token, index) => {
+
+            // TOKEN CHIP
+            const chip = document.createElement("div");
+            chip.className = "formula-chip removeable";
+            chip.innerHTML = `${token} <span class="remove">✕</span>`;
+
+            chip.onclick = (e) => {
+              e.stopPropagation();
+              removeToken(index);
+            };
+
+            box.appendChild(chip);
+
+            // ADD NEXT v
+            const v = createVChip(index + 1);
+            box.appendChild(v);
+          });
+        }
+
+        function openFormulaDropdown(el, position) {
+
+          removeFormulaDropdown();
+
+          const dropdown = document.createElement("div");
+          dropdown.className = "group-dropdown";
+          dropdown.id = "formulaDropdown";
+
+          const options = [
+            "+", "-", "*", "/", "%", "^", "(", ")"
+          ];
+
+          // ADD VARIABLES (dynamic)
+          const vars = [
+            document.getElementById("custom1").value,
+            document.getElementById("custom2").value,
+            document.getElementById("custom3").value,
+            document.getElementById("custom4").value,
+            document.getElementById("custom5").value
+          ].filter(v => v);
+
+          [...options, ...vars].forEach(val => {
+            const item = document.createElement("div");
+            item.className = "group-option";
+            item.innerText = val;
+
+            item.onclick = () => {
+              addToken(position, val);
+              removeFormulaDropdown();
             };
 
             dropdown.appendChild(item);
           });
 
-        } else {
-          const empty = document.createElement("div");
-          empty.style.padding = "8px";
-          empty.style.opacity = "0.6";
-          empty.innerText = "No removed groups";
-          dropdown.appendChild(empty);
+          el.appendChild(dropdown);
+
+          setTimeout(() => {
+            document.addEventListener("click", removeFormulaDropdown, { once: true });
+          }, 0);
         }
 
-        wrapper.appendChild(dropdown);
+        function addToken(pos, value) {
+          mainTokens.splice(pos, 0, value);
+          renderMainFormula();
+        }
 
-        // outside click close
-        setTimeout(() => {
-          const handler = (e) => {
-            if (!wrapper.contains(e.target)) {
-              dropdown.remove();
-              document.removeEventListener("click", handler);
-            }
+        function removeToken(index) {
+          mainTokens.splice(index, 1);
+          renderMainFormula();
+        }
+
+        function resetMainFormula() {
+          if (!mainTokens.length) return;
+          mainTokens = [];
+          renderMainFormula();
+        }
+
+        function removeFormulaDropdown() {
+          const d = document.getElementById("formulaDropdown");
+          if (d) d.remove();
+        }
+
+        function getCleanFormula(str) {
+          if (!str) return "";
+          return str.replace(/^"+|"+$/g, "");
+        }
+
+        function showFormulaPreview(text) {
+          const el = document.getElementById("formulaPreview");
+          if (!text) {
+            el.innerText = "No formula saved";
+          } else {
+            el.innerText = text;
+          }
+        }
+
+        function createVChip(position) {
+
+          const v = document.createElement("div");
+          v.className = "formula-chip formula-v";   // 👈 ADD CLASS
+          v.innerText = "v";
+
+          v.onclick = (e) => {
+            e.stopPropagation();
+            openFormulaDropdown(v, position);
           };
-          document.addEventListener("click", handler);
-        }, 0);
-      }
 
-      async function saveGroupList() {
-
-        const btn = document.querySelector("#groupBox .saveBtn");
-
-        const groupString = masterGroups.length
-          ? masterGroups.join(",") + ","
-          : "";
-
-        const params = new URLSearchParams({
-          mode: "groupList",
-          groups: groupString
-        });
-
-        try {
-          btn.innerText = "Saving...";
-
-          const res = await fetch(BASE_URL, {
-            method: "POST",
-            body: params
-          });
-
-          if (!res.ok) throw new Error();
-
-          // ✅ Show success
-          btn.innerText = "Saved ✓";
-
-          // ✅ Wait → then reload
-          setTimeout(async () => {
-            btn.innerText = "Save";
-            await loadSettings();
-          }, 1200);
-
-        } catch {
-          btn.innerText = "Error!";
+          return v;
         }
-      }
 
-    </script>
+      </script>
 
 </body>
 
