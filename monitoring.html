@@ -228,7 +228,7 @@
     }
 
     .main-label {
-      font-size: 13px;
+      font-size: 18px;
       color: #ffd6ff;
     }
 
@@ -642,15 +642,17 @@
                 col = "#4dabf7";
               }
 
-              // alerts override if needed
-              if (item.high && item.mainData > item.high) {
+              // 🔴 HIGH condition
+              if (checkCondition(value, item.high)) {
                 col = "#ff4d4f";
               }
-              else if (item.low && item.mainData < item.low) {
+
+              // 🟢 LOW condition
+              else if (checkCondition(value, item.low)) {
                 col = "#17c964";
               }
 
-              card.style.borderLeft = `6px solid ${col}`;
+              card.style.borderLeft = `10px solid ${col}`;
 
               // ===== SWITCH LOGIC =====
               if (isSwitch) {
@@ -759,6 +761,24 @@
           if (wrapper) wrapper.classList.remove("loading");
 
         });
+    }
+
+    function checkCondition(value, condition) {
+
+      if (!condition || condition === "") return false;
+
+      condition = condition.toString().trim();
+
+      const num = parseFloat(condition.replace(/[^\d.-]/g, ""));
+      if (isNaN(num)) return false;
+
+      if (condition.startsWith(">=")) return value >= num;
+      if (condition.startsWith("<=")) return value <= num;
+      if (condition.startsWith(">")) return value > num;
+      if (condition.startsWith("<")) return value < num;
+      if (condition.startsWith("=")) return value == num;
+
+      return false;
     }
 
   </script>

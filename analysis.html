@@ -10,6 +10,7 @@
     href="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
   <style>
     body {
@@ -244,50 +245,108 @@
       height: 150px !important;
     }
 
-    /* POPUP */
-    #extraInfo {
+    #popupOverlay {
       position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(18, 18, 18, 0.96);
-      color: #fff;
-      border-radius: 12px;
-      padding: 18px;
-      z-index: 1200;
-      max-width: 92%;
-      max-height: 84%;
-      overflow: auto;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
       display: none;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
     }
 
-    #closeInfo {
-      position: absolute;
-      right: 12px;
-      top: 10px;
-      cursor: pointer;
-      color: #ff6b6b;
-      font-size: 18px;
+    #popupCard {
+      background: #3B1C5B;
+      padding: 20px;
+      border-radius: 14px;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
     }
 
-    #infoTitle {
-      margin: 0 0 8px 0;
-      font-weight: 700;
-      font-size: 18px;
+    .company {
+      font-size: 16px;
+      font-weight: bold;
+      color: #e69df4;
     }
 
-    #infoContent {
-      white-space: pre-wrap;
-      font-size: 15px;
-      line-height: 1.5;
-      color: #e6e6e6;
+    .device {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-bottom: 6px;
     }
 
-    .muted {
-      opacity: 0.8;
+    #popupHeader {
+      margin-bottom: 10px;
+    }
+
+    #popupHeader .title {
       font-size: 13px;
-      margin-top: 6px;
+      font-weight: bold;
+    }
+
+    #popupHeader .ids {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    #popupHeader .mode {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    #popupChart {
+      width: 100% !important;
+      height: 300px !important;
+    }
+
+    #popupInfo {
+      margin-top: 15px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Dropdown */
+    #valueMode {
+      margin: 15px 40px;
+      padding: 8px 14px;
+
+      background: #3B1C5B;
+      backdrop-filter: blur(8px);
+
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+
+      outline: none;
+      cursor: pointer;
+
+      transition: all 0.25s ease;
+    }
+
+    /* Hover */
+    #valueMode:hover {
+      border-color: #C9A8E3;
+      box-shadow: 0 0 6px rgba(201, 168, 227, 0.4);
+    }
+
+    /* Focus (clicked) */
+    #valueMode:focus {
+      border-color: #C9A8E3;
+      box-shadow: 0 0 10px rgba(201, 168, 227, 0.6);
+    }
+
+    /* Dropdown options */
+    #valueMode option {
+      background: #1a1a2e;
+      color: white;
     }
 
     /* --------- LOADING SCREEN (unchanged) --------- */
@@ -318,6 +377,11 @@
       margin-bottom: 10px;
     }
 
+    #valueMode {
+      margin-left: 15px;
+      font-size: 14px;
+    }
+
     @keyframes spin {
       to {
         transform: rotate(360deg);
@@ -335,6 +399,10 @@
   </div>
 
   <script>
+    function showLoader() {
+      const l = document.getElementById("loadingScreen");
+      if (l) l.style.display = "flex";
+    }
     function hideLoader() {
       const l = document.getElementById("loadingScreen");
       if (l) l.style.display = "none";
@@ -383,17 +451,46 @@
     <button onclick="logoutUser()">Logout</button>
   </div>
 
+  <select id="valueMode">
+    <option value="raw">RAW Data</option>
+    <option value="main">Main Data</option>
+    <option value="sub">Sub Data</option>
+  </select>
+
   <!-- CONTENT -->
   <div id="sections" class="section-wrap"></div>
 
   <!-- POPUP -->
-  <div id="extraInfo">
-    <span id="closeInfo" onclick="closeExtraInfo()">✖</span>
-    <div id="infoTitle"></div>
-    <div id="infoContent"></div>
+  <div id="popupOverlay" onclick="closePopup(event)">
+    <div id="popupCard">
+
+      <div id="popupHeader"></div>
+
+      <canvas id="popupChart"></canvas>
+
+      <div id="popupInfo"></div>
+
+      <button id="downloadBtn" onclick="downloadChart()" style="
+          margin-top:15px;
+          padding:10px 16px;
+          border:none;
+          border-radius:8px;
+          background:linear-gradient(135deg,#C9A8E3,#6A329F);
+          color:white;
+          font-weight:600;
+          cursor:pointer;
+          width:100%;
+        ">
+        Download as JPEG
+      </button>
+
+    </div>
   </div>
 
   <script>
+
+    let valueMode = "raw";
+
     /* NAVIGATION */
     function toggleMenu() {
       const m = document.getElementById("mobileMenu");
@@ -452,6 +549,8 @@
 
     checkSession();
     setInterval(checkSession, 10000);
+
+
     /* FETCH ANALYSIS DATA */
     function loadAnalysis() {
 
@@ -459,7 +558,9 @@
         .then(r => r.json())
         .then(json => {
 
-          hideLoader();
+          window.sheetName = json.sheetName;
+
+          setTimeout(() => hideLoader(), 300);
 
           const wrapper = document.getElementById('sections');
           wrapper.innerHTML = "";
@@ -479,10 +580,13 @@
             const sensors = groups[groupName] || [];
 
             const validSensors = sensors.filter(sensor => {
-              return Object.values(sensor).some(v => v !== -1 && v !== "" && v !== null);
+              return Array.from({ length: 24 }).some((_, i) => {
+                const v = sensor[i];
+                return v && v !== "";
+              });
             });
 
-            if (validSensors.length === 0) return;
+            if (!validSensors || validSensors.length === 0) return;
 
             const title = document.createElement('h2');
             title.className = 'section-title';
@@ -509,22 +613,48 @@
 
     }
 
+    document.getElementById("valueMode").addEventListener("change", function () {
+
+      valueMode = this.value;
+
+      showLoader();   // 🔥 SHOW LOADER
+      loadAnalysis(); // reload data
+
+    });
     /* INITIAL LOAD */
     loadAnalysis();
-
     /* AUTO REFRESH EVERY 30s */
-    setInterval(loadAnalysis, 30000);
+    setInterval(() => {
+      loadAnalysis(); // no loader here
+    }, 60000);
 
     /* --- CARD BUILDER --- */
     function createCard(item) {
       const card = document.createElement('div');
       card.className = 'card';
 
-      const labelText = (item.Label && item.Label != -1) ? item.Label : "";
-      const cID = item["controller ID"], sID = item["sensor ID"];
+      const labelText = item.label || "";
+      const cID = item.controllerID, sID = item.sensorID;
       const cSID = `C${cID}:S${sID}`;
 
       const header = document.createElement('div');
+      const modeInfo = document.createElement('div');
+      modeInfo.style.fontSize = "11px";
+      modeInfo.style.opacity = "0.8";
+
+      if (valueMode === "raw") {
+        modeInfo.innerText = "View: Raw Data | Unit: none";
+      }
+
+      if (valueMode === "main") {
+        modeInfo.innerText =
+          `View: ${item.mainLabel || "-"} | Unit: ${item.mainUnit || "-"}`;
+      }
+
+      if (valueMode === "sub") {
+        modeInfo.innerText =
+          `View: ${item.subLabel || "-"} | Unit: ${item.subUnit || "-"}`;
+      }
       header.className = 'card-header';
       const t = document.createElement('div');
       t.className = 'title';
@@ -534,6 +664,7 @@
       ids.innerText = cSID;
       header.appendChild(t); header.appendChild(ids);
       card.appendChild(header);
+      card.appendChild(modeInfo);
 
       const wrap = document.createElement('div');
       wrap.className = 'chart-container';
@@ -549,31 +680,55 @@
 
     /* --- CHART RENDER --- */
     function renderChart(canvas, item) {
+
       const labels = Array.from({ length: 24 }, (_, i) => String(i));
-      let rawValues = labels.map(k => {
+
+      const values = labels.map(k => {
+
         const v = item[k];
-        if (v === -1 || v === "" || v == null) return null;
-        return Number(v);
+
+        if (!v || v === "") return null;
+
+        const parts = String(v).split(",").map(p => p.replace(/[^\d.]/g, ""));
+
+        // RAW → first
+        if (valueMode === "raw") {
+          return Number(parts[0]) || null;
+        }
+
+        // MAIN → second
+        if (valueMode === "main") {
+          return parts[1] ? Number(parts[1]) : null;
+        }
+
+        // SUB → third
+        if (valueMode === "sub") {
+          return parts[2] ? Number(parts[2]) : null;
+        }
+
+        return null;
+
       });
 
-      if (item["Sensor Type"] === "Distance") {
-        const H = Number(item["Tank Height"]) || 0;
-        const O = Number(item["Offset Error"]) || 0;
-        if (H > 0) {
-          rawValues = rawValues.map(v => {
-            if (v === null) return null;
-            return Math.max(0, Math.min(100, Math.round(((H - v + O) / H) * 100)));
-          });
-        }
+      if (canvas.chart) {
+        canvas.chart.destroy();
       }
 
-      new Chart(canvas.getContext('2d'), {
+      // ---------------------------
+      // 🔥 COLOR BASED ON MODE
+      // ---------------------------
+      const barColor =
+        valueMode === "raw" ? "#e69df4" :   // PINK
+          valueMode === "main" ? "#FEDC56" :  // YELLOW
+            "#ff9800";                          // orange
+
+      canvas.chart = new Chart(canvas.getContext('2d'), {
         type: 'bar',
         data: {
           labels,
           datasets: [{
-            data: rawValues,
-            backgroundColor: '#e69df4',
+            data: values,
+            backgroundColor: barColor,
             borderRadius: 6
           }]
         },
@@ -588,44 +743,191 @@
       });
     }
 
+
     /* --- POPUP --- */
+    let popupChartInstance = null;
+
     function openPopup(item) {
-      const cID = item["controller ID"];
-      const sID = item["sensor ID"];
-      const title = (item.Label && item.Label != -1)
-        ? `${item.Label} C${cID}:S${sID}`
-        : `Sensor C${cID}:S${sID}`;
 
-      document.getElementById('infoTitle').innerText = title;
+      document.getElementById("popupOverlay").style.display = "flex";
 
-      let lines = [];
-      const add = (label, key) => {
-        const v = item[key];
-        if (v !== undefined && v !== -1 && v !== "" && v !== null) {
-          lines.push(`${label}: ${v}`);
-        }
-      };
+      const canvas = document.getElementById("popupChart");
 
-      add("Tank Volume", "Tank Volume");
-      add("Tank Height", "Tank Height");
-      add("Offset Error", "Offset Error");
+      // ---------------------------
+      // 🔥 BASIC INFO
+      // ---------------------------
+      const cID = item.controllerID;
+      const sID = item.sensorID;
+      const cSID = `C${cID}:S${sID}`;
 
-      for (let i = 1; i <= 5; i++) {
-        const ck = `custom ${i}`;
-        const vk = `value ${i}`;
-        if (item[ck] !== -1 && item[ck] !== "" && item[vk] !== -1 && item[vk] !== "") {
-          lines.push(`${item[ck]}: ${item[vk]}`);
-        }
+      const title = item.label && item.label !== ""
+        ? item.label
+        : `Sensor ${cSID}`;
+
+      // 👉 DEVICE ID (SAFE FALLBACK)
+      const deviceID = window.sheetName || "V00000";
+
+      // 👉 BUTTON TEXT (KEEP ":" for display)
+      const fileBaseName = `${deviceID}_C${cID}:S${sID}`;
+      document.getElementById("downloadBtn").innerText = `Download - ${fileBaseName}`;
+
+      // ---------------------------
+      // 🔥 MODE TEXT
+      // ---------------------------
+      let viewText = "Raw Data";
+      let unitText = "none";
+
+      if (valueMode === "main") {
+        viewText = item.mainLabel || "-";
+        unitText = item.mainUnit || "-";
       }
 
-      document.getElementById('infoContent').innerText =
-        lines.length === 0 ? "(no extra info)" : lines.join("\n");
+      if (valueMode === "sub") {
+        viewText = item.subLabel || "-";
+        unitText = item.subUnit || "-";
+      }
 
-      document.getElementById('extraInfo').style.display = 'block';
+      // ---------------------------
+      // 🔥 HEADER
+      // ---------------------------
+      document.getElementById("popupHeader").innerHTML = `
+    <div class="company">Voltraxx Tech</div>
+    <div class="device">ID: ${deviceID}</div>
+
+    <div class="title">${title}</div>
+    <div class="ids">${cSID}</div>
+
+    <div class="mode">View: ${viewText} | Unit: ${unitText}</div>
+  `;
+
+      // ---------------------------
+      // 🔥 DESTROY OLD CHART
+      // ---------------------------
+      if (window.popupChartInstance) {
+        window.popupChartInstance.destroy();
+      }
+
+      // ---------------------------
+      // 🔥 PREPARE DATA
+      // ---------------------------
+      const labels = Array.from({ length: 24 }, (_, i) => String(i));
+
+      const values = labels.map(k => {
+
+        const v = item[k];
+        if (!v || v === "") return null;
+
+        const parts = String(v)
+          .split(",")
+          .map(p => p.replace(/[^\d.]/g, ""));
+
+        if (valueMode === "raw") return Number(parts[0]) || null;
+        if (valueMode === "main") return parts[1] ? Number(parts[1]) : null;
+        if (valueMode === "sub") return parts[2] ? Number(parts[2]) : null;
+
+        return null;
+
+      });
+
+      // ---------------------------
+      // 🔥 COLOR BASED ON MODE
+      // ---------------------------
+      const barColor =
+        valueMode === "raw" ? "#e69df4" :   // PINK
+          valueMode === "main" ? "#FEDC56" :  // YELLOW
+            "#ff9800";                          // orange
+
+      // ---------------------------
+      // 🔥 CREATE CHART
+      // ---------------------------
+      window.popupChartInstance = new Chart(canvas.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{
+            data: values,
+            backgroundColor: barColor,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#fff" } },
+            y: { ticks: { color: "#fff" } }
+          }
+        }
+      });
+
+      // ---------------------------
+      // 🔥 EXTRA INFO (DYNAMIC)
+      // ---------------------------
+      let info = [];
+
+      // 👉 Include ALL dynamic custom fields (AO–AX)
+      Object.keys(item).forEach(key => {
+
+        if (
+          !["controllerID", "sensorID", "label", "type",
+            "mainLabel", "mainUnit", "subLabel", "subUnit"]
+            .includes(key)
+          && isNaN(key) // skip time keys (0–23)
+        ) {
+          info.push(`${key}: ${item[key]}`);
+        }
+
+      });
+
+      document.getElementById("popupInfo").innerText =
+        info.length ? info.join("\n") : "No extra data";
     }
 
-    function closeExtraInfo() {
-      document.getElementById('extraInfo').style.display = 'none';
+    function closePopup(e) {
+
+      // close only if clicked outside card
+      if (e.target.id === "popupOverlay") {
+        document.getElementById("popupOverlay").style.display = "none";
+      }
+    }
+
+    function downloadChart() {
+
+      const popup = document.getElementById("popupCard");
+      if (!popup) return;
+
+      const deviceID = window.sheetName || "V00000";
+
+      const rawIds = document.querySelector("#popupHeader .ids")?.innerText || "";
+      const ids = rawIds.replace(":", "_");   // 🔥 FIX
+
+      // ids = C1:S10
+
+      const now = new Date();
+
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+
+      const hh = String(now.getHours()).padStart(2, "0");
+      const min = String(now.getMinutes()).padStart(2, "0");
+
+      const fileName =
+        `${deviceID}_${ids}_D_${yyyy}_${mm}_${dd}_T_${hh}_${min}`.replace(/\s+/g, "_");
+
+      html2canvas(popup, {
+        backgroundColor: null,
+        scale: 2
+      }).then(canvas => {
+
+        const link = document.createElement("a");
+
+        link.download = fileName + ".jpg";
+        link.href = canvas.toDataURL("image/jpeg", 1.0);
+
+        link.click();
+
+      });
+
     }
   </script>
 

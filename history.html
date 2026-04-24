@@ -365,6 +365,15 @@
     </div>
 
     <div class="filter-box">
+      <label>View</label>
+      <select id="valueMode">
+        <option value="raw">Raw Values</option>
+        <option value="main">Main Values</option>
+        <option value="sub">Sub Values</option>
+      </select>
+    </div>
+
+    <div class="filter-box">
       <label>Date From</label>
       <input type="date" id="fromDate">
     </div>
@@ -382,6 +391,8 @@
 
   <script>
 
+
+
     function nav(p) { window.location.href = p }
 
     function toggleMenu() {
@@ -391,6 +402,9 @@
 
 
     const BASE_URL = sessionStorage.getItem("BASE_URL")
+
+    let lastData = null;
+
     // ================= SESSION CONTROL =================
     function loadUserInfo() {
 
@@ -466,6 +480,12 @@
 
         })
 
+      document.getElementById("valueMode").addEventListener("change", () => {
+        if (lastData) {
+          renderTables(lastData.sheetName, lastData.header, lastData.rows);
+        }
+      });
+
     }
 
     async function getHistory() {
@@ -505,7 +525,8 @@
           throw new Error("No Data")
         }
 
-        renderTables(j.sheetName, j.header, j.rows)
+        lastData = j;
+        renderTables(j.sheetName, j.header, j.rows);
 
         btn.classList.remove("loading")
         btn.classList.add("success")
@@ -579,7 +600,11 @@ VOLTRAXX TECHNOLOGIES, client id: ${clientID}, Controller ID: ${controller}, Sen
           html += `<td>${r[0]}</td>`
 
           hourIndex.forEach(i => {
-            html += `<td>${(r[i] === null || r[i] === "" || r[i] === undefined) ? "." : r[i]}</td>`
+            const mode = document.getElementById("valueMode").value;
+
+            const value = parseCellValue(r[i], mode);
+
+            html += `<td>${value}</td>`;
           })
 
           html += "</tr>"
@@ -607,6 +632,30 @@ VOLTRAXX TECHNOLOGIES, client id: ${clientID}, Controller ID: ${controller}, Sen
 
       }
 
+    }
+
+    // =====================================================
+    // 📌 VALUE PARSER
+    // =====================================================
+    function parseCellValue(val, mode) {
+
+      if (val === null || val === "" || val === undefined) return ".";
+
+      const parts = String(val).split(",");
+
+      if (mode === "raw") {
+        return parts[0] || "|";
+      }
+
+      if (mode === "main") {
+        return parts[1] ? parts[1] : "|";
+      }
+
+      if (mode === "sub") {
+        return parts[2] ? parts[2] : "|";
+      }
+
+      return val;
     }
 
     async function downloadPDF(tableID, page, clientID, sensor) {

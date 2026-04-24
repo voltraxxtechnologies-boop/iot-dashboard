@@ -200,6 +200,9 @@
 
     /* ---------- SETTINGS PAGE UI ---------- */
 
+    input {
+      text-overflow: ellipsis;
+    }
 
     .settings-container {
       padding: 10px 20px;
@@ -357,7 +360,7 @@
 
 
     .group-chip:hover {
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 80, 80, 0.4);
     }
 
     .add-chip {
@@ -526,7 +529,7 @@
       font-size: 13px;
     }
 
-    .formula-limits input[type="number"] {
+    .formula-limits input[inputmode="numeric"] {
       width: 40px;
       padding: 4px 6px;
       border-radius: 6px;
@@ -774,23 +777,23 @@
 
             <tr>
               <td>Custom 1</td>
-              <td><input id="custom1" placeholder="Enter variable 1 name"></td>
+              <td><input id="custom1" maxlength="11" placeholder="Enter variable 1 name"></td>
             </tr>
             <tr>
               <td>Custom 2</td>
-              <td><input id="custom2" placeholder="Enter variable 2 name"></td>
+              <td><input id="custom2" maxlength="11" placeholder="Enter variable 2 name"></td>
             </tr>
             <tr>
               <td>Custom 3</td>
-              <td><input id="custom3" placeholder="Enter variable 3 name"></td>
+              <td><input id="custom3" maxlength="11" placeholder="Enter variable 3 name"></td>
             </tr>
             <tr>
               <td>Custom 4</td>
-              <td><input id="custom4" placeholder="Enter variable 4 name"></td>
+              <td><input id="custom4" maxlength="11" placeholder="Enter variable 4 name"></td>
             </tr>
             <tr>
               <td>Custom 5</td>
-              <td><input id="custom5" placeholder="Enter variable 5 name"></td>
+              <td><input id="custom5" maxlength="11" placeholder="Enter variable 5 name"></td>
             </tr>
           </table>
 
@@ -802,23 +805,28 @@
 
             <tr>
               <td>Value 1</td>
-              <td><input id="value1" type="number" placeholder="Enter variable 1 value"></td>
+              <td><input id="value1" type="text" inputmode="numeric" maxlength="11"
+                  placeholder="Enter variable 1 value"></td>
             </tr>
             <tr>
               <td>Value 2</td>
-              <td><input id="value2" type="number" placeholder="Enter variable 2 value"></td>
+              <td><input id="value2" type="text" inputmode="numeric" maxlength="11"
+                  placeholder="Enter variable 2 value"></td>
             </tr>
             <tr>
               <td>Value 3</td>
-              <td><input id="value3" type="number" placeholder="Enter variable 3 value"></td>
+              <td><input id="value3" type="text" inputmode="numeric" maxlength="11"
+                  placeholder="Enter variable 3 value"></td>
             </tr>
             <tr>
               <td>Value 4</td>
-              <td><input id="value4" type="number" placeholder="Enter variable 4 value"></td>
+              <td><input id="value4" type="text" inputmode="numeric" maxlength="11"
+                  placeholder="Enter variable 4 value"></td>
             </tr>
             <tr>
               <td>Value 5</td>
-              <td><input id="value5" type="number" placeholder="Enter variable 5 value"></td>
+              <td><input id="value5" type="text" inputmode="numeric" maxlength="11"
+                  placeholder="Enter variable 5 value"></td>
             </tr>
           </table>
         </div>
@@ -837,7 +845,7 @@
 
           <tr>
             <td>Name</td>
-            <td><input id="mainFormulaName" placeholder="Enter Formula Name"></td>
+            <td><input id="mainFormulaName" maxlength="11" placeholder="Enter Formula Name"></td>
           </tr>
 
           <tr>
@@ -862,14 +870,14 @@
           <label>
             <input type="checkbox" id="roundCheck">
             ROUND
-            <input type="number" id="roundValue" placeholder="0" disabled>
+            <input type="text" inputmode="numeric" id="roundValue" placeholder="0" disabled>
           </label>
 
           <label>
             <input type="checkbox" id="clampCheck">
             MIN - MAX
-            <input type="number" id="minValue" placeholder="min" disabled>
-            <input type="number" id="maxValue" placeholder="max" disabled>
+            <input type="text" inputmode="numeric" id="minValue" placeholder="min" disabled>
+            <input type="text" inputmode="numeric" id="maxValue" placeholder="max" disabled>
           </label>
 
         </div>
@@ -910,6 +918,41 @@
         let mainTokens = [];
         let currentFormulaType = "main"; // main | sub
 
+        document.addEventListener("beforeinput", function (e) {
+
+          if (!e.target.matches("input[maxlength], input[inputmode='numeric']")) return;
+
+          const max = 11;
+          const val = e.target.value;
+
+          if (e.inputType === "deleteContentBackward") return;
+
+          const selectionLength = e.target.selectionEnd - e.target.selectionStart;
+
+          if (val.length - selectionLength >= max) {
+            e.preventDefault();
+          }
+
+        });
+
+        document.addEventListener("input", function (e) {
+
+          if (!e.target.matches("input[maxlength], input[inputmode='numeric']")) return;
+
+          let val = e.target.value;
+
+          // ✅ FILTER ONLY NUMBERS (for numeric fields)
+          if (e.target.inputMode === "numeric") {
+            val = val.replace(/[^0-9.]/g, "");
+          }
+
+          if (val.length > 11) {
+            val = val.substring(0, 11);
+          }
+
+          e.target.value = val;
+
+        });
 
         function nav(p) { window.location.href = p; }
 
@@ -1080,8 +1123,17 @@
           selected = [...sensors, ...io].find(s => s.sensorID === id);
 
           if (selected) {
+
             renderDisplay();
             updateSensorTitle();
+
+            const formulaSection = document.getElementById("formulaBox").parentElement;
+
+            if (selected.sensorID >= 130) {
+              formulaSection.style.display = "none";
+            } else {
+              formulaSection.style.display = "block";
+            }
           }
 
         });
@@ -1109,7 +1161,7 @@
               initFormulaSwitch();
               resetMainFormula();
               renderFormulaVariables();
-              renderMainFormula(); // ✅ ADD THIS
+              renderMainFormula();
               loadFormulaByType();
               initFormulaControls();
               updateFormulaPreview();
@@ -1163,15 +1215,15 @@
       <td><input value="${s.sensorID}" disabled class="readonly"></td>
     </tr>
 
-    <tr><td>Type</td><td><input id="type" value="${s.type || ""}"></td></tr>
-    <tr><td>Label</td><td><input id="label" value="${s.label || ""}"></td></tr>
+    <tr><td>Type</td><td><input id="type" maxlength="11" value="${s.type || ""}"></td></tr>
+    <tr><td>Label</td><td><input id="label"  maxlength="11" value="${s.label || ""}"></td></tr>
 
-    <tr><td>Main Label</td><td><input id="mainLabel" value="${s.mainLabel || ""}"></td></tr>
+    <tr><td>Main Label</td><td><input id="mainLabel"  maxlength="11" value="${s.mainLabel || ""}"></td></tr>
     ${!isIO ? `
     <tr><td>Main Unit</td><td><input id="mainUnit" value="${s.mainUnit || ""}"></td></tr>
     ` : ""}
 
-    <tr><td>Sub Label</td><td><input id="subLabel" value="${s.subLabel || ""}"></td></tr>
+    <tr><td>Sub Label</td><td><input id="subLabel"  maxlength="11" value="${s.subLabel || ""}"></td></tr>
 
     ${!isIO ? `
     <tr><td>Sub Unit</td><td><input id="subUnit" value="${s.subUnit || ""}"></td></tr>
@@ -1189,7 +1241,7 @@
           <option value="=" ${highOp === "=" ? "selected" : ""}>=</option>
         </select>
 
-        <input id="highVal" type="number" step="any" value="${highVal}">
+        <input id="highVal" type="text" inputmode="numeric" step="any" value="${highVal}">
       </td>
     </tr>
 
@@ -1204,7 +1256,7 @@
           <option value="=" ${lowOp === "=" ? "selected" : ""}>=</option>
         </select>
 
-        <input id="lowVal" type="number" step="any" value="${lowVal}">
+        <input id="lowVal" type="text" inputmode="numeric" step="any" value="${lowVal}">
       </td>
     </tr>
     ` : ""}
@@ -1596,23 +1648,51 @@
           }
 
           // =========================
-          // ✅ ADD HERE (VALIDATION)
+          // ✅ PAIR VALIDATION (CUSTOM ↔ VALUE)
+          // =========================
+
+          const pairs = [
+            { name: custom1.value.trim(), value: document.getElementById("value1").value.trim(), id: 1 },
+            { name: custom2.value.trim(), value: document.getElementById("value2").value.trim(), id: 2 },
+            { name: custom3.value.trim(), value: document.getElementById("value3").value.trim(), id: 3 },
+            { name: custom4.value.trim(), value: document.getElementById("value4").value.trim(), id: 4 },
+            { name: custom5.value.trim(), value: document.getElementById("value5").value.trim(), id: 5 }
+          ];
+
+          for (let p of pairs) {
+
+            if ((p.name && !p.value) || (!p.name && p.value)) {
+
+              alert(`Custom ${p.id} and Value ${p.id} must both be filled or both empty`);
+
+              document.getElementById("custom" + p.id).style.border = "2px solid red";
+              document.getElementById("value" + p.id).style.border = "2px solid red";
+
+              return;
+            }
+
+            const c = document.getElementById("custom" + p.id);
+            const v = document.getElementById("value" + p.id);
+
+            c.style.border = "";
+            v.style.border = "";
+          }
+
+          // =========================
+          // ✅ VALIDATION
           // =========================
           if (!document.getElementById("mainFormulaName").value.trim()) {
             alert("Enter formula name");
             return;
           }
 
-          if (!mainTokens.length) {
-            alert("Build formula first");
-            return;
-          }
+          let final = null;
 
-          // =========================
-          // ✅ BUILD FINAL FORMULA
-          // =========================
-          const final = buildFinalFormulaForSheet();
-          if (!final) return;
+          // ✅ ONLY build formula if user actually created one
+          if (mainTokens.length) {
+            final = buildFinalFormulaForSheet();
+            if (!final) return;
+          }
 
           // =========================
           // ✅ PREPARE PARAMS
@@ -1640,13 +1720,17 @@
             ...(currentFormulaType === "main"
               ? {
                 mainFormulaName: document.getElementById("mainFormulaName").value,
-                mainFormulaText: final.text,
-                mainFormula: final.formula
+                ...(final && {
+                  mainFormulaText: final.text,
+                  mainFormula: final.formula
+                })
               }
               : {
                 subFormulaName: document.getElementById("mainFormulaName").value,
-                subFormulaText: final.text,
-                subFormula: final.formula
+                ...(final && {
+                  subFormulaText: final.text,
+                  subFormula: final.formula
+                })
               }
             )
           });
@@ -1763,7 +1847,8 @@
           numberWrapper.style.padding = "6px";
 
           const numberInput = document.createElement("input");
-          numberInput.type = "number";
+          numberInput.type = "text";
+          numberInput.inputMode = "numeric";
           numberInput.placeholder = "Enter number";
           numberInput.style.width = "100%";
 
@@ -1859,8 +1944,6 @@
           renderMainFormula();     // reset chip UI
           resetFormulaUI();        // uncheck ROUND & MIN-MAX
           updateFormulaPreview();  // clear preview
-          document.getElementById("formulaPreview").innerText = "";
-
         }
 
         function removeFormulaDropdown() {
@@ -1972,7 +2055,14 @@
           const round = document.getElementById("roundCheck").checked;
           const clamp = document.getElementById("clampCheck").checked;
 
-          const roundVal = document.getElementById("roundValue").value || 0;
+          const roundValRaw = document.getElementById("roundValue").value;
+
+          if (round && roundValRaw === "") {
+            alert("Enter decimal places to round to");
+            return "";
+          }
+
+          const roundVal = roundValRaw || 0;
           const minVal = document.getElementById("minValue").value;
           const maxVal = document.getElementById("maxValue").value;
 
@@ -1989,11 +2079,6 @@
 
           // ✅ APPLY ROUND LAST
           if (round) {
-
-            if (round && roundVal === "") {
-              alert("Enter decimal places to round to");
-              return "";
-            }
             formula = `ROUND( ${formula}, ${roundVal})`;
           }
 
@@ -2019,13 +2104,13 @@
 
         function buildFinalFormulaForSheet() {
 
-          if (!mainTokens.length) {
-            alert("Build formula first");
-            return null;
-          }
+          // if (!mainTokens.length) {
+          //   alert("Build formula first");
+          //   return null;
+          // }
 
           let formulaText = buildMainFormula(); // already built string
-
+          if (!formulaText) return null;
           // =========================
           // ✅ ADD "=" + QUOTES FOR TEXT
           // =========================
@@ -2114,6 +2199,7 @@
           });
 
         }
+
 
       </script>
 

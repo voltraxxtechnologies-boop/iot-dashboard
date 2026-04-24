@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Voltraxx Access Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- FAVICON ADDED (no other changes) -->
   <link rel="icon" type="image/png"
@@ -16,8 +17,9 @@
       font-family: "Poppins", sans-serif;
       height: 100vh;
       display: flex;
-      justify-content: center; 
-      align-items: flex-start; /* TOP */
+      justify-content: center;
+      align-items: flex-start;
+      /* TOP */
       padding-top: 10px;
       background: linear-gradient(135deg, #3B1C5B, #6A329F, #C9A8E3);
       background-size: 300% 300%;
@@ -26,20 +28,29 @@
     }
 
     @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
     }
 
     .login-wrapper {
       margin-top: 60px;
       width: 90%;
-      max-width: 300px;  /* Reduced width */
+      max-width: 300px;
+      /* Reduced width */
       padding: 35px 30px;
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
       text-align: center;
     }
 
@@ -54,11 +65,20 @@
     }
 
     @keyframes pulseLogo {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.1); }
+      0% {
+        transform: scale(1);
+      }
+
+      100% {
+        transform: scale(1.1);
+      }
     }
 
-    .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+    .logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
     input {
       width: 90%;
@@ -68,11 +88,13 @@
       border: none;
       outline: none;
       font-size: 16px;
-      background: rgba(255,255,255,0.22);
+      background: rgba(255, 255, 255, 0.22);
       color: white;
     }
 
-    input::placeholder { color: #ddd; }
+    input::placeholder {
+      color: #ddd;
+    }
 
     button.action-btn {
       width: 95%;
@@ -87,7 +109,11 @@
       font-weight: 600;
     }
 
-    .msg { height: 22px; margin-top: 10px; color: white; }
+    .msg {
+      height: 22px;
+      margin-top: 10px;
+      color: white;
+    }
 
     .nav-btns {
       display: flex;
@@ -100,7 +126,7 @@
       padding: 10px 0;
       border-radius: 8px;
       border: none;
-      background: rgba(255,255,255,0.25);
+      background: rgba(255, 255, 255, 0.25);
       color: white;
       cursor: pointer;
     }
@@ -117,7 +143,8 @@
 
   <div class="login-wrapper">
     <div class="logo-box">
-      <img src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
+      <img
+        src="https://raw.githubusercontent.com/voltraxxtechnologies-boop/my-website-assets/53933e88a81248217341a7e370001d6d63296433/LOGO1.png">
     </div>
 
     <h2 id="titleText">Sign In</h2>
@@ -126,8 +153,7 @@
     <div id="signinForm">
       <input id="signin_id" placeholder="Enter ID">
 
-      <input id="signin_pin" type="password" placeholder="Enter PIN"
-             inputmode="numeric" pattern="[0-9]*">
+      <input id="signin_pin" type="password" placeholder="Enter PIN" inputmode="numeric" pattern="[0-9]*">
 
       <button class="action-btn" onclick="signin()">Verify</button>
     </div>
@@ -141,8 +167,7 @@
 
       <input id="su_id" placeholder="Create ID">
 
-      <input id="su_pin" placeholder="Create PIN"
-             inputmode="numeric" pattern="[0-9]*">
+      <input id="su_pin" placeholder="Create PIN" inputmode="numeric" pattern="[0-9]*">
 
       <button class="action-btn" onclick="signup()">Create Account</button>
     </div>
@@ -155,8 +180,7 @@
 
       <input id="re_newid" placeholder="New ID (optional)">
 
-      <input id="re_newpin" placeholder="New PIN (optional)"
-             inputmode="numeric" pattern="[0-9]*">
+      <input id="re_newpin" placeholder="New PIN (optional)" inputmode="numeric" pattern="[0-9]*">
 
       <button class="action-btn" onclick="resetAcc()">Reset</button>
     </div>
@@ -171,138 +195,139 @@
     </div>
   </div>
 
-<script>
-const API = "https://script.google.com/macros/s/AKfycbzWmZbdGg3e9mMNPlPuKnfhxH-2K3o3KLiGgRvNRjVPNT__04NrKM4edMS9rDKD7Ho/exec";
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbzWmZbdGg3e9mMNPlPuKnfhxH-2K3o3KLiGgRvNRjVPNT__04NrKM4edMS9rDKD7Ho/exec";
 
-function showLoading(state) {
-  responseMsg.style.color = "white";
-  responseMsg.textContent = state ? "Please wait..." : "";
-}
+    function showLoading(state) {
+      responseMsg.style.color = "white";
+      responseMsg.textContent = state ? "Please wait..." : "";
+    }
 
-function isNumeric(val) {
-  return /^[0-9]+$/.test(val);
-}
+    function isNumeric(val) {
+      return /^[0-9]+$/.test(val);
+    }
 
-/* Switch Forms */
-function showForm(type){
-  document.getElementById("signinForm").style.display = (type === "signin") ? "block" : "none";
-  document.getElementById("signupForm").style.display = (type === "signup") ? "block" : "none";
-  document.getElementById("resetForm").style.display = (type === "reset") ? "block" : "none";
+    /* Switch Forms */
+    function showForm(type) {
+      document.getElementById("signinForm").style.display = (type === "signin") ? "block" : "none";
+      document.getElementById("signupForm").style.display = (type === "signup") ? "block" : "none";
+      document.getElementById("resetForm").style.display = (type === "reset") ? "block" : "none";
 
-  document.getElementById("btnSignin").classList.remove("active");
-  document.getElementById("btnSignup").classList.remove("active");
-  document.getElementById("btnReset").classList.remove("active");
+      document.getElementById("btnSignin").classList.remove("active");
+      document.getElementById("btnSignup").classList.remove("active");
+      document.getElementById("btnReset").classList.remove("active");
 
-  document.getElementById(`btn${type.charAt(0).toUpperCase()+type.slice(1)}`).classList.add("active");
+      document.getElementById(`btn${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add("active");
 
-  document.getElementById("titleText").innerText =
-    type === "signin" ? "Sign In" :
-    type === "signup" ? "Sign Up" :
-    "Reset Account";
+      document.getElementById("titleText").innerText =
+        type === "signin" ? "Sign In" :
+          type === "signup" ? "Sign Up" :
+            "Reset Account";
 
-  responseMsg.textContent = "";
-}
+      responseMsg.textContent = "";
+    }
 
-/* SIGNIN */
-async function signin(){
-  const id = signin_id.value.trim();
-  const pin = signin_pin.value.trim();
+    /* SIGNIN */
+    async function signin() {
+      const id = signin_id.value.trim();
+      const pin = signin_pin.value.trim();
 
-  if(!id || !pin) return showMsg("Enter ID & PIN");
-  if(!isNumeric(pin)) return showMsg("PIN must be numbers only");
+      if (!id || !pin) return showMsg("Enter ID & PIN");
+      if (!isNumeric(pin)) return showMsg("PIN must be numbers only");
 
-  showLoading(true);
+      showLoading(true);
 
-  let res = await fetch(`${API}?read=signin&id=${id}&pin=${pin}`);
-  let data = await res.json();
+      let res = await fetch(`${API}?read=signin&id=${id}&pin=${pin}`);
+      let data = await res.json();
 
-  if(data.status === "Online"){
-    signin_id.value = "";
-    signin_pin.value = "";
+      if (data.status === "Online") {
+        signin_id.value = "";
+        signin_pin.value = "";
 
-    sessionStorage.setItem("BASE_URL", data.base_url);
-    sessionStorage.setItem("CLIENT", data.client);
-    sessionStorage.setItem("DEVICE_ID", data.id);
-    sessionStorage.setItem("LOGIN_TIME", Date.now());
-    window.location = "monitoring.html";
-  } else if(data.status === "Offline"){
-    showMsg("Login restricted");
-  }else {
-    showMsg("Invalid ID or PIN");
-  }
-}
+        sessionStorage.setItem("BASE_URL", data.base_url);
+        sessionStorage.setItem("CLIENT", data.client);
+        sessionStorage.setItem("DEVICE_ID", data.id);
+        sessionStorage.setItem("LOGIN_TIME", Date.now());
+        window.location = "monitoring.html";
+      } else if (data.status === "Offline") {
+        showMsg("Login restricted");
+      } else {
+        showMsg("Invalid ID or PIN");
+      }
+    }
 
-/* SIGNUP */
-async function signup(){
-  const q = {
-    device_id: su_device.value.trim(),
-    otp: su_otp.value.trim(),
-    client: su_client.value.trim(),
-    mobile: su_mobile.value.trim(),
-    id: su_id.value.trim(),
-    pin: su_pin.value.trim(),
-  };
+    /* SIGNUP */
+    async function signup() {
+      const q = {
+        device_id: su_device.value.trim(),
+        otp: su_otp.value.trim(),
+        client: su_client.value.trim(),
+        mobile: su_mobile.value.trim(),
+        id: su_id.value.trim(),
+        pin: su_pin.value.trim(),
+      };
 
-  if (Object.values(q).some(v => v === "")) {
-    return showMsg("All fields required.");
-  }
+      if (Object.values(q).some(v => v === "")) {
+        return showMsg("All fields required.");
+      }
 
-  if(!isNumeric(q.pin)) return showMsg("PIN must be numbers only");
+      if (!isNumeric(q.pin)) return showMsg("PIN must be numbers only");
 
-  showLoading(true);
+      showLoading(true);
 
-  let url = `${API}?read=signup&device_id=${q.device_id}&otp=${q.otp}&client=${q.client}&mobile=${q.mobile}&id=${q.id}&pin=${q.pin}`;
-  let res = await fetch(url);
-  let data = await res.json();
+      let url = `${API}?read=reset&device_id=${d}&mobile=${m}&otp=${o}&new_id=${nid}&new_pin=${npin}`;
+      let res = await fetch(url);
+      let data = await res.json();
 
-  showMsg(data.message);
+      showMsg(data.message);
 
-  if (data.status === "ok") {
-    su_device.value = "";
-    su_otp.value = "";
-    su_client.value = "";
-    su_mobile.value = "";
-    su_id.value = "";
-    su_pin.value = "";
-  }
-}
+      if (data.status === "ok") {
+        su_device.value = "";
+        su_otp.value = "";
+        su_client.value = "";
+        su_mobile.value = "";
+        su_id.value = "";
+        su_pin.value = "";
+      }
+    }
 
-/* RESET */
-async function resetAcc(){
-  let d = re_device.value.trim();
-  let m = re_mobile.value.trim();
-  let o = re_otp.value.trim();
-  let nid = re_newid.value.trim();
-  let npin = re_newpin.value.trim();
+    /* RESET */
+    async function resetAcc() {
+      let d = re_device.value.trim();
+      let m = re_mobile.value.trim();
+      let o = re_otp.value.trim();
+      let nid = re_newid.value.trim();
+      let npin = re_newpin.value.trim();
 
-  if(!d || !m || !o) return showMsg("Device ID, Mobile & OTP required");
+      if (!d || !m || !o) return showMsg("Device ID, Mobile & OTP required");
 
-  if(npin && !isNumeric(npin))
-    return showMsg("New PIN must be numbers only");
+      if (npin && !isNumeric(npin))
+        return showMsg("New PIN must be numbers only");
 
-  showLoading(true);
+      showLoading(true);
 
-  let url = `${API}?read=reset&device_id=${d}&mobile=${m}&otp=${o}&new_id=${nid}&new_pin=${npin}`;
-  let res = await fetch(url);
-  let data = await res.json();
+      let url = `${API}?read=reset&device_id=${d}&mobile=${m}&otp=${o}&new_id=${nid}&new_pin=${npin}`;
+      let res = await fetch(url);
+      let data = await res.json();
 
-  showMsg(data.message);
+      showMsg(data.message);
 
-  if (data.status === "ok") {
-    re_device.value = "";
-    re_mobile.value = "";
-    re_otp.value = "";
-    re_newid.value = "";
-    re_newpin.value = "";
-  }
-}
+      if (data.status === "ok") {
+        re_device.value = "";
+        re_mobile.value = "";
+        re_otp.value = "";
+        re_newid.value = "";
+        re_newpin.value = "";
+      }
+    }
 
-/* Helper */
-function showMsg(msg){
-  responseMsg.style.color = "white";
-  responseMsg.textContent = msg;
-}
-</script>
+    /* Helper */
+    function showMsg(msg) {
+      responseMsg.style.color = "white";
+      responseMsg.textContent = msg;
+    }
+  </script>
 
 </body>
+
 </html>
