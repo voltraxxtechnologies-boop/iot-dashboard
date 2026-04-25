@@ -899,7 +899,7 @@
         </div>
 
         <div class="formula-actions">
-          <button class="resetBtn" onclick="resetMainFormula()">Reset</button>
+          <button class="resetBtn" onclick="resetMainFormula(false)">Reset</button>
           <button class="saveBtn" onclick="saveFormulaVariables()">Save</button>
         </div>
 
@@ -917,6 +917,7 @@
         let displayGroups = [];
         let mainTokens = [];
         let currentFormulaType = "main"; // main | sub
+        let formulaEdited = false;
 
         document.addEventListener("beforeinput", function (e) {
 
@@ -944,6 +945,7 @@
           // ✅ FILTER ONLY NUMBERS (for numeric fields)
           if (e.target.inputMode === "numeric") {
             val = val.replace(/[^0-9.]/g, "");
+            val = val.replace(/(\..*?)\..*/g, "$1"); // allow only one dot
           }
 
           if (val.length > 11) {
@@ -1075,7 +1077,7 @@
             if (defaultSensor) {
               selected = defaultSensor;
               sel.value = defaultSensor.sensorID;
-              resetMainFormula();
+              resetMainFormula(false);
               renderDisplay(); // prepare data only        
               updateSensorTitle();
             }
@@ -1159,7 +1161,7 @@
             section.classList.add("open");
             if (id === "formulaBox") {
               initFormulaSwitch();
-              resetMainFormula();
+              resetMainFormula(false);
               renderFormulaVariables();
               renderMainFormula();
               loadFormulaByType();
@@ -1602,164 +1604,190 @@
           document.getElementById("value5").value = selected.value5 || "";
 
         }
-        async function saveFormulaVariables() {
 
-          if (!selected) {
-            alert("Select sensor first");
-            return;
-          }
 
-          const btn = document.querySelector("#formulaBox .saveBtn");
+async function saveFormulaVariables() {
 
-          // =========================
-          // ✅ GET INPUT ELEMENTS
-          // =========================
-          const custom1 = document.getElementById("custom1");
-          const custom2 = document.getElementById("custom2");
-          const custom3 = document.getElementById("custom3");
-          const custom4 = document.getElementById("custom4");
-          const custom5 = document.getElementById("custom5");
+  if (!selected) {
+    alert("Select sensor first");
+    return;
+  }
 
-          // =========================
-          // ✅ DUPLICATE CHECK
-          // =========================
-          const vars = [
-            custom1.value.trim(),
-            custom2.value.trim(),
-            custom3.value.trim(),
-            custom4.value.trim(),
-            custom5.value.trim()
-          ].filter(v => v);
+  const btn = document.querySelector("#formulaBox .saveBtn");
 
-          // ❌ CHECK: numeric-only variable names
-          for (let v of vars) {
-            if (/^\d+$/.test(v)) {
-              alert("Variable name cannot be only numbers");
-              return;
-            }
-          }
+  // =========================
+  // ✅ INPUTS
+  // =========================
+  const custom1 = document.getElementById("custom1");
+  const custom2 = document.getElementById("custom2");
+  const custom3 = document.getElementById("custom3");
+  const custom4 = document.getElementById("custom4");
+  const custom5 = document.getElementById("custom5");
 
-          // ❌ CHECK: duplicates
-          const unique = new Set(vars);
+  const value1 = document.getElementById("value1");
+  const value2 = document.getElementById("value2");
+  const value3 = document.getElementById("value3");
+  const value4 = document.getElementById("value4");
+  const value5 = document.getElementById("value5");
 
-          if (vars.length !== unique.size) {
-            alert("Duplicate variable names not allowed");
-            return;
-          }
+  // =========================
+  // ✅ VARIABLE VALIDATION
+  // =========================
+  const vars = [
+    custom1.value.trim(),
+    custom2.value.trim(),
+    custom3.value.trim(),
+    custom4.value.trim(),
+    custom5.value.trim()
+  ].filter(v => v);
 
-          // =========================
-          // ✅ PAIR VALIDATION (CUSTOM ↔ VALUE)
-          // =========================
+  for (let v of vars) {
+    if (/^\d+$/.test(v)) {
+      alert("Variable name cannot be only numbers");
+      return;
+    }
+  }
 
-          const pairs = [
-            { name: custom1.value.trim(), value: document.getElementById("value1").value.trim(), id: 1 },
-            { name: custom2.value.trim(), value: document.getElementById("value2").value.trim(), id: 2 },
-            { name: custom3.value.trim(), value: document.getElementById("value3").value.trim(), id: 3 },
-            { name: custom4.value.trim(), value: document.getElementById("value4").value.trim(), id: 4 },
-            { name: custom5.value.trim(), value: document.getElementById("value5").value.trim(), id: 5 }
-          ];
+  if (vars.length !== new Set(vars).size) {
+    alert("Duplicate variable names not allowed");
+    return;
+  }
 
-          for (let p of pairs) {
+  // =========================
+  // ✅ PAIR VALIDATION
+  // =========================
+  const pairs = [
+    { name: custom1.value.trim(), value: value1.value.trim(), id: 1 },
+    { name: custom2.value.trim(), value: value2.value.trim(), id: 2 },
+    { name: custom3.value.trim(), value: value3.value.trim(), id: 3 },
+    { name: custom4.value.trim(), value: value4.value.trim(), id: 4 },
+    { name: custom5.value.trim(), value: value5.value.trim(), id: 5 }
+  ];
 
-            if ((p.name && !p.value) || (!p.name && p.value)) {
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById("custom" + i).style.border = "";
+    document.getElementById("value" + i).style.border = "";
+  }
 
-              alert(`Custom ${p.id} and Value ${p.id} must both be filled or both empty`);
+  for (let p of pairs) {
+    if ((p.name && !p.value) || (!p.name && p.value)) {
+      alert(`Custom ${p.id} and Value ${p.id} must both be filled or both empty`);
+      document.getElementById("custom" + p.id).style.border = "2px solid red";
+      document.getElementById("value" + p.id).style.border = "2px solid red";
+      return;
+    }
+  }
 
-              document.getElementById("custom" + p.id).style.border = "2px solid red";
-              document.getElementById("value" + p.id).style.border = "2px solid red";
+  // =========================
+  // ✅ CHANGE DETECTION
+  // =========================
+  const currentName = document.getElementById("mainFormulaName").value.trim();
 
-              return;
-            }
+  const originalName = currentFormulaType === "main"
+    ? (selected.mainFormulaName || "")
+    : (selected.subFormulaName || "");
 
-            const c = document.getElementById("custom" + p.id);
-            const v = document.getElementById("value" + p.id);
+  const isNameChanged = currentName !== originalName;
+  const isFormulaChanged = formulaEdited;
 
-            c.style.border = "";
-            v.style.border = "";
-          }
+  const shouldSendFormulaBlock = isNameChanged || isFormulaChanged;
 
-          // =========================
-          // ✅ VALIDATION
-          // =========================
-          if (!document.getElementById("mainFormulaName").value.trim()) {
-            alert("Enter formula name");
-            return;
-          }
+  // =========================
+  // ✅ VALIDATION
+  // =========================
+  if (isFormulaChanged && !mainTokens.length) {
+    alert("Build formula first");
+    return;
+  }
 
-          let final = null;
+  if (shouldSendFormulaBlock && !currentName) {
+    alert("Enter formula name");
+    return;
+  }
 
-          // ✅ ONLY build formula if user actually created one
-          if (mainTokens.length) {
-            final = buildFinalFormulaForSheet();
-            if (!final) return;
-          }
+  // =========================
+  // ✅ PARAMS
+  // =========================
+  const params = new URLSearchParams({
+    mode: "formula",
+    sensorID: selected.sensorID,
 
-          // =========================
-          // ✅ PREPARE PARAMS
-          // =========================
-          const params = new URLSearchParams({
-            mode: "formula",
-            sensorID: selected.sensorID,
+    custom1: custom1.value,
+    value1: value1.value,
 
-            // VARIABLES
-            custom1: custom1.value,
-            value1: document.getElementById("value1").value,
+    custom2: custom2.value,
+    value2: value2.value,
 
-            custom2: custom2.value,
-            value2: document.getElementById("value2").value,
+    custom3: custom3.value,
+    value3: value3.value,
 
-            custom3: custom3.value,
-            value3: document.getElementById("value3").value,
+    custom4: custom4.value,
+    value4: value4.value,
 
-            custom4: custom4.value,
-            value4: document.getElementById("value4").value,
+    custom5: custom5.value,
+    value5: value5.value,
+  });
 
-            custom5: custom5.value,
-            value5: document.getElementById("value5").value,
+  // =========================
+  // ✅ FORMULA / NAME UPDATE
+  // =========================
+  if (shouldSendFormulaBlock) {
 
-            ...(currentFormulaType === "main"
-              ? {
-                mainFormulaName: document.getElementById("mainFormulaName").value,
-                ...(final && {
-                  mainFormulaText: final.text,
-                  mainFormula: final.formula
-                })
-              }
-              : {
-                subFormulaName: document.getElementById("mainFormulaName").value,
-                ...(final && {
-                  subFormulaText: final.text,
-                  subFormula: final.formula
-                })
-              }
-            )
-          });
+    if (currentFormulaType === "main") {
 
-          try {
+      params.append("mainFormulaName", currentName);
 
-            btn.innerText = "Saving...";
+      if (isFormulaChanged) {
+        const final = buildFinalFormulaForSheet();
+        if (!final) return;
 
-            const res = await fetch(BASE_URL, {
-              method: "POST",
-              body: params
-            });
+        params.append("mainFormulaText", final.text);
+        params.append("mainFormula", final.formula);
+      }
 
-            if (!res.ok) throw new Error();
+    } else {
 
-            btn.innerText = "Saved ✓";
+      params.append("subFormulaName", currentName);
 
-            // ✅ RESET UI AFTER SAVE
-            resetFormulaUI();
+      if (isFormulaChanged) {
+        const final = buildFinalFormulaForSheet();
+        if (!final) return;
 
-            setTimeout(async () => {
-              btn.innerText = "Save";
-              await loadSettings();
-            }, 1200);
+        params.append("subFormulaText", final.text);
+        params.append("subFormula", final.formula);
+      }
 
-          } catch {
-            btn.innerText = "Error!";
-          }
-        }
+    }
+
+  }
+
+  // =========================
+  // ✅ API CALL
+  // =========================
+  try {
+
+    btn.innerText = "Saving...";
+
+    const res = await fetch(BASE_URL, {
+      method: "POST",
+      body: params
+    });
+
+    if (!res.ok) throw new Error();
+
+    btn.innerText = "Saved ✓";
+
+    formulaEdited = false;
+
+    setTimeout(async () => {
+      btn.innerText = "Save";
+      await loadSettings();
+    }, 1200);
+
+  } catch {
+    btn.innerText = "Error!";
+  }
+}
 
         function loadFormulaByType() {
 
@@ -1927,23 +1955,28 @@
 
         function addToken(pos, value) {
           mainTokens.splice(pos, 0, value);
+          formulaEdited = true;   // ✅ ADD THIS
           renderMainFormula();
           updateFormulaPreview();
         }
 
         function removeToken(index) {
           mainTokens.splice(index, 1);
+          formulaEdited = true;   // ✅ ADD THIS
           renderMainFormula();
           updateFormulaPreview();
         }
 
-        function resetMainFormula() {
-
+        function resetMainFormula(markEdited = true) {
           mainTokens = [];
 
-          renderMainFormula();     // reset chip UI
-          resetFormulaUI();        // uncheck ROUND & MIN-MAX
-          updateFormulaPreview();  // clear preview
+          if (markEdited) {
+            formulaEdited = true;
+          }
+
+          renderMainFormula();
+          resetFormulaUI();
+          updateFormulaPreview();
         }
 
         function removeFormulaDropdown() {
@@ -2102,62 +2135,53 @@
           el.innerText = "=" + formula;
         }
 
-        function buildFinalFormulaForSheet() {
+function buildFinalFormulaForSheet() {
 
-          // if (!mainTokens.length) {
-          //   alert("Build formula first");
-          //   return null;
-          // }
+  let formulaText = buildMainFormula();
+  if (!formulaText) return null;
 
-          let formulaText = buildMainFormula(); // already built string
-          if (!formulaText) return null;
-          // =========================
-          // ✅ ADD "=" + QUOTES FOR TEXT
-          // =========================
-          const formulaTextForSheet = `="${formulaText}"`;
+  // =========================
+  // ✅ DISPLAY TEXT (NO "=")
+  // =========================
+  const formulaTextForSheet = formulaText.trim();   // NO "="
 
-          // =========================
-          // ✅ REPLACE VARIABLES → CELL REFERENCES
-          // =========================
+  // =========================
+  // ✅ EXECUTABLE (WITH "=")
+  // =========================
+  let executable = formulaText.trim();
 
-          const sensorID = selected.sensorID;
+  const sensorID = selected.sensorID;
 
-          const map = {
-            [document.getElementById("custom1").value.trim()]: `AP${sensorID}`,
-            [document.getElementById("custom2").value.trim()]: `AR${sensorID}`,
-            [document.getElementById("custom3").value.trim()]: `AT${sensorID}`,
-            [document.getElementById("custom4").value.trim()]: `AV${sensorID}`,
-            [document.getElementById("custom5").value.trim()]: `AX${sensorID}`,
-            "Readings": `C${sensorID}`
-          };
+  const map = {
+    [document.getElementById("custom1").value.trim()]: `AP${sensorID}`,
+    [document.getElementById("custom2").value.trim()]: `AR${sensorID}`,
+    [document.getElementById("custom3").value.trim()]: `AT${sensorID}`,
+    [document.getElementById("custom4").value.trim()]: `AV${sensorID}`,
+    [document.getElementById("custom5").value.trim()]: `AX${sensorID}`,
+    "Readings": `C${sensorID}`
+  };
 
-          let executable = formulaText;
+  Object.keys(map)
+    .filter(k => k)
+    .sort((a, b) => b.length - a.length)
+    .forEach(key => {
 
-          Object.keys(map)
-            .filter(k => k) // remove empty keys
-            .sort((a, b) => b.length - a.length)
-            .forEach(key => {
+      const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const flexibleKey = escaped.replace(/\s+/g, "\\s+");
 
-              const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`\\b${flexibleKey}\\b`, "gi");
 
-              // 🔥 allow flexible spacing
-              const flexibleKey = escaped.replace(/\s+/g, "\\s+");
+      executable = executable.replace(regex, map[key]);
+    });
 
-              const regex = new RegExp(`\\b${flexibleKey}\\b`, "gi");
+  // ✅ ONLY HERE "=" IS ADDED
+  executable = "=" + executable;
 
-              executable = executable.replace(regex, map[key]);
-            });
-
-          // =========================
-          // ✅ ADD "=" PREFIX
-          // =========================
-          executable = "=" + executable;
-
-          return {
-            text: formulaTextForSheet,
-            formula: executable
-          };
-        }
+  return {
+    text: formulaTextForSheet,   // NO "="
+    formula: executable          // WITH "="
+  };
+}
 
         function resetFormulaUI() {
 
@@ -2187,11 +2211,11 @@
 
               currentFormulaType = btn.dataset.type;
 
+              formulaEdited = false;   // ✅ IMPORTANT FIX
+
               mainTokens = [];
               renderMainFormula();
               resetFormulaUI();
-
-              document.getElementById("mainFormulaName").value = "";
 
               loadFormulaByType();
             };

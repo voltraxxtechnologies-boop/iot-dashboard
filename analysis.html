@@ -267,6 +267,32 @@
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
     }
 
+    #popupCard {
+      position: relative;
+      /* REQUIRED */
+    }
+
+    #popupCloseBtn {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 20px;
+      cursor: pointer;
+      color: white;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+
+    #popupCloseBtn:hover {
+      background: #ff4d4f;
+    }
+
     .company {
       font-size: 16px;
       font-weight: bold;
@@ -463,6 +489,8 @@
   <!-- POPUP -->
   <div id="popupOverlay" onclick="closePopup(event)">
     <div id="popupCard">
+
+      <div id="popupCloseBtn" onclick="forceClosePopup()">✕</div>
 
       <div id="popupHeader"></div>
 
@@ -888,6 +916,10 @@
       if (e.target.id === "popupOverlay") {
         document.getElementById("popupOverlay").style.display = "none";
       }
+    }
+
+    function forceClosePopup() {
+      document.getElementById("popupOverlay").style.display = "none";
     }
 
     function downloadChart() {
