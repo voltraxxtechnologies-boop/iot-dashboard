@@ -244,11 +244,24 @@
     }
 
     /* VALUES (RIGHT SIDE) */
-    .main-value,
+
+    .main-value {
+      flex-shrink: 0;
+      max-width: 50%;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.3s ease;
+    }
+
     .sub-value {
       flex-shrink: 0;
       max-width: 50%;
-      font-weight: 500;
+      font-size: 16px;
+      font-weight: 600;
       text-align: right;
       white-space: nowrap;
       overflow: hidden;
@@ -452,7 +465,7 @@
         z-index:9999;
       ">
 
-        <div style="
+    <div style="
           background:#3B1C5B;
           padding:30px;
           border-radius:14px;
