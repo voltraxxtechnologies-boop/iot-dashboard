@@ -176,15 +176,18 @@
       backdrop-filter: blur(8px);
       padding: 11px;
       border-radius: 12px;
-      width: 180px;
+      min-width: 140px;
+      max-width: 260px;
+      width: fit-content;
+      overflow: hidden;
       /* ~20% smaller */
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
       transition: .25s;
     }
 
-    @media (max-width:1200px) {
+    @media (max-width:1600px) {
       .card {
-        width: 170px;
+        width: 200px;
       }
     }
 
@@ -221,37 +224,36 @@
       opacity: .85;
     }
 
-    .main-line {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 8px;
-    }
-
-    .main-label {
-      font-size: 14px;
-      font-weight: 500;
-      color: #ffd6ff;
-    }
-
-    .main-value {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
+    .main-line,
     .sub-line {
       display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
     }
 
+    /* LABELS (LEFT SIDE) */
+    .main-label,
     .sub-label {
-      font-size: 13px;
-      opacity: .85;
+      flex: 1;
+      min-width: 0;
+      /* 🔥 REQUIRED */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
+    /* VALUES (RIGHT SIDE) */
+    .main-value,
     .sub-value {
-      font-size: 16px;
-      font-weight: 600;
+      flex-shrink: 0;
+      max-width: 50%;
+      font-weight: 500;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.3s ease;
     }
 
     /* ---------- LOADING SCREEN ---------- */
@@ -440,6 +442,32 @@
   <!-- CONTENT -->
   <div class="section-wrap" id="groupsContainer"></div>
 
+  <div id="popupOverlay" style="
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.7);
+        display:none;
+        justify-content:center;
+        align-items:center;
+        z-index:9999;
+      ">
+
+        <div style="
+          background:#3B1C5B;
+          padding:30px;
+          border-radius:14px;
+          width:90%;
+          max-width:200px;
+          color:white;
+        ">
+
+      <div style="text-align:right; cursor:pointer;" onclick="closePopup()">✕</div>
+
+      <div id="popupContent"></div>
+
+    </div>
+  </div>
+
   <script>
 
     /* Navigation */
@@ -576,6 +604,14 @@
               const card = document.createElement("div");
               card.className = "card";
 
+              // 👇 Only allow popup for sensors (<130)
+              if (item.sensorID < 130) {
+                card.onclick = () => openPopup(item);
+              }
+
+              // 👇 Cursor styling
+              card.style.cursor = (item.sensorID < 130) ? "pointer" : "default";
+
               let isSwitch = item.sensorID >= 130;
 
               card.innerHTML = `
@@ -627,13 +663,13 @@
               card.querySelector(".main-label").innerText = item.mainLabel || "";
               if (!isSwitch) {
                 card.querySelector(".main-value").innerText =
-                  `${value}${item.mainUnit || ""}`;
+                  `${formatNumber(value)}${item.mainUnit || ""}`;
               }
 
               card.querySelector(".sub-label").innerText = item.subLabel || "";
               card.querySelector(".sub-value").innerText =
                 item.subData != null && item.subData !== "" ?
-                  `${item.subData}${item.subUnit || ""}` : "";
+                  `${formatNumber(item.subData)}${item.subUnit || ""}` : "";
 
 
               let col = "#e69df4";
@@ -659,6 +695,7 @@
               if (isSwitch) {
 
                 const checkbox = card.querySelector(`#sw-${cID}-${sID}`);
+
                 const wrapper = card.querySelector(`#wrap-${cID}-${sID}`);
 
                 const key = `${cID}-${sID}`;
@@ -713,6 +750,11 @@
         .catch(() => showNoData());
     }
 
+    function formatNumber(val) {
+      if (val === null || val === undefined) return "";
+      return val.toString();
+    }
+
     function isValid(v) {
       return !(v === "" || v == null || v === "-" || (typeof v === "string" && v.trim() === ""));
     }
@@ -745,7 +787,9 @@
 
             // 🔒 ensure only one interval exists
             clearInterval(autoRefresh);
-            autoRefresh = setInterval(loadData, 1500);
+            autoRefresh = setInterval(() => {
+              if (!document.hidden) loadData();
+            }, 1000);
 
           }, 300);
 
@@ -768,6 +812,8 @@
 
       if (!condition || condition === "") return false;
 
+      value = Number(value);
+
       condition = condition.toString().trim();
 
       const num = parseFloat(condition.replace(/[^\d.-]/g, ""));
@@ -780,6 +826,28 @@
       if (condition.startsWith("=")) return value == num;
 
       return false;
+    }
+
+    function openPopup(item) {
+
+      const content = `
+    <h3>${item.label || "Sensor"}</h3>
+    <p><b>ID:</b> C${item.controllerID}:S${item.sensorID}</p>
+
+    <p><b>${item.mainLabel || "-"}:</b> ${item.mainData ?? "-"}${item.mainUnit || ""}</p>
+    <p><b>${item.subLabel || "-"}:</b> ${item.subData ?? "-"}${item.subUnit || ""}</p>
+
+    <hr>
+
+    <p><b>Raw:</b> ${item.readings ?? "-"}</p>
+  `;
+
+      document.getElementById("popupContent").innerHTML = content;
+      document.getElementById("popupOverlay").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("popupOverlay").style.display = "none";
     }
 
   </script>
