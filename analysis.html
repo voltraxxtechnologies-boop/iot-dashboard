@@ -339,6 +339,7 @@
     /* Dropdown */
     #valueMode {
       margin: 15px 40px;
+      margin-left: 15px;
       padding: 8px 14px;
 
       background: #3B1C5B;
@@ -401,11 +402,6 @@
       border-radius: 50%;
       animation: spin .9s linear infinite;
       margin-bottom: 10px;
-    }
-
-    #valueMode {
-      margin-left: 15px;
-      font-size: 14px;
     }
 
     @keyframes spin {
@@ -479,7 +475,7 @@
 
   <select id="valueMode">
     <option value="raw">RAW Data</option>
-    <option value="main">Main Data</option>
+    <option value="main" selected>Main Data</option>
     <option value="sub">Sub Data</option>
   </select>
 
@@ -516,8 +512,6 @@
   </div>
 
   <script>
-
-    let valueMode = "raw";
 
     /* NAVIGATION */
     function toggleMenu() {
@@ -641,14 +635,17 @@
 
     }
 
+    let valueMode = localStorage.getItem("valueMode") || "main";
+
+    document.getElementById("valueMode").value = valueMode;
+
     document.getElementById("valueMode").addEventListener("change", function () {
-
       valueMode = this.value;
-
-      showLoader();   // 🔥 SHOW LOADER
-      loadAnalysis(); // reload data
-
+      localStorage.setItem("valueMode", valueMode);
+      showLoader();
+      loadAnalysis();
     });
+
     /* INITIAL LOAD */
     loadAnalysis();
     /* AUTO REFRESH EVERY 30s */
@@ -796,7 +793,14 @@
       const deviceID = window.sheetName || "V00000";
 
       // 👉 BUTTON TEXT (KEEP ":" for display)
-      const fileBaseName = `${deviceID}_C${cID}:S${sID}`;
+      // 👉 map mode to readable label
+      let modeLabel = "";
+      if (valueMode === "raw") modeLabel = "RAW Data";
+      else if (valueMode === "main") modeLabel = "MAIN Data";
+      else if (valueMode === "sub") modeLabel = "SUB Data";
+
+      // 👉 BUTTON TEXT (WITH DATA TYPE)
+      const fileBaseName = `${deviceID}_C${cID}:S${sID}_${modeLabel}`;
       document.getElementById("downloadBtn").innerText = `Download - ${fileBaseName}`;
 
       // ---------------------------
