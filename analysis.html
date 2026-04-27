@@ -126,7 +126,7 @@
       border-radius: 2px;
     }
 
-    @media(max-width:600px) {
+    @media(max-width:900px) {
       .nav-buttons {
         display: none;
       }
@@ -160,8 +160,13 @@
     }
 
     .mobile-menu button.active {
-      font-weight: bold;
-      color: #ffd6ff;
+      background: linear-gradient(135deg, #C9A8E3, #6A329F);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transform: scale(1.02);
+      transition: 0.25s ease;
     }
 
     /* ---------- CONTENT ---------- */
@@ -512,6 +517,15 @@
   </div>
 
   <script>
+
+    const currentPage = window.location.pathname.split("/").pop();
+
+    document.querySelectorAll("#mobileMenu button").forEach(btn => {
+      const page = btn.getAttribute("onclick")?.match(/'(.*?)'/)?.[1];
+      if (page === currentPage) {
+        btn.classList.add("active");
+      }
+    });
 
     /* NAVIGATION */
     function toggleMenu() {
