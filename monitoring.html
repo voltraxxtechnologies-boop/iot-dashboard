@@ -644,6 +644,17 @@
 
             // keep only sensors with valid data
             const validSensors = sensors.filter(item => {
+              const id = Number(item.sensorID);
+
+              // Supported cards: sensors 10-99, indicators 120-139, switches 140-159.
+              // IDs 100-119 and all IDs outside these ranges are ignored.
+              const isSupportedID =
+                (id >= 10 && id <= 99) ||
+                (id >= 120 && id <= 139) ||
+                (id >= 140 && id <= 159);
+
+              if (!isSupportedID) return false;
+
               let value = item.mainData;
               if (!isValid(value)) value = item.readings;
               return isValid(value);
@@ -679,16 +690,17 @@
               const card = document.createElement("div");
               card.className = "card";
 
-              // 👇 Only allow popup for sensors (<130)
-              if (item.sensorID < 130) {
+              // Only sensor cards (IDs 10-99) open the details popup.
+              if (item.sensorID >= 10 && item.sensorID <= 99) {
                 card.onclick = () => openPopup(item);
               }
 
-              // 👇 Cursor styling
-              card.style.cursor = (item.sensorID < 130) ? "pointer" : "default";
+              // Only sensor cards are clickable.
+              card.style.cursor =
+                (item.sensorID >= 10 && item.sensorID <= 99) ? "pointer" : "default";
 
-              let isSwitch = item.sensorID >= 130 && item.sensorID <= 149;
-              let isIndicator = item.sensorID >= 150;
+              let isSwitch = item.sensorID >= 140 && item.sensorID <= 159;
+              let isIndicator = item.sensorID >= 120 && item.sensorID <= 139;
 
               card.innerHTML = `
           <div class="card-header">
@@ -728,7 +740,7 @@
               if (item.label) {
                 title = item.label;
               } else {
-                if (sID >= 130) {
+                if (sID >= 120 && sID <= 159) {
                   title = `Device C${cID}:S${sID}`;
                 } else {
                   title = `Sensor C${cID}:S${sID}`;
@@ -744,7 +756,7 @@
                   `${formatNumber(value)}${item.mainUnit || ""}`;
               }
 
-              // ===== STATUS INDICATOR LOGIC (ID >= 150) =====
+              // ===== STATUS INDICATOR LOGIC (ID 120-139) =====
               if (isIndicator) {
                 const indicator = card.querySelector(
                   `#indicator-${cID}-${sID}`
@@ -765,8 +777,8 @@
 
               let col = "#e69df4";
 
-              // 🔵 Device (sID ≥ 130)
-              if (sID >= 130) {
+              // 🔵 Device (indicators and switches: IDs 120-159)
+              if (sID >= 120 && sID <= 159) {
                 col = "#4dabf7";
               }
 
